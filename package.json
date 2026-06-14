@@ -1,0 +1,13 @@
+{
+  "name": "openphysics-org-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tooling for the OpenPhysics org config repo: repo metadata helpers and simulation screenshot capture.",
+  "scripts": {
+    "screenshots": "bash scripts/generate-screenshots.sh"
+  },
+  "devDependencies": {
+    "playwright": "^1.60.0"
+  }
+}
