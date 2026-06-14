@@ -1,0 +1,94 @@
+name: Fleet Health
+
+# Org-wide health check: clone every active simulation and run the standard
+# pre-PR trio (lint, type-check, build), then publish a pass/fail table to the
+# job summary. Catches a sim that a shared-workflow or dependency change quietly
+# broke. Read-only — uses the default token to clone public repos.
+
+on:
+  schedule:
+    - cron: '0 7 * * 1' # Mondays 07:00 UTC, just after the 06:00 compliance audit
+  workflow_dispatch:
+    inputs:
+      repos:
+        description: 'Optional space/comma-separated repos to limit the run (default: all active sims)'
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fleet-health
+  cancel-in-progress: true
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Lint / type-check / build every simulation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ONLY: ${{ inputs.repos }}
+        run: |
+          set -uo pipefail
+
+          if [ -n "${ONLY:-}" ]; then
+            SIMS=$(echo "$ONLY" | tr ', ' '\n' | sed '/^$/d')
+          else
+            SIMS=$(jq -r '.repos[] | select(.isSimulation == true and .status == "active") | .name' structure/repos.json)
+          fi
+
+          {
+            echo "# Fleet health report"
+            echo
+            echo "| Repo | Install | Lint | Type-check | Build |"
+            echo "|---|:--:|:--:|:--:|:--:|"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          overall=0
+          icon() { case "$1" in 0) printf '✅' ;; 1) printf '❌' ;; 2) printf '—' ;; esac; }
+
+          # Run an npm script if the repo defines it: 0 pass, 1 fail, 2 absent.
+          run_script() {
+            local dir="$1" name="$2"
+            if ! jq -e --arg s "$name" '.scripts[$s] // empty' "$dir/package.json" >/dev/null 2>&1; then
+              return 2
+            fi
+            ( cd "$dir" && npm run "$name" >/dev/null 2>&1 ) && return 0 || return 1
+          }
+
+          for sim in $SIMS; do
+            echo "::group::$sim"
+            dir="$(mktemp -d)"
+
+            if ! gh repo clone "OpenPhysics/$sim" "$dir" -- --depth 1 --quiet; then
+              echo "| $sim | ❌ clone | — | — | — |" >> "$GITHUB_STEP_SUMMARY"
+              overall=1; rm -rf "$dir"; echo "::endgroup::"; continue
+            fi
+
+            if ( cd "$dir" && npm install --no-audit --no-fund >/dev/null 2>&1 ); then inst=0; else inst=1; overall=1; fi
+            if [ "$inst" -ne 0 ]; then
+              echo "| $sim | $(icon 1) | — | — | — |" >> "$GITHUB_STEP_SUMMARY"
+              rm -rf "$dir"; echo "::endgroup::"; continue
+            fi
+
+            run_script "$dir" lint;  case $? in 0) lint=0 ;; 2) lint=2 ;; *) lint=1; overall=1 ;; esac
+            run_script "$dir" check; case $? in 0) chk=0 ;; 2) chk=2 ;; *) chk=1; overall=1 ;; esac
+            run_script "$dir" build; case $? in 0) bld=0 ;; 2) bld=2 ;; *) bld=1; overall=1 ;; esac
+
+            printf '| %s | %s | %s | %s | %s |\n' \
+              "$sim" "$(icon "$inst")" "$(icon "$lint")" "$(icon "$chk")" "$(icon "$bld")" \
+              >> "$GITHUB_STEP_SUMMARY"
+
+            rm -rf "$dir"
+            echo "::endgroup::"
+          done
+
+          exit $overall

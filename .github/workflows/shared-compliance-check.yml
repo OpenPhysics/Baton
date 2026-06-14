@@ -1,0 +1,70 @@
+name: Shared compliance check
+
+on:
+  workflow_call:
+    inputs:
+      repo-name:
+        description: Repository name to check (defaults to calling repository)
+        type: string
+        required: false
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  check-single:
+    # When invoked via `uses:` the event is the caller's (push/pull_request),
+    # never 'workflow_call'; run for those and let check-all own dispatch/schedule.
+    if: github.event_name != 'workflow_dispatch' && github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository under test
+        uses: actions/checkout@v6
+
+      # The compliance script lives in this orchestration repo (Baton), not in the
+      # caller, so check it out alongside and run it against the caller's working tree.
+      - name: Check out OpenPhysics/Baton for the compliance script
+        uses: actions/checkout@v6
+        with:
+          repository: OpenPhysics/Baton
+          path: .org-compliance
+
+      - name: Run compliance checks
+        run: |
+          REPO="${{ inputs.repo-name }}"
+          if [ -z "$REPO" ]; then
+            REPO="${{ github.event.repository.name }}"
+          fi
+          echo "Checking repository: $REPO"
+          GITHUB_REPOSITORY="OpenPhysics/$REPO" \
+            bash .org-compliance/scripts/check-repo-compliance.sh "$PWD"
+
+  check-all:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Audit simulation repositories
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SIMS=$(jq -r '.repos[] | select(.isSimulation == true) | .name' structure/repos.json)
+          FAILED=0
+          for sim in $SIMS; do
+            echo "======== $sim ========"
+            WORKDIR=$(mktemp -d)
+            gh repo clone "OpenPhysics/$sim" "$WORKDIR" -- --depth 1
+            if ! ./scripts/check-repo-compliance.sh "$WORKDIR"; then
+              FAILED=1
+            fi
+            rm -rf "$WORKDIR"
+          done
+          exit $FAILED

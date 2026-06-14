@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OpenPhysics — open-source interactive physics simulations for the web.">
+  <meta property="og:title" content="OpenPhysics Simulations">
+  <meta property="og:description" content="Open-source interactive physics simulations for the web.">
+  <meta name="theme-color" content="#0b1020">
+  <title>OpenPhysics Simulations</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080c18;
+      --bg-2: #0d1326;
+      --surface: rgba(255, 255, 255, 0.035);
+      --surface-hover: rgba(255, 255, 255, 0.06);
+      --text: #eef2fb;
+      --muted: #98a6c8;
+      --faint: #6c7896;
+      --accent: #6f9bff;
+      --border: rgba(255, 255, 255, 0.09);
+      --radius: 16px;
+      --maxw: 1140px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Animated aurora backdrop */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      background:
+        radial-gradient(60% 50% at 50% -5%, rgba(111, 155, 255, 0.20), transparent 70%),
+        radial-gradient(40% 40% at 100% 0%, rgba(168, 85, 247, 0.12), transparent 70%),
+        linear-gradient(180deg, var(--bg-2), var(--bg) 40%);
+    }
+    .bg::before, .bg::after {
+      content: "";
+      position: absolute;
+      width: 45vw;
+      height: 45vw;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.5;
+      animation: drift 22s ease-in-out infinite alternate;
+    }
+    .bg::before { background: radial-gradient(circle, rgba(91, 141, 239, 0.6), transparent 60%); top: -10vw; left: -8vw; }
+    .bg::after  { background: radial-gradient(circle, rgba(168, 85, 247, 0.45), transparent 60%); bottom: -12vw; right: -8vw; animation-delay: -8s; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(6vw, 4vw) scale(1.15); }
+    }
+
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: clamp(3rem, 8vw, 6rem) 1.5rem 4rem; }
+
+    /* Hero */
+    header { text-align: center; margin-bottom: 4rem; }
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.35rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      margin-bottom: 1.5rem;
+    }
+    header h1 {
+      margin: 0 0 1rem;
+      font-size: clamp(2.5rem, 7vw, 4.25rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #ffffff 20%, #8fb2ff 60%, #c4a3ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    header p { margin: 0 auto; max-width: 40rem; color: var(--muted); font-size: clamp(1rem, 2.5vw, 1.2rem); }
+
+    .links { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2rem; }
+    .links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text);
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+    }
+    .links a:hover { background: rgba(111, 155, 255, 0.16); border-color: rgba(111, 155, 255, 0.4); transform: translateY(-1px); }
+    .links a.primary { background: linear-gradient(135deg, #5b8def, #7c5bef); border-color: transparent; }
+    .links a.primary:hover { filter: brightness(1.08); }
+
+    /* Sections */
+    section { margin-bottom: 3.5rem; }
+    .section-head { display: flex; align-items: baseline; gap: 0.75rem; margin: 0 0 1.5rem; }
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .section-head .count {
+      font-size: 0.8rem;
+      color: var(--faint);
+      padding: 0.1rem 0.55rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+    .section-head::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1.1rem; }
+
+    /* Cards */
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: inherit;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      z-index: 3;
+      background: linear-gradient(90deg, hsl(var(--hue) 85% 65%), hsl(calc(var(--hue) + 45) 85% 62%));
+      opacity: 0.95;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      background: var(--surface-hover);
+      border-color: hsl(var(--hue) 70% 60% / 0.5);
+      box-shadow: 0 16px 40px -16px hsl(var(--hue) 80% 55% / 0.55);
+    }
+
+    /* Screenshot preview */
+    .thumb {
+      position: relative;
+      aspect-ratio: 1154 / 753;
+      overflow: hidden;
+      background: linear-gradient(135deg, hsl(var(--hue) 45% 16%), hsl(calc(var(--hue) + 45) 45% 12%));
+      border-bottom: 1px solid var(--border);
+    }
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transition: transform 0.45s ease;
+    }
+    .card:hover .thumb img { transform: scale(1.05); }
+    .thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(8, 12, 24, 0.55));
+      pointer-events: none;
+    }
+    /* Fallback monogram tile when a sim has no screenshot committed yet */
+    .thumb.placeholder { display: grid; place-items: center; }
+    .thumb.placeholder span {
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: hsl(var(--hue) 75% 80%);
+      opacity: 0.9;
+    }
+
+    .badge {
+      position: absolute;
+      left: 0.85rem;
+      bottom: 0.85rem;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      color: #fff;
+      background: linear-gradient(135deg, hsl(var(--hue) 80% 58%), hsl(calc(var(--hue) + 45) 78% 52%));
+      box-shadow: 0 6px 18px -6px hsl(var(--hue) 80% 50% / 0.95);
+    }
+
+    .card-body { display: flex; flex: 1; flex-direction: column; padding: 1.3rem; }
+    .card-head { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.4rem; }
+    .card-arrow {
+      font-size: 1.2rem;
+      color: var(--faint);
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+    .card:hover .card-arrow { transform: translate(3px, -3px); color: hsl(var(--hue) 85% 70%); }
+
+    .card h3 { margin: 0; font-size: 1.1rem; font-weight: 650; color: var(--text); }
+    .card p { margin: 0.5rem 0 1.1rem; flex: 1; font-size: 0.9rem; color: var(--muted); }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: auto; }
+    .tag {
+      font-size: 0.72rem;
+      color: var(--muted);
+      padding: 0.18rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      white-space: nowrap;
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--faint);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg::before, .bg::after { animation: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <header>
+      <span class="eyebrow">Open-source physics for the web</span>
+      <h1>OpenPhysics</h1>
+      <p>Interactive simulations for waves, mechanics, optics, electromagnetism, and quantum circuits &mdash; free to explore, remix, and teach with.</p>
+      <div class="links">
+        <a class="primary" href="#simulations">Browse simulations</a>
+        <a href="https://github.com/OpenPhysics">GitHub Organization</a>
+        <a href="https://github.com/OpenPhysics/.github/blob/main/CONTRIBUTING.md">Contributing</a>
+      </div>
+    </header>
+
+    <main id="simulations">
+    <section>
+      <div class="section-head">
+        <h2>Core Simulations</h2>
+        <span class="count">7</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="https://openphysics.github.io/DopplerEffect/" style="--hue: 235;">
+          <div class="thumb"><img src="assets/DopplerEffect.webp" alt="Doppler Effect simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">DE</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Doppler Effect</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>Interactive simulation of the Doppler Effect — visualizes how the frequency of sound waves shifts with relative motion between source and observer.</p>
+            <div class="tags"><span class="tag">waves</span><span class="tag">sound</span><span class="tag">frequency</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/OpticsLab/" style="--hue: 177;">
+          <div class="thumb"><img src="assets/OpticsLab.webp" alt="Optics Lab simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">OL</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Optics Lab</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>Web-based geometric optics simulation. Supports ray sources, parallel and divergent beams, mirrors, lenses, beam splitters, and refraction interfaces.</p>
+            <div class="tags"><span class="tag">optics</span><span class="tag">geometric optics</span><span class="tag">reflection</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/OscillationsAndChaos/" style="--hue: 237;">
+          <div class="thumb"><img src="assets/OscillationsAndChaos.webp" alt="Oscillations And Chaos simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">OA</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Oscillations And Chaos</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>Collection of four classical mechanics simulations exploring oscillations and chaos: single spring, double spring, pendulum, and double pendulum.</p>
+            <div class="tags"><span class="tag">oscillations</span><span class="tag">chaos</span><span class="tag">springs</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/QubitSketch/" style="--hue: 47;">
+          <div class="thumb"><img src="assets/QubitSketch.webp" alt="Qubit Sketch simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">QS</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Qubit Sketch</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>Drag-and-drop quantum circuit builder with a live state simulator. Place quantum gates and watch probabilities, amplitudes, Bloch spheres, and measurements update in real time.</p>
+            <div class="tags"><span class="tag">quantum mechanics</span><span class="tag">quantum circuits</span><span class="tag">qubits</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/Resonance/" style="--hue: 206;">
+          <div class="thumb"><img src="assets/Resonance.webp" alt="Resonance simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">R</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Resonance</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>Interactive simulation of resonance in driven oscillating systems. Visualizes driven mass-spring systems and Chladni plate patterns.</p>
+            <div class="tags"><span class="tag">resonance</span><span class="tag">oscillations</span><span class="tag">waves</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/TrackLab/" style="--hue: 52;">
+          <div class="thumb"><img src="assets/TrackLab.webp" alt="Track Lab simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">TL</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Track Lab</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>Browser-based video motion-analysis tool. Load a video, calibrate real-world distances, and auto-track objects across frames using computer vision.</p>
+            <div class="tags"><span class="tag">kinematics</span><span class="tag">measurement</span><span class="tag">data analysis</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/WaveComposer/" style="--hue: 163;">
+          <div class="thumb"><img src="assets/WaveComposer.webp" alt="Wave Composer simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">WC</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Wave Composer</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>Three-screen VoceVista-style real-time voice-analysis simulation. Analyzes microphone input for waveform, spectrum, and composition.</p>
+            <div class="tags"><span class="tag">waves</span><span class="tag">acoustics</span><span class="tag">Fourier analysis</span></div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Classic &amp; PhET Ports</h2>
+        <span class="count">7</span>
+      </div>
+      <div class="grid">
+        <a class="card" href="https://openphysics.github.io/ElectricFieldOfDreams/" style="--hue: 280;">
+          <div class="thumb"><img src="assets/ElectricFieldOfDreams.webp" alt="Electric Field Of Dreams simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">EF</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Electric Field Of Dreams</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>SceneryStack port of the PhET 'Electric Field of Dreams' simulation. Place charged particles and observe Coulomb interactions and an adjustable uniform external field.</p>
+            <div class="tags"><span class="tag">electrostatics</span><span class="tag">electric fields</span><span class="tag">Coulomb's law</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/LadyBug/" style="--hue: 320;">
+          <div class="thumb"><img src="assets/LadyBug.webp" alt="Lady Bug simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">LB</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Lady Bug</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>SceneryStack port of the PhET 'Ladybug Motion 2D' simulation. Explore 2D motion, position, velocity, and acceleration using a ladybug on a rotating platform.</p>
+            <div class="tags"><span class="tag">kinematics</span><span class="tag">2D motion</span><span class="tag">rotation</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/LunarLander/" style="--hue: 32;">
+          <div class="thumb"><img src="assets/LunarLander.webp" alt="Lunar Lander simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">LL</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Lunar Lander</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>SceneryStack port of the classic PhET Flash 'Lunar Lander' simulation. Pilot a lunar module to a soft landing by managing thrust and tilt against gravity.</p>
+            <div class="tags"><span class="tag">gravity</span><span class="tag">forces</span><span class="tag">kinematics</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/MazeGame/" style="--hue: 55;">
+          <div class="thumb"><img src="assets/MazeGame.webp" alt="Maze Game simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">MG</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Maze Game</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>SceneryStack port of the PhET 'Maze Game' simulation. Drive a particle through tile-based mazes using position, velocity, or acceleration control modes.</p>
+            <div class="tags"><span class="tag">kinematics</span><span class="tag">vectors</span><span class="tag">motion</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/MovingMan/" style="--hue: 188;">
+          <div class="thumb"><img src="assets/MovingMan.webp" alt="Moving Man simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">MM</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Moving Man</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>SceneryStack port of the PhET Java 'Moving Man' simulation. Explore 1D kinematics by dragging a man or using position/velocity/acceleration sliders.</p>
+            <div class="tags"><span class="tag">kinematics</span><span class="tag">1D motion</span><span class="tag">graphs</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/RadioWaves/" style="--hue: 293;">
+          <div class="thumb"><img src="assets/RadioWaves.webp" alt="Radio Waves simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">RW</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Radio Waves</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>SceneryStack port of the PhET 'Radio Waves &amp; Electromagnetic Fields' simulation, rebuilt from the legacy PIXI.js + Backbone version. Wiggle an electron and watch EM radiation propagate.</p>
+            <div class="tags"><span class="tag">electromagnetism</span><span class="tag">radio waves</span><span class="tag">EM fields</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/TheRamp/" style="--hue: 329;">
+          <div class="thumb placeholder"><span>TR</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>The Ramp</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>SceneryStack port of the PhET Java 'The Ramp' simulation. Explore forces on an inclined plane with friction, energy conservation, and applied forces. Features record/playback, force charts, and comparison objects.</p>
+            <div class="tags"><span class="tag">forces</span><span class="tag">inclined plane</span><span class="tag">friction</span></div>
+          </div>
+        </a>
+      </div>
+    </section>
+    </main>
+
+    <footer>
+      <p>14 live simulations &middot; Built with <a href="https://scenerystack.org/">SceneryStack</a> &middot; GNU Affero GPL v3 &middot;
+      <a href="https://github.com/OpenPhysics/Baton">OpenPhysics/Baton</a></p>
+    </footer>
+  </div>
+</body>
+</html>

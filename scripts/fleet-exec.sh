@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+# Fleet batch-change runner for OpenPhysics repositories.
+#
+# Clone each repo selected from the catalog, run a command inside it, and — with
+# --apply — push a branch and open a pull request with the resulting changes.
+# Dry-run by default: prints a diffstat per repo and opens no PRs.
+#
+# Examples:
+#   # Preview bumping a dependency across every simulation (no PRs):
+#   scripts/fleet-exec.sh --simulation -- npm pkg set dependencies.scenerystack=^3.1.0
+#
+#   # Apply a Biome autofix across all sims and open one PR each:
+#   scripts/fleet-exec.sh --simulation --apply --install \
+#     --branch chore/biome-fix --title "chore: biome autofix" -- npm run fix
+#
+# Auth: uses the `gh` CLI. Pushing branches and opening PRs in other repos needs a
+# token with write access to those repos (your local `gh auth`, or an org PAT /
+# GitHub App token exported as GH_TOKEN in CI — the default GITHUB_TOKEN is scoped
+# only to the repo running the workflow).
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/repos.sh
+source "$SCRIPT_DIR/lib/repos.sh"
+
+ORG="OpenPhysics"
+BRANCH="chore/fleet-update"
+TITLE=""
+BODY="Automated fleet change opened by Baton's fleet-exec runner."
+COMMIT_MSG=""
+APPLY=0
+KEEP=0
+INSTALL=0
+LABELS=()
+SKIPS=()
+CMD=()
+
+GIT_NAME="${FLEET_GIT_NAME:-github-actions[bot]}"
+GIT_EMAIL="${FLEET_GIT_EMAIL:-41898282+github-actions[bot]@users.noreply.github.com}"
+
+usage() {
+  cat <<'EOF'
+Usage: fleet-exec.sh [filters] [options] -- <command> [args...]
+
+Clone each selected OpenPhysics repo, run <command> in it, and (with --apply) open
+a PR with the resulting changes. Dry-run by default.
+
+Filters (from structure/repos.json):
+  --simulation        Only repositories with isSimulation=true
+  --no-simulation     Only repositories with isSimulation=false
+  --type TYPE         Filter by type field
+  --status STATUS     Filter by status field
+  --catalog PATH      Override path to repos.json
+
+Options:
+  --branch NAME       Branch to create in each repo (default: chore/fleet-update)
+  --title TEXT        PR title (default: "chore: fleet update")
+  --body TEXT         PR body
+  --commit-message T  Commit message (default: PR title)
+  --label LABEL       Add a label to each PR (repeatable; label must already exist)
+  --skip NAME         Exclude a repo (repeatable)
+  --install           Run `npm install` in each clone before the command
+  --apply             Actually push branches and open PRs (otherwise dry-run)
+  --keep              Keep the temporary clones instead of deleting them
+  -h, --help          Show this help
+
+Environment:
+  GH_TOKEN                 Token for gh (write access needed for --apply)
+  FLEET_GIT_NAME/_EMAIL    Commit identity (default: github-actions[bot])
+EOF
+}
+
+repos_reset_filters
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --simulation) FILTER_SIMULATION=true; shift ;;
+    --no-simulation) FILTER_SIMULATION=false; shift ;;
+    --type) FILTER_TYPE="${2:?Missing value for --type}"; shift 2 ;;
+    --status) FILTER_STATUS="${2:?Missing value for --status}"; shift 2 ;;
+    --catalog) REPOS_JSON="${2:?Missing value for --catalog}"; shift 2 ;;
+    --branch) BRANCH="${2:?Missing value for --branch}"; shift 2 ;;
+    --title) TITLE="${2:?Missing value for --title}"; shift 2 ;;
+    --body) BODY="${2:?Missing value for --body}"; shift 2 ;;
+    --commit-message) COMMIT_MSG="${2:?Missing value for --commit-message}"; shift 2 ;;
+    --label) LABELS+=("${2:?Missing value for --label}"); shift 2 ;;
+    --skip) SKIPS+=("${2:?Missing value for --skip}"); shift 2 ;;
+    --install) INSTALL=1; shift ;;
+    --apply) APPLY=1; shift ;;
+    --keep) KEEP=1; shift ;;
+    -h|--help) usage; exit 0 ;;
+    --) shift; CMD=("$@"); break ;;
+    *) echo "Unknown argument: $1" >&2; usage >&2; exit 2 ;;
+  esac
+done
+
+if [[ ${#CMD[@]} -eq 0 ]]; then
+  echo "A command is required after --" >&2
+  usage >&2
+  exit 2
+fi
+
+TITLE="${TITLE:-chore: fleet update}"
+COMMIT_MSG="${COMMIT_MSG:-$TITLE}"
+
+for tool in gh jq git; do
+  command -v "$tool" >/dev/null 2>&1 || { echo "$tool is required" >&2; exit 1; }
+done
+
+if [[ $APPLY -eq 1 ]] && ! gh auth status >/dev/null 2>&1; then
+  echo "--apply requires an authenticated gh (set GH_TOKEN or run 'gh auth login')" >&2
+  exit 1
+fi
+
+is_skipped() {
+  local name="$1" s
+  for s in ${SKIPS[@]+"${SKIPS[@]}"}; do
+    [[ "$s" == "$name" ]] && return 0
+  done
+  return 1
+}
+
+total=0 changed=0 opened=0 overall=0
+NAMES="$(repos_names)"
+
+for repo in $NAMES; do
+  if is_skipped "$repo"; then
+    echo "==== $repo (skipped) ===="
+    continue
+  fi
+  total=$((total + 1))
+  echo "==== $repo ===="
+
+  workdir="$(mktemp -d)"
+  cleanup() { [[ $KEEP -eq 1 ]] || rm -rf "$workdir"; }
+
+  if ! gh repo clone "$ORG/$repo" "$workdir" -- --depth 1 --quiet 2>/dev/null; then
+    echo "  clone failed"; overall=1; cleanup; continue
+  fi
+
+  base="$(git -C "$workdir" branch --show-current)"
+  git -C "$workdir" checkout -q -b "$BRANCH"
+
+  if [[ $INSTALL -eq 1 && -f "$workdir/package.json" ]]; then
+    if ! ( cd "$workdir" && npm install --no-audit --no-fund >/dev/null 2>&1 ); then
+      echo "  npm install failed"; overall=1; cleanup; continue
+    fi
+  fi
+
+  if ! ( cd "$workdir" && REPO_NAME="$repo" "${CMD[@]}" ); then
+    echo "  command failed"; overall=1; cleanup; continue
+  fi
+
+  # Ignore an npm-install-created node_modules / lockfile churn unless the command
+  # touched the lockfile itself; node_modules is gitignored in every sim already.
+  if [[ -z "$(git -C "$workdir" status --porcelain)" ]]; then
+    echo "  no changes"; cleanup; continue
+  fi
+
+  changed=$((changed + 1))
+  git -C "$workdir" --no-pager diff --stat | sed 's/^/  /'
+
+  if [[ $APPLY -eq 0 ]]; then
+    echo "  [dry-run] would commit, push '$BRANCH', and open a PR into '$base'"
+    cleanup; continue
+  fi
+
+  git -C "$workdir" add -A
+  git -C "$workdir" -c "user.name=$GIT_NAME" -c "user.email=$GIT_EMAIL" commit -q -m "$COMMIT_MSG"
+  if ! git -C "$workdir" push -q -u origin "$BRANCH" 2>/dev/null; then
+    echo "  push failed"; overall=1; cleanup; continue
+  fi
+
+  label_args=()
+  for l in ${LABELS[@]+"${LABELS[@]}"}; do label_args+=(--label "$l"); done
+  if pr_url="$( cd "$workdir" && gh pr create --base "$base" --head "$BRANCH" \
+      --title "$TITLE" --body "$BODY" ${label_args[@]+"${label_args[@]}"} 2>&1 )"; then
+    echo "  opened: $pr_url"; opened=$((opened + 1))
+  else
+    echo "  PR creation failed: $pr_url"; overall=1
+  fi
+  cleanup
+done
+
+echo "----"
+echo "Summary: $total repo(s), $changed changed, $opened PR(s) opened."
+if [[ $APPLY -eq 0 && $changed -gt 0 ]]; then
+  echo "Dry-run only — re-run with --apply to push branches and open PRs."
+fi
+exit $overall
