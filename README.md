@@ -107,7 +107,7 @@ Cross-repo automation, all driven from the catalog:
   [`fleet-exec.yml`](.github/workflows/fleet-exec.yml) workflow exposes it as a manual dispatch
   (e.g. bump a shared dependency, run `npm run fix`, apply a codemod). Opening PRs in other
   repos needs a `FLEET_PAT` secret with write access — the default `GITHUB_TOKEN` is scoped to
-  Baton only.
+  Baton only. Setup steps (fine-grained PAT or GitHub App): [`doc/fleet-auth.md`](doc/fleet-auth.md).
 - **Health report** — [`fleet-health.yml`](.github/workflows/fleet-health.yml) runs weekly,
   cloning every active simulation and running lint, type-check, and build, then publishing a
   pass/fail table to the job summary. Read-only; surfaces sims broken by a shared-workflow or
