@@ -88,17 +88,38 @@ scopes cleanly to the installed repos.
 
 ## Verifying
 
-1. **Dry-run first** (no token needed beyond the default — public clones only):
-   run the **Fleet Exec** workflow with `apply` unchecked, or locally:
+1. **Preflight the token** (read-only, no side effects). Run the **Fleet Exec** workflow with
+   `check_auth` checked to confirm `FLEET_PAT` can push to the targeted repos — it queries each
+   repo's push permission via the API and opens nothing:
+
+   ```bash
+   gh workflow run fleet-exec.yml --repo OpenPhysics/Baton -f target=simulation -f check_auth=true
+   # or a single repo: -f only=Resonance -f check_auth=true
+   # locally: scripts/fleet-exec.sh --simulation --check-auth
+   ```
+
+   A run reporting `Auth preflight as: <token owner>` and `N/N writable` confirms the secret works.
+2. **Dry-run** a real change (prints diffstats, opens nothing):
 
    ```bash
    scripts/fleet-exec.sh --simulation -- npm pkg set dependencies.scenerystack=^3.1.0
    ```
+3. **Apply to one repo** as a smoke test with `--only` (or the `only` workflow input), then re-run
+   with `apply` enabled. Verify one PR opens before scaling up.
 
-   Confirm the printed diffstats look right.
-2. **Apply to one repo** as a smoke test, scoping with `--skip` or a tight filter, e.g. limit the
-   catalog to a single repo with `--catalog`, then re-run with `apply` enabled. Verify one PR opens.
-3. Scale up once a single-repo PR looks correct.
+## Editing Baton's own workflows
+
+Pushing changes to files under `.github/workflows/` in **Baton itself** (e.g. editing
+`fleet-exec.yml`) requires your local `gh`/git token to carry the **`workflow`** OAuth scope —
+GitHub rejects the push otherwise (`refusing to allow an OAuth App to … workflow … without
+workflow scope`). Add it once:
+
+```bash
+gh auth refresh -h github.com -s workflow
+```
+
+This is separate from `FLEET_PAT` (which governs writes to the *target* sim repos); it only affects
+pushing workflow edits to Baton from your machine.
 
 ## Safety notes
 
