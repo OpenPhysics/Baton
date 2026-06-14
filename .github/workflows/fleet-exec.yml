@@ -8,9 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: 'Command to run in each repo (e.g. npm pkg set dependencies.vite=^8.1.0)'
+        description: 'Command to run in each repo (e.g. npm pkg set dependencies.vite=^8.1.0). Not needed when check_auth=true.'
         type: string
-        required: true
+        required: false
+        default: ''
       target:
         description: Which repos to target
         type: choice
@@ -18,6 +19,14 @@ on:
           - simulation
           - all
         default: simulation
+      only:
+        description: Target a single repo by name (overrides target; for one-PR runs / smoke tests)
+        type: string
+        default: ''
+      check_auth:
+        description: Read-only preflight — verify the token can push to the targeted repos, then exit. Opens nothing.
+        type: boolean
+        default: false
       branch:
         description: Branch to create in each repo
         type: string
@@ -63,14 +72,28 @@ jobs:
           # operator-supplied command cannot break out of the run step.
           COMMAND: ${{ inputs.command }}
           TARGET: ${{ inputs.target }}
+          ONLY: ${{ inputs.only }}
           BRANCH: ${{ inputs.branch }}
           TITLE: ${{ inputs.title }}
           DO_INSTALL: ${{ inputs.install }}
           DO_APPLY: ${{ inputs.apply }}
+          DO_CHECK_AUTH: ${{ inputs.check_auth }}
         run: |
           set -euo pipefail
           args=()
-          [ "$TARGET" = "simulation" ] && args+=(--simulation)
+          if [ -n "$ONLY" ]; then
+            args+=(--only "$ONLY")
+          elif [ "$TARGET" = "simulation" ]; then
+            args+=(--simulation)
+          fi
+          if [ "$DO_CHECK_AUTH" = "true" ]; then
+            bash scripts/fleet-exec.sh "${args[@]}" --check-auth
+            exit $?
+          fi
+          if [ -z "$COMMAND" ]; then
+            echo "command is required unless check_auth=true" >&2
+            exit 2
+          fi
           [ "$DO_INSTALL" = "true" ] && args+=(--install)
           [ "$DO_APPLY" = "true" ] && args+=(--apply)
           bash scripts/fleet-exec.sh "${args[@]}" \

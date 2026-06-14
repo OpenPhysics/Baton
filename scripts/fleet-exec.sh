@@ -31,6 +31,7 @@ COMMIT_MSG=""
 APPLY=0
 KEEP=0
 INSTALL=0
+CHECK_AUTH=0
 LABELS=()
 SKIPS=()
 CMD=()
@@ -50,9 +51,12 @@ Filters (from structure/repos.json):
   --no-simulation     Only repositories with isSimulation=false
   --type TYPE         Filter by type field
   --status STATUS     Filter by status field
+  --only NAME         Target a single repo by name (one-PR runs, smoke tests)
   --catalog PATH      Override path to repos.json
 
 Options:
+  --check-auth        Read-only preflight: verify the token can write (push) to
+                      each selected repo, print a table, and exit. Opens nothing.
   --branch NAME       Branch to create in each repo (default: chore/fleet-update)
   --title TEXT        PR title (default: "chore: fleet update")
   --body TEXT         PR body
@@ -77,6 +81,7 @@ while [[ $# -gt 0 ]]; do
     --no-simulation) FILTER_SIMULATION=false; shift ;;
     --type) FILTER_TYPE="${2:?Missing value for --type}"; shift 2 ;;
     --status) FILTER_STATUS="${2:?Missing value for --status}"; shift 2 ;;
+    --only) FILTER_NAME="${2:?Missing value for --only}"; shift 2 ;;
     --catalog) REPOS_JSON="${2:?Missing value for --catalog}"; shift 2 ;;
     --branch) BRANCH="${2:?Missing value for --branch}"; shift 2 ;;
     --title) TITLE="${2:?Missing value for --title}"; shift 2 ;;
@@ -86,6 +91,7 @@ while [[ $# -gt 0 ]]; do
     --skip) SKIPS+=("${2:?Missing value for --skip}"); shift 2 ;;
     --install) INSTALL=1; shift ;;
     --apply) APPLY=1; shift ;;
+    --check-auth) CHECK_AUTH=1; shift ;;
     --keep) KEEP=1; shift ;;
     -h|--help) usage; exit 0 ;;
     --) shift; CMD=("$@"); break ;;
@@ -93,8 +99,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ ${#CMD[@]} -eq 0 ]]; then
-  echo "A command is required after --" >&2
+if [[ $CHECK_AUTH -eq 0 && ${#CMD[@]} -eq 0 ]]; then
+  echo "A command is required after -- (or use --check-auth for a read-only preflight)" >&2
   usage >&2
   exit 2
 fi
@@ -106,9 +112,32 @@ for tool in gh jq git; do
   command -v "$tool" >/dev/null 2>&1 || { echo "$tool is required" >&2; exit 1; }
 done
 
-if [[ $APPLY -eq 1 ]] && ! gh auth status >/dev/null 2>&1; then
-  echo "--apply requires an authenticated gh (set GH_TOKEN or run 'gh auth login')" >&2
+if [[ ( $APPLY -eq 1 || $CHECK_AUTH -eq 1 ) ]] && ! gh auth status >/dev/null 2>&1; then
+  echo "This run requires an authenticated gh (set GH_TOKEN or run 'gh auth login')" >&2
   exit 1
+fi
+
+# --check-auth: read-only preflight. Ask the API whether the active token can push
+# to each selected repo; open and change nothing. Exits non-zero if any can't be
+# written, so an apply=true run won't start with a stale/under-scoped token.
+if [[ $CHECK_AUTH -eq 1 ]]; then
+  auth_total=0 auth_ok=0 auth_fail=0
+  who="$(gh api user --jq .login 2>/dev/null || echo '?')"
+  echo "Auth preflight as: $who"
+  printf '%-28s %s\n' "REPO" "PUSH"
+  for repo in $(repos_names); do
+    auth_total=$((auth_total + 1))
+    if push="$(gh api "repos/$ORG/$repo" --jq .permissions.push 2>/dev/null)" && [[ "$push" == "true" ]]; then
+      printf '%-28s %s\n' "$repo" "✅ yes"
+      auth_ok=$((auth_ok + 1))
+    else
+      printf '%-28s %s\n' "$repo" "❌ no"
+      auth_fail=$((auth_fail + 1))
+    fi
+  done
+  echo "----"
+  echo "Auth: $auth_ok/$auth_total writable, $auth_fail without push access."
+  [[ $auth_fail -eq 0 ]] && exit 0 || exit 1
 fi
 
 is_skipped() {
