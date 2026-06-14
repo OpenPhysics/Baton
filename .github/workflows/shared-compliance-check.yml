@@ -42,29 +42,88 @@ jobs:
           GITHUB_REPOSITORY="OpenPhysics/$REPO" \
             bash .org-compliance/scripts/check-repo-compliance.sh "$PWD"
 
-  check-all:
+  # Org-wide audit (dispatch/schedule). Fan out one sim per runner so they audit in
+  # parallel with isolated logs, mirroring fleet-health.yml: `discover` builds the
+  # sim list from the catalog, `audit` checks each, `report` aggregates pass/fail.
+  discover-all:
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.list.outputs.matrix }}
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Audit simulation repositories
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Build the sim matrix
+        id: list
         run: |
           set -euo pipefail
-          SIMS=$(jq -r '.repos[] | select(.isSimulation == true) | .name' structure/repos.json)
-          FAILED=0
-          for sim in $SIMS; do
-            echo "======== $sim ========"
-            WORKDIR=$(mktemp -d)
-            gh repo clone "OpenPhysics/$sim" "$WORKDIR" -- --depth 1
-            if ! ./scripts/check-repo-compliance.sh "$WORKDIR"; then
-              FAILED=1
-            fi
-            rm -rf "$WORKDIR"
-          done
-          exit $FAILED
+          matrix=$(jq -c '[.repos[] | select(.isSimulation == true) | .name]' structure/repos.json)
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  audit:
+    needs: discover-all
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sim: ${{ fromJson(needs.discover-all.outputs.matrix) }}
+    steps:
+      - name: Check out OpenPhysics/Baton for the compliance script
+        uses: actions/checkout@v6
+
+      - name: Audit ${{ matrix.sim }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SIM: ${{ matrix.sim }}
+        run: |
+          set -uo pipefail
+          WORKDIR=$(mktemp -d)
+          if ! gh repo clone "OpenPhysics/$SIM" "$WORKDIR" -- --depth 1 --quiet; then
+            echo "| $SIM | ❌ clone |" > "row-$SIM.md"
+            exit 1
+          fi
+          if GITHUB_REPOSITORY="OpenPhysics/$SIM" ./scripts/check-repo-compliance.sh "$WORKDIR"; then
+            echo "| $SIM | ✅ |" > "row-$SIM.md"
+            rc=0
+          else
+            echo "| $SIM | ❌ |" > "row-$SIM.md"
+            rc=1
+          fi
+          rm -rf "$WORKDIR"
+          exit "$rc"
+
+      - name: Upload row
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: compliance-row-${{ matrix.sim }}
+          path: row-${{ matrix.sim }}.md
+          if-no-files-found: ignore
+
+  report-all:
+    needs: [discover-all, audit]
+    if: always() && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download rows
+        uses: actions/download-artifact@v7
+        with:
+          pattern: compliance-row-*
+          path: rows
+          merge-multiple: true
+
+      - name: Assemble report
+        run: |
+          set -euo pipefail
+          {
+            echo "# Fleet compliance report"
+            echo
+            echo "| Repo | Compliance |"
+            echo "|---|:--:|"
+            find rows -name '*.md' -exec cat {} + 2>/dev/null | sort || true
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if find rows -name '*.md' -exec cat {} + 2>/dev/null | grep -q '❌'; then
+            echo "One or more simulations failed compliance — see the table above." >&2
+            exit 1
+          fi

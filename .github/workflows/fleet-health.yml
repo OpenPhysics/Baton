@@ -60,9 +60,24 @@ jobs:
     steps:
       - uses: actions/setup-node@v6
         with:
+          # Mirrors the node-version default in ci.yml / deploy.yml — bump together.
+          # See Baton/README.md ("Node version").
           node-version: '24'
 
-      - name: Lint / type-check / build ${{ matrix.sim }}
+      # Sims are cloned into a mktemp dir, so setup-node's lockfile-based cache does
+      # not apply. Cache the shared ~/.npm download dir per sim so repeat runs skip
+      # re-downloading the (largely shared) dependency set. The run_id in the primary
+      # key makes every run save a fresh entry while restore-keys reuses the last one.
+      - name: Cache npm downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: fleet-health-npm-${{ runner.os }}-${{ matrix.sim }}-${{ github.run_id }}
+          restore-keys: |
+            fleet-health-npm-${{ runner.os }}-${{ matrix.sim }}-
+            fleet-health-npm-${{ runner.os }}-
+
+      - name: Lint / type-check / build / test ${{ matrix.sim }}
         env:
           GH_TOKEN: ${{ github.token }}
           SIM: ${{ matrix.sim }}
@@ -85,7 +100,7 @@ jobs:
           status=0
 
           if ! gh repo clone "OpenPhysics/$SIM" "$dir" -- --depth 1 --quiet; then
-            row="| $SIM | ❌ clone | — | — | — |"
+            row="| $SIM | ❌ clone | — | — | — | — |"
             status=1
           else
             # Reproducible install when a lockfile is present; fall back otherwise.
@@ -96,13 +111,14 @@ jobs:
             fi
 
             if [ "$inst" -ne 0 ]; then
-              row="| $SIM | $(icon 1) | — | — | — |"
+              row="| $SIM | $(icon 1) | — | — | — | — |"
               status=1
             else
               run_script "$dir" lint;  case $? in 0) lint=0 ;; 2) lint=2 ;; *) lint=1; status=1 ;; esac
               run_script "$dir" check; case $? in 0) chk=0 ;; 2) chk=2 ;; *) chk=1; status=1 ;; esac
               run_script "$dir" build; case $? in 0) bld=0 ;; 2) bld=2 ;; *) bld=1; status=1 ;; esac
-              row="| $SIM | $(icon "$inst") | $(icon "$lint") | $(icon "$chk") | $(icon "$bld") |"
+              run_script "$dir" test;  case $? in 0) tst=0 ;; 2) tst=2 ;; *) tst=1; status=1 ;; esac
+              row="| $SIM | $(icon "$inst") | $(icon "$lint") | $(icon "$chk") | $(icon "$bld") | $(icon "$tst") |"
             fi
           fi
 
@@ -113,7 +129,7 @@ jobs:
 
       - name: Upload row
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: health-row-${{ matrix.sim }}
           path: row-${{ matrix.sim }}.md
@@ -125,7 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download rows
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: health-row-*
           path: rows
@@ -137,8 +153,8 @@ jobs:
           {
             echo "# Fleet health report"
             echo
-            echo "| Repo | Install | Lint | Type-check | Build |"
-            echo "|---|:--:|:--:|:--:|:--:|"
+            echo "| Repo | Install | Lint | Type-check | Build | Test |"
+            echo "|---|:--:|:--:|:--:|:--:|:--:|"
             find rows -name '*.md' -exec cat {} + 2>/dev/null | sort || true
           } >> "$GITHUB_STEP_SUMMARY"
 

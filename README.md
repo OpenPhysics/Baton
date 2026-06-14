@@ -13,7 +13,7 @@ Pages simulation landing page.
 
 | Path | Purpose |
 |---|---|
-| [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Reusable CI workflow (audit, lint, type-check, build) |
+| [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Reusable CI workflow (audit, lint, type-check, test, build) |
 | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | Reusable GitHub Pages deploy workflow |
 | [`.github/workflows/shared-codeql.yml`](.github/workflows/shared-codeql.yml) | Reusable CodeQL analysis |
 | [`.github/workflows/shared-dependency-review.yml`](.github/workflows/shared-dependency-review.yml) | Reusable dependency review |
@@ -21,7 +21,7 @@ Pages simulation landing page.
 | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | Build and deploy the org simulation index to GitHub Pages |
 | [`.github/workflows/optimize-assets.yml`](.github/workflows/optimize-assets.yml) | Regenerate WebP card thumbnails from screenshots and commit them back |
 | [`.github/workflows/fleet-exec.yml`](.github/workflows/fleet-exec.yml) | Fan a command across many repos and open one PR each (manual dispatch) |
-| [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) | Weekly lint / type-check / build of every simulation, reported as a table |
+| [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) | Weekly lint / type-check / build / test of every simulation, reported as a table |
 | [`.github/workflows/sync-dependabot.yml`](.github/workflows/sync-dependabot.yml) | Validate the Dependabot templates |
 | [`scripts/`](scripts/) | Repo catalog tools, compliance checks, Dependabot/metadata sync, screenshots |
 | [`config/`](config/) | Canonical Dependabot templates synced to member repos |
@@ -51,6 +51,10 @@ Optional compliance checking:
     with:
       repo-name: ${{ github.event.repository.name }}
 ```
+
+`ci.yml` runs the test step automatically when the caller defines a `test` npm script — no per-repo
+flag needed. Pass `run-tests: "true"` to force it on (e.g. before a test script exists) or
+`run-tests: "false"` to opt out.
 
 Pages deploy (sims that publish to GitHub Pages):
 
@@ -109,8 +113,21 @@ Cross-repo automation, all driven from the catalog:
   repos needs a `FLEET_PAT` secret with write access — the default `GITHUB_TOKEN` is scoped to
   Baton only. Setup steps (fine-grained PAT or GitHub App): [`doc/fleet-auth.md`](doc/fleet-auth.md).
 - **Health report** — [`fleet-health.yml`](.github/workflows/fleet-health.yml) runs weekly,
-  cloning every active simulation and running lint, type-check, and build, then publishing a
-  pass/fail table to the job summary. Read-only; surfaces sims broken by a shared-workflow or
-  dependency change.
+  fanning out one matrix job per active simulation (npm download cache reused across runs) to run
+  lint, type-check, build, and test, then publishing a pass/fail table to the job summary.
+  Read-only; surfaces sims broken by a shared-workflow or dependency change.
 - **Compliance audit** — [`shared-compliance-check.yml`](.github/workflows/shared-compliance-check.yml)
-  audits README structure and CI wiring across the org (see above).
+  audits README structure and CI wiring across the org. The dispatch/schedule run fans out one
+  matrix job per sim and aggregates a single pass/fail table (see above).
+
+## Node version
+
+The default Node version for the fleet is **`"24"`**, declared in three places that must stay in
+sync — bump them together:
+
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — `node-version` input default
+- [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) — `node-version` input default
+- [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) — `setup-node` step
+
+When bumping, also update `@types/node` across member repos (Dependabot ignores its major bumps so
+the runtime and types stay aligned — see the note in the Dependabot templates under `config/`).
