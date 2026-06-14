@@ -4,11 +4,17 @@ on:
   workflow_call:
     inputs:
       node-version:
+        # Default Node version for the fleet. Single source of truth: this default
+        # is mirrored in deploy.yml and fleet-health.yml — bump all three together.
+        # See Baton/README.md ("Node version").
         type: string
         default: "24"
       run-tests:
-        type: boolean
-        default: false
+        # Tri-state: "true" forces the test step on, "false" forces it off, and the
+        # default "" means auto — run tests when the repo defines a "test" npm script.
+        # String (not boolean) so "unset" is distinguishable from "off".
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -47,9 +53,20 @@ jobs:
       - name: Type check
         run: npm run check
 
+      # Run tests when run-tests is "true", or when it is unset ("") and the repo
+      # defines a "test" script. Skipped only when run-tests is explicitly "false"
+      # or no test script exists. Keeps testless sims green with no per-repo config.
       - name: Test
-        if: inputs.run-tests
-        run: npm test
+        if: inputs.run-tests != 'false'
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.run-tests }}" = "true" ]; then
+            npm test
+          elif jq -e '.scripts.test // empty' package.json >/dev/null 2>&1; then
+            npm test
+          else
+            echo "No \"test\" script defined and run-tests not forced; skipping."
+          fi
 
       - name: Build
         run: npm run build
