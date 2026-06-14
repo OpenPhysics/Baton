@@ -11,8 +11,6 @@ OUTPUT="$DOCS_DIR/index.html"
 # Full-size ground-truth screenshots committed in this repo. The lightweight
 # WebP thumbnails served by the page are derived from these.
 SCREENSHOTS_DIR="$REPO_ROOT/screenshots"
-# Workspace holding the sibling sim repos (used only to refresh the originals below).
-WORKSPACE="${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required" >&2
@@ -21,35 +19,17 @@ fi
 
 mkdir -p "$ASSETS_DIR" "$SCREENSHOTS_DIR"
 
-# Width of the generated card thumbnails (looks crisp on ~360px cards at 2x).
-THUMB_WIDTH=760
-MAGICK=""
-if command -v magick >/dev/null 2>&1; then
-  MAGICK="magick"
-elif command -v convert >/dev/null 2>&1; then
-  MAGICK="convert"
+# Build the card thumbnails with sharp (scripts/make-thumbnails.mjs). The committed
+# full-size PNGs in screenshots/ are the ground truth; when this runs from a full
+# workspace checkout they are first refreshed from the sibling sim repos, then each
+# is downscaled to a small WebP under docs/assets/. Sharp is a dev dependency, so if
+# node_modules is absent (e.g. a docs-only edit) we keep the already committed
+# thumbnails rather than failing the whole page build — run `npm install` to refresh.
+if [[ -f "$REPO_ROOT/node_modules/sharp/package.json" ]]; then
+  node "$SCRIPT_DIR/make-thumbnails.mjs" || echo "warning: thumbnail regeneration failed; using committed docs/assets/*.webp" >&2
+else
+  echo "sharp not installed; skipping thumbnail regeneration (using committed docs/assets/*.webp). Run 'npm install' to refresh." >&2
 fi
-
-# Build the card thumbnails. The committed full-size PNGs in screenshots/ are the
-# ground truth; when this runs from a full workspace checkout they are first
-# refreshed from the sibling sim repos. Each original is then downscaled to a
-# small WebP under docs/assets/. In CI (only this repo checked out) the already
-# committed originals and thumbnails are used unchanged.
-while IFS= read -r sim; do
-  [[ -z "$sim" ]] && continue
-  original="$SCREENSHOTS_DIR/$sim.png"
-  sibling="$WORKSPACE/$sim/assets/screenshot.png"
-  if [[ -f "$sibling" ]]; then
-    cp "$sibling" "$original"
-  fi
-  [[ -f "$original" ]] || continue
-  if [[ -n "$MAGICK" ]]; then
-    "$MAGICK" "$original" -resize "${THUMB_WIDTH}x" -quality 80 -strip "$ASSETS_DIR/$sim.webp"
-  else
-    # No ImageMagick available: serve the full-size PNG so the card still works.
-    cp "$original" "$ASSETS_DIR/$sim.png"
-  fi
-done < <(jq -r '.repos[] | select(.isSimulation == true and .status == "active") | select(.name | test("cd48"; "i") | not) | .name' "$REPOS_JSON")
 
 # Each line: name|url|hue|topics(comma-separated)@description
 jq_program='

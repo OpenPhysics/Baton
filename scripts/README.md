@@ -8,7 +8,7 @@ the monorepo checkout.
 
 - [`jq`](https://jqlang.org/)
 - [`gh`](https://cli.github.com/) for GitHub sync commands
-- Node.js + `npm install` (in the repo root) for the screenshot scripts — installs Playwright
+- Node.js + `npm install` (in the repo root) for the screenshot and thumbnail scripts — installs Playwright and sharp
 
 ## Quick reference
 
@@ -21,6 +21,7 @@ the monorepo checkout.
 | [`check-repo-compliance.sh`](check-repo-compliance.sh) | README/CI compliance checks |
 | [`sync-dependabot.sh`](sync-dependabot.sh) | Copy Dependabot configs to sim repos |
 | [`generate-pages-index.sh`](generate-pages-index.sh) | Build `docs/index.html` simulation landing page |
+| [`make-thumbnails.mjs`](make-thumbnails.mjs) | Downscale `screenshots/*.png` to `docs/assets/*.webp` with sharp |
 | [`generate-screenshots.sh`](generate-screenshots.sh) | Capture each sim's screen to `<sim>/assets/screenshot.png` |
 | [`screenshot.mjs`](screenshot.mjs) | Playwright driver behind `generate-screenshots.sh` |
 

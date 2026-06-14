@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Tooling for the OpenPhysics org config repo: repo metadata helpers and simulation screenshot capture.",
+  "description": "Tooling for the OpenPhysics org orchestration repo (Baton): repo metadata helpers, simulation screenshot capture, and the Pages landing page.",
   "scripts": {
-    "screenshots": "bash scripts/generate-screenshots.sh"
+    "screenshots": "bash scripts/generate-screenshots.sh",
+    "thumbnails": "node scripts/make-thumbnails.mjs",
+    "pages": "bash scripts/generate-pages-index.sh"
   },
   "devDependencies": {
-    "playwright": "^1.60.0"
+    "playwright": "^1.60.0",
+    "sharp": "^0.35.1"
   }
 }
