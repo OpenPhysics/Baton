@@ -20,6 +20,8 @@ Pages simulation landing page.
 | [`.github/workflows/shared-compliance-check.yml`](.github/workflows/shared-compliance-check.yml) | README and repo-structure compliance audit |
 | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | Build and deploy the org simulation index to GitHub Pages |
 | [`.github/workflows/optimize-assets.yml`](.github/workflows/optimize-assets.yml) | Regenerate WebP card thumbnails from screenshots and commit them back |
+| [`.github/workflows/fleet-exec.yml`](.github/workflows/fleet-exec.yml) | Fan a command across many repos and open one PR each (manual dispatch) |
+| [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) | Weekly lint / type-check / build of every simulation, reported as a table |
 | [`.github/workflows/sync-dependabot.yml`](.github/workflows/sync-dependabot.yml) | Validate the Dependabot templates |
 | [`scripts/`](scripts/) | Repo catalog tools, compliance checks, Dependabot/metadata sync, screenshots |
 | [`config/`](config/) | Canonical Dependabot templates synced to member repos |
@@ -95,3 +97,20 @@ scripts/sync-github-metadata.sh --dry-run
 
 Scripts assume the `Baton` repo lives beside member repos in a shared workspace; set
 `OPENPHYSICS_WORKSPACE` or pass `--catalog /path/to/repos.json` if your checkout differs.
+
+## Fleet operations
+
+Cross-repo automation, all driven from the catalog:
+
+- **Batch changes** — [`scripts/fleet-exec.sh`](scripts/fleet-exec.sh) clones each selected
+  repo, runs a command, and (with `--apply`) opens one PR per repo. Dry-run by default. The
+  [`fleet-exec.yml`](.github/workflows/fleet-exec.yml) workflow exposes it as a manual dispatch
+  (e.g. bump a shared dependency, run `npm run fix`, apply a codemod). Opening PRs in other
+  repos needs a `FLEET_PAT` secret with write access — the default `GITHUB_TOKEN` is scoped to
+  Baton only.
+- **Health report** — [`fleet-health.yml`](.github/workflows/fleet-health.yml) runs weekly,
+  cloning every active simulation and running lint, type-check, and build, then publishing a
+  pass/fail table to the job summary. Read-only; surfaces sims broken by a shared-workflow or
+  dependency change.
+- **Compliance audit** — [`shared-compliance-check.yml`](.github/workflows/shared-compliance-check.yml)
+  audits README structure and CI wiring across the org (see above).

@@ -16,6 +16,7 @@ the monorepo checkout.
 |---|---|
 | [`parse-repos.sh`](parse-repos.sh) | Core parser/CLI for `repos.json` |
 | [`list-repos.sh`](list-repos.sh) | Human-friendly listing wrapper |
+| [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
 | [`check-repo-compliance.sh`](check-repo-compliance.sh) | README/CI compliance checks |
@@ -62,6 +63,29 @@ Filters:
 - `--type simulation|template|config|hardware-interface|tool`
 - `--status active|template`
 - `--simulation` / `--no-simulation`
+
+## fleet-exec.sh
+
+Fan a change out across the org: clone each selected repo, run a command in it, and
+— with `--apply` — push a branch and open one PR per repo. **Dry-run by default** (prints
+a diffstat per repo and opens nothing). Reuses the same catalog filters as `parse-repos.sh`.
+
+```bash
+# Preview bumping a dependency across every simulation (no PRs):
+scripts/fleet-exec.sh --simulation -- npm pkg set dependencies.scenerystack=^3.1.0
+
+# Apply a Biome autofix across all sims and open one PR each:
+scripts/fleet-exec.sh --simulation --apply --install \
+  --branch chore/biome-fix --title "chore: biome autofix" -- npm run fix
+```
+
+Key options: `--apply` (push + open PRs), `--install` (`npm install` before the command,
+needed for lint/build codemods), `--branch`, `--title`, `--label`, `--skip NAME`, `--keep`.
+
+Pushing and opening PRs needs a token with **write access to the target repos** — your local
+`gh auth`, or an org PAT / GitHub App token as `GH_TOKEN`. The default `GITHUB_TOKEN` only
+reaches the repo running a workflow, so the [`fleet-exec.yml`](../.github/workflows/fleet-exec.yml)
+dispatch wrapper reads a `FLEET_PAT` secret for `apply=true`.
 
 ## sync-github-metadata.sh
 

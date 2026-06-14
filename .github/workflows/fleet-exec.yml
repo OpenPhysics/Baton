@@ -1,0 +1,77 @@
+name: Fleet Exec
+
+# Manually fan a change out across OpenPhysics repos: clone each, run a command,
+# and (when apply=true) open one PR per repo. Defaults to a dry-run that only
+# prints diffs. Powered by scripts/fleet-exec.sh.
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'Command to run in each repo (e.g. npm pkg set dependencies.vite=^8.1.0)'
+        type: string
+        required: true
+      target:
+        description: Which repos to target
+        type: choice
+        options:
+          - simulation
+          - all
+        default: simulation
+      branch:
+        description: Branch to create in each repo
+        type: string
+        default: chore/fleet-update
+      title:
+        description: PR title
+        type: string
+        default: 'chore: fleet update'
+      install:
+        description: Run npm install before the command (needed for lint/build codemods)
+        type: boolean
+        default: false
+      apply:
+        description: Open PRs (off = dry-run, prints diffs only)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fleet-exec
+  cancel-in-progress: false
+
+jobs:
+  fleet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Run fleet-exec
+        env:
+          # Pushing branches / opening PRs in other repos needs a token with write
+          # access to them. The default GITHUB_TOKEN only reaches this repo, so set
+          # an org PAT or GitHub App token as the FLEET_PAT secret for apply=true.
+          GH_TOKEN: ${{ secrets.FLEET_PAT || github.token }}
+          # Inputs are passed via env (never interpolated into the script) so an
+          # operator-supplied command cannot break out of the run step.
+          COMMAND: ${{ inputs.command }}
+          TARGET: ${{ inputs.target }}
+          BRANCH: ${{ inputs.branch }}
+          TITLE: ${{ inputs.title }}
+          DO_INSTALL: ${{ inputs.install }}
+          DO_APPLY: ${{ inputs.apply }}
+        run: |
+          set -euo pipefail
+          args=()
+          [ "$TARGET" = "simulation" ] && args+=(--simulation)
+          [ "$DO_INSTALL" = "true" ] && args+=(--install)
+          [ "$DO_APPLY" = "true" ] && args+=(--apply)
+          bash scripts/fleet-exec.sh "${args[@]}" \
+            --branch "$BRANCH" --title "$TITLE" \
+            -- bash -lc "$COMMAND"

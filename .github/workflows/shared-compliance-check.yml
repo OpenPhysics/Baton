@@ -24,12 +24,12 @@ jobs:
       - name: Check out the repository under test
         uses: actions/checkout@v6
 
-      # The compliance script lives in this org-config repo, not in the caller,
-      # so check it out alongside and run it against the caller's working tree.
-      - name: Check out OpenPhysics/.github for the compliance script
+      # The compliance script lives in this orchestration repo (Baton), not in the
+      # caller, so check it out alongside and run it against the caller's working tree.
+      - name: Check out OpenPhysics/Baton for the compliance script
         uses: actions/checkout@v6
         with:
-          repository: OpenPhysics/.github
+          repository: OpenPhysics/Baton
           path: .org-compliance
 
       - name: Run compliance checks
