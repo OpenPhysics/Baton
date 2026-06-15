@@ -245,7 +245,7 @@
       "description": "Three-screen VoceVista-style real-time voice-analysis simulation. Analyzes microphone input for waveform, spectrum, and composition.",
       "deployedUrl": "https://OpenPhysics.github.io/WaveComposer",
       "physicsTopics": ["waves", "acoustics", "Fourier analysis", "sound"],
-      "screens": ["Voice", "Composer", "Simulation"],
+      "screens": ["Compose", "Analyzer", "Voice & Vowels"],
       "status": "active"
     },
     {
