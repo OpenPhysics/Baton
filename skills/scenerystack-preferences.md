@@ -65,6 +65,7 @@ The control's value `Property` is the single source of truth; views and the mode
 
 ## Rules
 
+- The preferences model and dialog UI live in `src/preferences/` as `<Prefix>PreferencesModel.ts` and `<Prefix>PreferencesNode.ts` (a multi-tab sim may split the UI into `<Prefix><Tab>PreferencesNode.ts` files), alongside `<prefix>QueryParameters.ts` — see [CONVENTIONS.md §3](../CONVENTIONS.md).
 - Configure preferences **only** in `src/main.ts` on the `PreferencesModel`. Don't scatter dialog wiring elsewhere.
 - Turn a built-in flag on only when the sim actually honors it — `supportsProjectorMode` needs `projector:` colors defined; `supportsDynamicLocale` needs all-Property strings.
 - Custom controls are built from `Property`s; persist user choices (commonly `localStorage`) and `.reset()` is generally **not** applied to preferences (they outlive Reset All).
