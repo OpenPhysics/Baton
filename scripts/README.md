@@ -16,6 +16,7 @@ the monorepo checkout.
 |---|---|
 | [`parse-repos.sh`](parse-repos.sh) | Core parser/CLI for `repos.json` |
 | [`list-repos.sh`](list-repos.sh) | Human-friendly listing wrapper |
+| [`clone-fleet.sh`](clone-fleet.sh) | Clone/update every catalog repo into the workspace as a sibling |
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
@@ -63,6 +64,31 @@ Filters:
 - `--type simulation|template|config|hardware-interface|tool`
 - `--status active|template`
 - `--simulation` / `--no-simulation`
+
+## clone-fleet.sh
+
+Populate the workspace from the catalog: clone every selected repo as a sibling directory
+beside `Baton`. `repos.json` is the single source of truth — there are no submodules, so a
+repo appears here the moment it is added to the catalog. Re-runnable and safe: repos already
+on disk are skipped unless `--update` is given (which `git pull --ff-only`s them).
+
+The thin [`OpenPhysics` superproject](https://github.com/OpenPhysics/OpenPhysics)'s
+`bootstrap.sh` clones `Baton` and then calls this; run it directly once you already have
+`Baton`.
+
+```bash
+# Clone whatever is missing into the workspace
+scripts/clone-fleet.sh
+
+# Only the simulations, and fast-forward any already present
+scripts/clone-fleet.sh --simulation --update
+
+# Preview the plan, change nothing (HTTPS instead of SSH)
+scripts/clone-fleet.sh --dry-run --https
+```
+
+Reuses the same catalog filters as `parse-repos.sh` (`--simulation`, `--type`, `--status`,
+`--only NAME`, `--skip NAME`). Clones over SSH by default; `--https` for token/anonymous use.
 
 ## fleet-exec.sh
 
