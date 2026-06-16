@@ -110,7 +110,7 @@ elif [ -f pyproject.toml ] || [ -f setup.py ] || [ -f requirements.txt ]; then
   fi
 fi
 
-# ── SceneryStack simulation structure (see OpenPhysics/CONVENTIONS.md) ──────────
+# ── SceneryStack simulation structure (see Baton/CONVENTIONS.md) ────────────────
 # Only applies to sim repos (npm package with a src/main.ts bootstrap entry).
 if [ -f package.json ] && [ -f src/main.ts ]; then
   for f in init assert splash brand main; do

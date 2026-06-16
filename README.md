@@ -26,6 +26,9 @@ Pages simulation landing page.
 | [`scripts/`](scripts/) | Repo catalog tools, compliance checks, Dependabot/metadata sync, screenshots |
 | [`config/`](config/) | Canonical Dependabot templates synced to member repos |
 | [`structure/repos.json`](structure/repos.json) | Machine-readable catalog of org repositories |
+| [`CONVENTIONS.md`](CONVENTIONS.md) | Shared codebase structure every SceneryStack sim must follow |
+| [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | Shared accessibility pattern for SceneryStack sims |
+| [`skills/`](skills/) | SceneryStack development reference docs for AI assistants |
 | [`docs/`](docs/) | Generated landing page ([openphysics.github.io/Baton](https://openphysics.github.io/Baton/)) |
 
 ## Shared CI
