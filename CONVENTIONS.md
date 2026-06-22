@@ -132,6 +132,24 @@ sim-specific `vite.config.ts` plugins (e.g. TrackLab's OpenCV/video serving), `b
 traversal choice (`pdomOrder` wrapper-Node *or* `pdomPlayAreaNode`/`pdomControlAreaNode`, per
 [ACCESSIBILITY.md §3](ACCESSIBILITY.md)).
 
+## 8. Constructor options
+
+Two option styles coexist across the fleet and **both are acceptable** — pick by the shape of the
+class rather than converting working code:
+
+- **Explicit params + optional options object.** Leaf classes (and most ScreenViews/models) take a
+  typed `options?: <Name>Options` and apply defaults inline (`options?.foo ?? default`), forwarding the
+  object to `super`. Simple and the most common — e.g. `BaseScreenView` in OscillationsAndChaos.
+- **`optionize`.** When subclassing a SceneryStack type whose `ParentOptions` must be merged with your
+  own defaults and forwarded, use
+  `optionize<<Name>Options, SelfOptions, ParentOptions>()( { …defaults }, providedOptions )` with the
+  `SelfOptions` type declared above the class — e.g. MazeGame's panels and screens.
+
+Either way, declare the `SelfOptions` (or `EmptySelfOptions`) and `<Name>Options = SelfOptions &
+ParentOptions` types above the class, and **never** use lodash `merge` / `_.extend`. With `optionize`
+the incoming parameter is named `providedOptions` (the merged result is `options`); the explicit style
+names it `options` directly.
+
 ## Per-sim checklist (PR sign-off gate)
 
 Most of these are checked automatically by Baton's compliance gate (see Verification); the
