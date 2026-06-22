@@ -29,7 +29,30 @@ Pages simulation landing page.
 | [`CONVENTIONS.md`](CONVENTIONS.md) | Shared codebase structure every SceneryStack sim must follow |
 | [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | Shared accessibility pattern for SceneryStack sims |
 | [`skills/`](skills/) | SceneryStack development reference docs for AI assistants |
+| [`.claude-plugin/`](.claude-plugin/) | Marketplace + plugin manifests that package `skills/` as the `scenerystack@openphysics` Claude Code plugin |
 | [`docs/`](docs/) | Generated landing page ([openphysics.github.io/Baton](https://openphysics.github.io/Baton/)) |
+
+## Claude Code plugin
+
+This repo doubles as a Claude Code [marketplace](.claude-plugin/marketplace.json). It publishes one
+plugin, **`scenerystack`**, that bundles the [`skills/`](skills/) reference docs so any sim repo can
+load them as a unit instead of vendoring copies. The repo root *is* the plugin
+([`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)); its `skills/` are auto-discovered.
+
+Member repos enable it from their `.claude/settings.json`:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "openphysics": { "source": { "source": "github", "repo": "OpenPhysics/Baton" } }
+  },
+  "enabledPlugins": { "scenerystack@openphysics": true }
+}
+```
+
+Or interactively: `claude plugin marketplace add OpenPhysics/Baton` then
+`claude plugin install scenerystack@openphysics`. Validate manifest changes with
+`claude plugin validate .claude-plugin/marketplace.json`.
 
 ## Shared CI
 
