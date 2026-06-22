@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "scenerystack",
+  "version": "1.0.0",
+  "description": "Focused SceneryStack reference skills for building OpenPhysics simulations — coding conventions, optionize, model/view transforms, i18n, color profiles, accessibility, preferences, query parameters, and more.",
+  "author": {
+    "name": "OpenPhysics"
+  },
+  "homepage": "https://github.com/OpenPhysics/Baton/tree/main/skills",
+  "repository": "https://github.com/OpenPhysics/Baton",
+  "license": "MIT",
+  "keywords": [
+    "scenerystack",
+    "phet",
+    "simulations",
+    "physics",
+    "openphysics"
+  ]
+}

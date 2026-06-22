@@ -1,0 +1,51 @@
+name: Baton self-check
+
+# Validates Baton's own invariants — the skills collection is well-formed and its
+# README index is in sync, the fleet Node version agrees across workflows, and the
+# helper scripts are syntactically valid. These guard against the kind of drift that
+# otherwise rots silently as the repo grows.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - ".claude-plugin/**"
+      - "scripts/**"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/deploy.yml"
+      - ".github/workflows/fleet-health.yml"
+      - ".github/workflows/baton-selfcheck.yml"
+  pull_request:
+    paths:
+      - "skills/**"
+      - ".claude-plugin/**"
+      - "scripts/**"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/deploy.yml"
+      - ".github/workflows/fleet-health.yml"
+      - ".github/workflows/baton-selfcheck.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  selfcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Validate the skills collection
+        run: scripts/check-skills.sh
+
+      - name: Check fleet Node version is in sync
+        run: scripts/check-node-version.sh
+
+      - name: Lint shell scripts (syntax)
+        run: |
+          set -euo pipefail
+          find scripts -name '*.sh' -print0 | while IFS= read -r -d '' s; do
+            echo "bash -n $s"
+            bash -n "$s"
+          done
