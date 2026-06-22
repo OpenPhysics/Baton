@@ -9,7 +9,7 @@ SceneryStack sims are localized from day one. This skill is the **workflow** aro
 
 ## Locale-file parity is a hard contract
 
-Each sim has one `src/i18n/strings_<locale>.json` per supported locale (commonly `strings_en.json` + `strings_fr.json`). `LocalizedString.getNestedStringProperties({ en, fr })` infers its type from the **union of keys**, so when locale files diverge TypeScript errors at `npm run check`. **This is intentional — do not silence it.**
+Every sim ships all three locales — `strings_en.json`, `strings_es.json`, and `strings_fr.json` (see [CONVENTIONS.md §4](../../CONVENTIONS.md)). `LocalizedString.getNestedStringProperties({ en, es, fr })` infers its type from the **union of keys**, so when locale files diverge TypeScript errors at `npm run check`. **This is intentional — do not silence it.**
 
 When you add or rename a key:
 
@@ -17,17 +17,20 @@ When you add or rename a key:
 2. Keep the **nesting and key names identical** across files — only the values differ.
 3. Run `npm run check`; a type error means a locale is missing a key.
 
-To add a **new locale** (e.g. Spanish):
+To add a **locale beyond the standard three** (e.g. German):
 
 ```typescript
 // StringManager.ts
-import stringsEs from "./strings_es.json";
-this.stringProperties = LocalizedString.getNestedStringProperties({
+import stringsDe from "./strings_de.json";
+const stringProperties = LocalizedString.getNestedStringProperties({
   en: stringsEn,
+  es: stringsEs,
   fr: stringsFr,
-  es: stringsEs,   // file must contain every key the others have
+  de: stringsDe,   // file must contain every key the others have
 });
 ```
+
+Also register the new locale in `src/init.ts` (`availableLocales`).
 
 ## Interpolating values: `PatternStringProperty`, never concatenation
 

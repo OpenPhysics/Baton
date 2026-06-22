@@ -13,17 +13,17 @@ One file per sim (e.g. `DopplerEffectColors.ts`, `SimColors.ts`), exporting a si
 
 ```typescript
 import { Color, ProfileColorProperty } from "scenerystack/scenery";
-import dopplerEffect from "./DopplerEffectNamespace";
+import DopplerEffectNamespace from "./DopplerEffectNamespace.js";
 
 const BLACK = new Color(0, 0, 0);
 const WHITE = new Color(255, 255, 255);
 
 const DopplerEffectColors = {
-  backgroundColorProperty: new ProfileColorProperty(dopplerEffect, "backgroundColor", {
+  backgroundColorProperty: new ProfileColorProperty(DopplerEffectNamespace, "background", {
     default: BLACK,
     projector: WHITE,
   }),
-  sourceColorProperty: new ProfileColorProperty(dopplerEffect, "sourceColor", {
+  sourceColorProperty: new ProfileColorProperty(DopplerEffectNamespace, "sourceColor", {
     default: new Color(100, 255, 100),
     projector: new Color(0, 200, 0),
   }),
@@ -32,7 +32,7 @@ const DopplerEffectColors = {
 export default DopplerEffectColors;
 ```
 
-- First arg is the sim **namespace** (`new Namespace("dopplerEffect")`, exported from `*Namespace.ts`).
+- First arg is the sim **namespace** (`new Namespace("doppler-effect")` — the kebab-case sim id — exported as the default from `*Namespace.ts`, imported with the `.js` extension).
 - Second arg is a **unique string key** — this is the name shown in the color editor and used by phet-io. Keep it stable.
 - The third arg is a map of named profiles. `default` is required; `projector` enables Projector Mode (high-contrast, light background for classroom projectors).
 

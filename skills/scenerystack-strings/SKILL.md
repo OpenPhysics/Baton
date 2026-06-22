@@ -28,19 +28,21 @@ description: Use whenever a view needs display text, or you add/rename/remove us
 ```typescript
 import { LocalizedString } from "scenerystack/chipper";
 import stringsEn from "./strings_en.json";
+import stringsEs from "./strings_es.json";
 import stringsFr from "./strings_fr.json";
+
+// nesting mirrors the JSON; each leaf becomes a <leaf>StringProperty.
+// Module-level so getters can reference it directly (canonical template pattern).
+const stringProperties = LocalizedString.getNestedStringProperties({
+  en: stringsEn,
+  es: stringsEs,
+  fr: stringsFr,
+});
 
 export class StringManager {
   private static instance: StringManager;
-  private readonly stringProperties;
 
-  private constructor() {
-    // nesting mirrors the JSON; each leaf becomes a <leaf>StringProperty
-    this.stringProperties = LocalizedString.getNestedStringProperties({
-      en: stringsEn,
-      fr: stringsFr,
-    });
-  }
+  private constructor() {} // obtain via getInstance()
 
   public static getInstance(): StringManager {
     return (StringManager.instance ??= new StringManager());
@@ -48,9 +50,14 @@ export class StringManager {
 
   public getControlPanelStrings() {
     return {
-      valuesStringProperty: this.stringProperties.controls.valuesStringProperty,
-      soundSpeedStringProperty: this.stringProperties.controls.soundSpeedStringProperty,
+      valuesStringProperty: stringProperties.controls.valuesStringProperty,
+      soundSpeedStringProperty: stringProperties.controls.soundSpeedStringProperty,
     };
+  }
+
+  // accessibility strings live under the a11y group (see ACCESSIBILITY.md)
+  public getA11yStrings() {
+    return stringProperties.a11y;
   }
 }
 ```
