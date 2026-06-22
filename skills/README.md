@@ -16,6 +16,11 @@ These complement, not replace, the broader docs:
 The skills go one level deeper than `CLAUDE.md`: API specifics, idioms, and pitfalls for a
 single subsystem.
 
+New skills follow [`TEMPLATE.md`](TEMPLATE.md) and must be added to the index below;
+[`../scripts/check-skills.sh`](../scripts/check-skills.sh) (run in CI by
+[`baton-selfcheck.yml`](../.github/workflows/baton-selfcheck.yml)) enforces that every
+folder is well-formed and listed here.
+
 ## Index
 
 ### Coding & review
@@ -24,6 +29,7 @@ single subsystem.
 |---|---|
 | [`scenerystack-coding-conventions`](scenerystack-coding-conventions/SKILL.md) | Writing/reviewing TypeScript — naming, constructor signatures, optionize, access modifiers, type inference, assertions, read-vs-write Property APIs. |
 | [`scenerystack-code-review`](scenerystack-code-review/SKILL.md) | Running a pre-release Code Review (CRC) on a sim — build/fuzz, memory leaks, performance, i18n, structure conformance, accessibility. |
+| [`scenerystack-testing`](scenerystack-testing/SKILL.md) | Adding/changing unit tests — `vitest` specs for model/physics code, the `tests/` layout, fuzz/Playwright specs, the build/fuzz check that substitutes where none exist. |
 
 ### Model & math
 
@@ -32,6 +38,8 @@ single subsystem.
 | [`scenerystack-model`](scenerystack-model/SKILL.md) | Creating/changing a model — state, physics, the `step(dt)`/`reset()` loop, reactive Properties, the `TModel` contract, model/view separation. |
 | [`scenerystack-model-view-transform`](scenerystack-model-view-transform/SKILL.md) | Converting between model and view coordinates or scaling physical quantities to pixels — `ModelViewTransform2`. |
 | [`scenerystack-constants`](scenerystack-constants/SKILL.md) | A number, size, or physical parameter appears in code — define it in `*Constants.ts` instead of inlining a magic value. |
+| [`scenerystack-numerics`](scenerystack-numerics/SKILL.md) | Writing a model's numerical core — integrating motion over `dt`, stable time steps, Euler vs. higher-order integration, `Utils`/`LinearFunction`/`dotRandom`, determinism. |
+| [`scenerystack-enumeration`](scenerystack-enumeration/SKILL.md) | A model/view needs a fixed set of named choices (mode, state, tool) — `EnumerationValue`, `EnumerationProperty`, and why to prefer it over string unions or numeric constants. |
 
 ### View & layout
 
@@ -41,6 +49,9 @@ single subsystem.
 | [`scenerystack-color-profiles`](scenerystack-color-profiles/SKILL.md) | Adding/theming colors — `ProfileColorProperty`, the per-sim `*Colors.ts`, projector mode. |
 | [`scenerystack-drag-listener`](scenerystack-drag-listener/SKILL.md) | Making a node draggable by mouse, touch, or keyboard — `DragListener`, `KeyboardDragListener`, `RichDragListener`, drag bounds. |
 | [`scenerystack-optionize`](scenerystack-optionize/SKILL.md) | A constructor takes configurable options — `optionize<>()`, `SelfOptions`/`Options`, `EmptySelfOptions`, `combineOptions`. |
+| [`scenerystack-ui-controls`](scenerystack-ui-controls/SKILL.md) | Adding standard controls — sliders, spinners, checkboxes, radio buttons, combo boxes, buttons, Reset All — from `sun`/`scenery-phet`, wired to model Properties. |
+| [`scenerystack-custom-drawing`](scenerystack-custom-drawing/SKILL.md) | Rendering custom graphics the standard nodes don't cover — curves, filled regions, arrows, dynamic paths — `Path` + kite `Shape`, primitive nodes, renderer hints. |
+| [`scenerystack-animation`](scenerystack-animation/SKILL.md) | Something must move or change smoothly over time, independent of the physics step — the twixt `Animation` class, `Easing`, chaining/looping, animate vs. integrate. |
 
 ### Text & localization
 
@@ -48,6 +59,13 @@ single subsystem.
 |---|---|
 | [`scenerystack-strings`](scenerystack-strings/SKILL.md) | A view needs display text, or you add/rename user-visible text — `StringManager`, `strings_*.json`, consuming `*StringProperty`. |
 | [`scenerystack-i18n`](scenerystack-i18n/SKILL.md) | Adding a locale, keeping locale files in sync, interpolating with `PatternStringProperty`, or enabling the runtime language picker. |
+
+### App structure & lifecycle
+
+| Skill | Use when |
+|---|---|
+| [`scenerystack-screen-view`](scenerystack-screen-view/SKILL.md) | Wiring a sim's entry point — the joist `Sim`/`Screen`/`ScreenView` trio, the model factory, screen icons/background, the per-frame `step` hand-off. |
+| [`scenerystack-disposal`](scenerystack-disposal/SKILL.md) | Creating nodes/listeners/Properties that don't live for the whole sim — `dispose()`, `disposeEmitter`, unlinking, tearing down `DerivedProperty`/`Multilink`, avoiding leaks. |
 
 ### Configuration & accessibility
 
@@ -57,3 +75,4 @@ single subsystem.
 | [`scenerystack-query-parameters`](scenerystack-query-parameters/SKILL.md) | Adding a URL-configurable startup option or debug flag — a typed `QueryStringMachine` schema. |
 | [`scenerystack-keyboard-help-dialog`](scenerystack-keyboard-help-dialog/SKILL.md) | Documenting keyboard controls in the `?` dialog — `KeyboardHelpSection`, `TwoColumnKeyboardHelpContent`, `createKeyboardHelpNode`. |
 | [`scenerystack-accessibility`](scenerystack-accessibility/SKILL.md) | Making a sim usable with a keyboard and screen reader — `accessibleName`, help text, dynamic announcements, keyboard listeners, interactive highlights. |
+| [`scenerystack-sound`](scenerystack-sound/SKILL.md) | Adding sound — UI feedback, sonification of a changing quantity, or an audio Preferences tab — `tambo`, `soundManager`, `SoundClip`, gating on the sound-enabled Property. |

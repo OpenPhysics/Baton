@@ -19,8 +19,11 @@ the monorepo checkout.
 | [`clone-fleet.sh`](clone-fleet.sh) | Clone/update every catalog repo into the workspace as a sibling |
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
+| [`sync-claude-settings.sh`](sync-claude-settings.sh) | Roll the `scenerystack` Claude Code plugin out to sim repos' `.claude/settings.json` |
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
 | [`check-repo-compliance.sh`](check-repo-compliance.sh) | README/CI compliance checks |
+| [`check-skills.sh`](check-skills.sh) | Validate the `skills/` collection and its README index (Baton self-check) |
+| [`check-node-version.sh`](check-node-version.sh) | Assert the fleet Node version agrees across workflows (Baton self-check) |
 | [`sync-dependabot.sh`](sync-dependabot.sh) | Copy Dependabot configs to sim repos |
 | [`generate-pages-index.sh`](generate-pages-index.sh) | Build `docs/index.html` simulation landing page |
 | [`make-thumbnails.mjs`](make-thumbnails.mjs) | Downscale `screenshots/*.png` to `docs/assets/*.webp` with sharp |
@@ -124,6 +127,32 @@ scripts/sync-github-metadata.sh --repo TemplateSingleSim
 ```
 
 Note: GitHub does not expose API toggles for **Deployments** / **Packages** in the About sidebar.
+
+## sync-claude-settings.sh
+
+Roll the [`scenerystack` Claude Code plugin](../.claude-plugin/marketplace.json) out to the
+SceneryStack repos by **merging** the canonical keys from
+[`config/claude-settings.json`](../config/claude-settings.json) into each repo's
+`.claude/settings.json`. It only adds/updates `extraKnownMarketplaces.openphysics` and
+`enabledPlugins["scenerystack@openphysics"]` — existing keys in a repo's settings are preserved.
+Targets every catalog repo whose framework is `SceneryStack`. Writes files only; commit/push (or
+fan out as PRs via `fleet-exec.sh`) is left to you.
+
+```bash
+scripts/sync-claude-settings.sh --dry-run     # show what would change, write nothing
+scripts/sync-claude-settings.sh               # merge into each sibling repo
+scripts/sync-claude-settings.sh DopplerEffect # limit to named repo(s)
+```
+
+## Self-check scripts
+
+Run by [`baton-selfcheck.yml`](../.github/workflows/baton-selfcheck.yml) on every PR that touches
+`skills/`, `.claude-plugin/`, or `scripts/`, and runnable locally:
+
+```bash
+scripts/check-skills.sh         # every skills/<name>/SKILL.md is well-formed and indexed in skills/README.md
+scripts/check-node-version.sh   # ci.yml / deploy.yml / fleet-health.yml all declare the same Node version
+```
 
 ## generate-screenshots.sh
 

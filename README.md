@@ -23,8 +23,9 @@ Pages simulation landing page.
 | [`.github/workflows/fleet-exec.yml`](.github/workflows/fleet-exec.yml) | Fan a command across many repos and open one PR each (manual dispatch) |
 | [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) | Weekly lint / type-check / build / test of every simulation, reported as a table |
 | [`.github/workflows/sync-dependabot.yml`](.github/workflows/sync-dependabot.yml) | Validate the Dependabot templates |
+| [`.github/workflows/baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml) | Validate Baton's own invariants (skills collection + index, Node-version sync, script syntax) |
 | [`scripts/`](scripts/) | Repo catalog tools, compliance checks, Dependabot/metadata sync, screenshots |
-| [`config/`](config/) | Canonical Dependabot templates synced to member repos |
+| [`config/`](config/) | Canonical Dependabot + Claude-settings templates synced to member repos |
 | [`structure/repos.json`](structure/repos.json) | Machine-readable catalog of org repositories |
 | [`CONVENTIONS.md`](CONVENTIONS.md) | Shared codebase structure every SceneryStack sim must follow |
 | [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | Shared accessibility pattern for SceneryStack sims |
@@ -39,7 +40,8 @@ plugin, **`scenerystack`**, that bundles the [`skills/`](skills/) reference docs
 load them as a unit instead of vendoring copies. The repo root *is* the plugin
 ([`.claude-plugin/plugin.json`](.claude-plugin/plugin.json)); its `skills/` are auto-discovered.
 
-Member repos enable it from their `.claude/settings.json`:
+Member repos enable it from their `.claude/settings.json` (the canonical keys live in
+[`config/claude-settings.json`](config/claude-settings.json)):
 
 ```json
 {
@@ -53,6 +55,9 @@ Member repos enable it from their `.claude/settings.json`:
 Or interactively: `claude plugin marketplace add OpenPhysics/Baton` then
 `claude plugin install scenerystack@openphysics`. Validate manifest changes with
 `claude plugin validate .claude-plugin/marketplace.json`.
+
+Roll it out across the fleet with [`scripts/sync-claude-settings.sh`](scripts/sync-claude-settings.sh),
+which merges those keys into every SceneryStack repo's settings without clobbering existing config.
 
 ## Shared CI
 
@@ -154,6 +159,10 @@ sync — bump them together:
 - [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — `node-version` input default
 - [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) — `node-version` input default
 - [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) — `setup-node` step
+
+[`scripts/check-node-version.sh`](scripts/check-node-version.sh) enforces that the three stay in
+sync (run in CI by [`baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml)), so a half-done
+bump fails fast instead of drifting silently.
 
 When bumping, also update `@types/node` across member repos (Dependabot ignores its major bumps so
 the runtime and types stay aligned — see the note in the Dependabot templates under `config/`).
