@@ -24,13 +24,29 @@ new Node({ accessibleParagraph: a11yStrings.levelCompleteStringProperty });
 new Node({ tagName: "div", labelTagName: "h3", ariaRole: "application" });
 ```
 
-Reading order in the PDOM is controlled with `pdomOrder` (independent of visual/z-order):
+Reading order in the PDOM is controlled with `pdomOrder` (independent of visual/z-order). A **`ScreenView` throws if you set `pdomOrder` on itself**, so use one of the two sanctioned patterns (pick one per sim — see [ACCESSIBILITY.md §3](../../ACCESSIBILITY.md)):
 
 ```typescript
-this.pdomOrder = [playArea, controlPanel, resetAllButton];
+// (a) a lightweight wrapper Node that "borrows" the interactive nodes (template default)
+this.addChild(new Node({ pdomOrder: [playArea, controlPanel, resetAllButton] }));
+
+// (b) the protected pdomPlayAreaNode / pdomControlAreaNode (PhET-idiomatic)
+this.pdomPlayAreaNode.pdomOrder = [playArea];
+this.pdomControlAreaNode.pdomOrder = [controlPanel, resetAllButton];
 ```
 
-A **screen summary** describes the whole screen at the top of the PDOM — override `createScreenSummaryContent()` in the `ScreenView` to return a node (often a `ScreenSummaryContent` subclass) with `accessibleParagraph`s built from model state.
+A **screen summary** describes the whole screen at the top of the PDOM. Each `ScreenView` registers a `*ScreenSummaryContent` (extends `ScreenSummaryContent` from `scenerystack/sim`) through the **`screenSummaryContent` option in its `super(...)` call** — not by overriding a method — so every sim wires it the same way:
+
+```typescript
+import { ScreenSummaryContent } from "scenerystack/sim";
+
+super({
+  screenSummaryContent: new SimScreenSummaryContent(model),
+  // ...other ScreenView options
+});
+```
+
+`ScreenSummaryContent` supplies four regions: `playAreaContent` (what the play area holds), `controlAreaContent` (what the controls do), `currentDetailsContent` (a **live** `DerivedProperty` over model state), and `interactionHintContent` (how to start). See the shared [ACCESSIBILITY.md](../../ACCESSIBILITY.md) convention and `TemplateSingleSim/src/sim-screen/view/SimScreenSummaryContent.ts` for the canonical pattern.
 
 ## 2. Accessible responses (announcing change)
 
