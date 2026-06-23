@@ -145,10 +145,19 @@ class rather than converting working code:
   `optionize<<Name>Options, SelfOptions, ParentOptions>()( { …defaults }, providedOptions )` with the
   `SelfOptions` type declared above the class — e.g. MazeGame's panels and screens.
 
+**`Screen` subclasses are standardized on `optionize`** — the template's `SimScreen`
+and every sim follow it, so **don't** hand-spread `{ …defaults, ...options }` into `super(...)`. A
+screen that adds no options of its own passes its screen-default block (`backgroundColorProperty`,
+`createKeyboardHelpNode`, icons, …) as the defaults and the constructor `options` as the provided arg:
+`optionize<<Name>ScreenOptions, EmptySelfOptions, ScreenOptions>()( { …screen defaults }, options )`.
+The param stays named `options` here (not `providedOptions`) because the model/view factories read it
+directly; extra dependencies carried on the options bag (`preferences`, `viewProperties`, …) flow
+through unchanged.
+
 Either way, declare the `SelfOptions` (or `EmptySelfOptions`) and `<Name>Options = SelfOptions &
 ParentOptions` types above the class, and **never** use lodash `merge` / `_.extend`. With `optionize`
-the incoming parameter is named `providedOptions` (the merged result is `options`); the explicit style
-names it `options` directly.
+the incoming parameter is normally named `providedOptions` (the merged result is `options`); the
+explicit style names it `options` directly.
 
 ## Per-sim checklist (PR sign-off gate)
 
