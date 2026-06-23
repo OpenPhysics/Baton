@@ -150,6 +150,10 @@ Cross-repo automation, all driven from the catalog:
 - **Compliance audit** — [`shared-compliance-check.yml`](.github/workflows/shared-compliance-check.yml)
   audits README structure and CI wiring across the org. The dispatch/schedule run fans out one
   matrix job per sim and aggregates a single pass/fail table (see above).
+- **Everyday git fan-out** — [`doc/fleet-git.md`](doc/fleet-git.md) is a cheat sheet for running
+  git across your local checkouts (`pull all`, `push all`, `status all`), built on
+  `parse-repos.sh paths`. Use it for ad-hoc local work; use `fleet-exec.sh` to land the same
+  change as PRs.
 
 ## Node version
 

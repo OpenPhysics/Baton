@@ -18,6 +18,7 @@ the monorepo checkout.
 | [`list-repos.sh`](list-repos.sh) | Human-friendly listing wrapper |
 | [`clone-fleet.sh`](clone-fleet.sh) | Clone/update every catalog repo into the workspace as a sibling |
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
+| [`../doc/fleet-git.md`](../doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
 | [`sync-claude-settings.sh`](sync-claude-settings.sh) | Roll the `scenerystack` Claude Code plugin out to sim repos' `.claude/settings.json` |
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
