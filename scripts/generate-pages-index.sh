@@ -36,12 +36,17 @@ jq_program='
   .repos[]
   | select(.isSimulation == true and .status == "active")
   | select(.name | test("cd48"; "i") | not)
-  | select(.isPhETPort == $phet)
+  | select(
+      ($category == "naap" and .isNAAPPort == true)
+      or ($category == "phet" and .isPhETPort == true)
+      or ($category == "new" and .isPhETPort == false and .isNAAPPort == false)
+    )
   | "\(.name)|\(.deployedUrl // ("https://openphysics.github.io/" + .name))|\((.name | explode | add) % 360)|\(.physicsTopics | join(","))@\(.description)"
 '
 
-new_sims="$(jq -r --argjson phet false "$jq_program" "$REPOS_JSON" | sort)"
-phet_sims="$(jq -r --argjson phet true "$jq_program" "$REPOS_JSON" | sort)"
+new_sims="$(jq -r --arg category new "$jq_program" "$REPOS_JSON" | sort)"
+phet_sims="$(jq -r --arg category phet "$jq_program" "$REPOS_JSON" | sort)"
+naap_sims="$(jq -r --arg category naap "$jq_program" "$REPOS_JSON" | sort)"
 
 html_escape() {
   printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
@@ -106,7 +111,8 @@ count_lines() {
 
 new_count="$(count_lines "$new_sims")"
 phet_count="$(count_lines "$phet_sims")"
-total_count="$((new_count + phet_count))"
+naap_count="$(count_lines "$naap_sims")"
+total_count="$((new_count + phet_count + naap_count))"
 
 {
   cat <<'HEADER'
@@ -422,6 +428,22 @@ SECTION
   while IFS= read -r line; do
     [[ -n "$line" ]] && card_html "$line"
   done <<<"$phet_sims"
+
+  cat <<SECTION
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>NAAP Astronomy Labs</h2>
+        <span class="count">${naap_count}</span>
+      </div>
+      <div class="grid">
+SECTION
+
+  while IFS= read -r line; do
+    [[ -n "$line" ]] && card_html "$line"
+  done <<<"$naap_sims"
 
   cat <<FOOTER
       </div>
