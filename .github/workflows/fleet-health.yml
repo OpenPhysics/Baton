@@ -69,7 +69,7 @@ jobs:
       # re-downloading the (largely shared) dependency set. The run_id in the primary
       # key makes every run save a fresh entry while restore-keys reuses the last one.
       - name: Cache npm downloads
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: fleet-health-npm-${{ runner.os }}-${{ matrix.sim }}-${{ github.run_id }}
