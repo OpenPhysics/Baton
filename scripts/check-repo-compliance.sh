@@ -134,6 +134,54 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
     pass "<Prefix>Namespace.ts at src/ root"
   fi
 
+  if compgen -G "src/*Colors.ts" >/dev/null; then
+    pass "<Prefix>Colors.ts at src/ root"
+  else
+    fail "no <Prefix>Colors.ts at src/ root"
+  fi
+
+  # Constants: default is a root <Prefix>Constants.ts; a documented nested layout is
+  # allowed (CONVENTIONS.md §2), but constants must exist somewhere under src/.
+  if compgen -G "src/*Constants.ts" >/dev/null; then
+    pass "<Prefix>Constants.ts at src/ root"
+  elif [ -n "$(find src -mindepth 2 -name '*Constants.ts' -print -quit)" ]; then
+    warn "no root <Prefix>Constants.ts — nested constants found; ensure the layout is documented in CLAUDE.md"
+  else
+    fail "no *Constants.ts anywhere under src/"
+  fi
+
+  # The scenerystack Claude Code plugin roll-out (config/claude-settings.json).
+  if [ ! -f .claude/settings.json ]; then
+    fail ".claude/settings.json is missing (run Baton/scripts/sync-claude-settings.sh)"
+  elif ! grep -q 'scenerystack@openphysics' .claude/settings.json; then
+    fail ".claude/settings.json does not enable the scenerystack@openphysics plugin"
+  else
+    pass ".claude/settings.json enables the scenerystack plugin"
+  fi
+
+  # Hardcoded colors in view code (heuristic — ProfileColorProperty entries belong in
+  # <Prefix>Colors.ts). Transparent rgba(0,0,0,0) hit-areas and icon/brand palettes are
+  # accepted; anything else should be themed or documented as a carve-out in CLAUDE.md.
+  color_hits="$(grep -rEn '"#[0-9a-fA-F]{3,8}"|rgba?\(' src --include='*.ts' 2>/dev/null \
+    | grep -vE 'Colors\.ts|Icon|brand\.ts|rgba\( *0, *0, *0, *0 *\)|rgba\(0,0,0,0\)' || true)"
+  if [ -n "$color_hits" ]; then
+    warn "possible hardcoded colors outside <Prefix>Colors.ts (theme or document as carve-out):"
+    echo "$color_hits" | sed 's/^/  /'
+  else
+    pass "no hardcoded colors outside <Prefix>Colors.ts"
+  fi
+
+  # Screen summaries (ACCESSIBILITY.md layer 2): per-screen *ScreenSummaryContent.ts
+  # files (template pattern), an inline createScreenSummaryContent() factory
+  # (OscillationsAndChaos pattern), or a direct `new ScreenSummaryContent(...)`
+  # — one of the three must exist.
+  if [ -n "$(find src -name '*ScreenSummaryContent.ts' -print -quit)" ] \
+    || grep -rqE 'createScreenSummaryContent|new ScreenSummaryContent\(' src --include='*.ts'; then
+    pass "screen summary content present"
+  else
+    warn "no *ScreenSummaryContent.ts and no ScreenSummaryContent construction — a11y screen summaries appear unwired (ACCESSIBILITY.md)"
+  fi
+
   if [ ! -d src/preferences ]; then
     fail "src/preferences/ is missing"
   else

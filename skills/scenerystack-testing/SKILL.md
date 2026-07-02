@@ -5,7 +5,7 @@ description: Use when adding or changing unit tests for a simulation — writing
 
 # SceneryStack Testing
 
-Unit tests are **optional** across the fleet — most sims rely on `npm run check` + `npm run build` + manual/fuzz testing, and only the algorithm-heavy sims (OpticsLab, Resonance, WaveComposer, MazeGame) ship unit tests. When a sim *does* test, it follows the template layout exactly (CONVENTIONS §5) so the structure is identical everywhere. Test the **model** (pure logic, physics, math) — not Scenery rendering.
+Unit tests are **optional** across the fleet — most sims rely on `npm run check` + `npm run build` + manual/fuzz testing, and only the algorithm-heavy sims (OpticsLab, Resonance, WaveComposer, MazeGame, QubitSketch, ExtrasolarPlanets, RotatingSky, SolarSystemModels) ship unit tests. When a sim *does* test, it follows the template layout exactly (CONVENTIONS §5) so the structure is identical everywhere. Test the **model** (pure logic, physics, math) — not Scenery rendering.
 
 ## The standardized layout
 

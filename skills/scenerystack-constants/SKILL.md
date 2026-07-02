@@ -44,11 +44,22 @@ export const CONTROL_PANEL_VBOX_SPACING = 6;
 
 ## Where constants live
 
-- **Model/physics** values → a constants file in `model/` (e.g. `SimConstants.ts`, `LunarLanderConstants.ts`).
-- **Layout/view** values → a constants file in `view/` (e.g. `MazeGameLayoutConstants.ts`, `ViewConstants.ts`).
-- Sim-wide values can sit at `src/<Sim>Constants.ts`.
+Two layouts are accepted (CONVENTIONS.md §2); match the sim's existing choice:
 
-Match the sim's existing file — don't invent a second constants file when one already covers the area.
+- **Single root file (the template default).** All sim-wide values in `src/<Prefix>Constants.ts`.
+  Larger domains group inside the one file with frozen `as const` objects — e.g.
+  VariableStarPhotometry's `VSPConstants.ts` (`FIELD`, `APERTURE`, `TIME`, `LAYOUT`,
+  `FONT_SIZE` groups) or ExtrasolarPlanets' `ExtrasolarPlanetsConstants.ts` (layout +
+  SI physics + slider ranges + presets in one place).
+- **Documented nested split.** Constants live next to their consumers when the sim's
+  `CLAUDE.md` documents the layout: **model/physics** values in a `model/` constants file
+  (e.g. MazeGame's `model/MazeGameConstants.ts`, RadioWaves' `model/RadioWavesConstants.ts`),
+  **layout/view** values in a `view/` or screen-level file (e.g. `MazeGameLayoutConstants.ts`),
+  shared values under `common/` (e.g. TheRamp's `common/RampConstants.ts`,
+  OscillationsAndChaos' topical `common/view/*Constants.ts` files).
+
+Either way, constants must exist somewhere under `src/` — and match the sim's existing
+file: don't invent a second constants file when one already covers the area.
 
 ## Rules
 
