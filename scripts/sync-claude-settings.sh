@@ -5,8 +5,8 @@
 # existing keys in a repo's settings are preserved; only extraKnownMarketplaces.openphysics
 # and enabledPlugins["scenerystack@openphysics"] are added/updated.
 #
-# Targets every repo whose catalog framework is "SceneryStack" (the 14 sims + the template
-# — i.e. the CONVENTIONS.md scope). Operates on sibling checkouts in the workspace, like the
+# Targets every repo whose catalog framework is "SceneryStack" (all the sims in
+# structure/repos.json + the template — i.e. the CONVENTIONS.md scope). Operates on sibling checkouts in the workspace, like the
 # other fleet scripts; it writes files only — committing/pushing (or opening PRs) is left to
 # you or to fleet-exec.sh.
 #

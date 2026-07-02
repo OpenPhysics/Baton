@@ -10,9 +10,10 @@ The canonical reference implementation lives in **`TemplateSingleSim`**. When in
 copy from the template. New sims are forked from it via `npm run rename`, so they start
 conformant by default.
 
-> **Scope:** the 14 SceneryStack TypeScript sims (DopplerEffect, ElectricFieldOfDreams,
-> LadyBug, LunarLander, MazeGame, MovingMan, OpticsLab, OscillationsAndChaos, QubitSketch,
-> RadioWaves, Resonance, TheRamp, TrackLab, WaveComposer) and the template. The hardware web
+> **Scope:** the 18 SceneryStack TypeScript sims (DopplerEffect, ElectricFieldOfDreams,
+> ExtrasolarPlanets, LadyBug, LunarLander, MazeGame, MovingMan, OpticsLab,
+> OscillationsAndChaos, QubitSketch, RadioWaves, Resonance, RotatingSky, SolarSystemModels,
+> TheRamp, TrackLab, VariableStarPhotometry, WaveComposer) and the template. The hardware web
 > UI `tscd48` and the Python apps (`pyro`, `pycd48`) are out of scope. Orchestration (`Baton`)
 > and community-health (`.github`) repos follow their own conventions.
 
@@ -52,6 +53,13 @@ src/
   screen folder (or `common/`).
 - Sim-specific extra root files are allowed when justified (e.g. `<Prefix>Icons.ts`,
   `<Prefix>Strings.ts`); note them in the sim's `CLAUDE.md`.
+- **Constants placement:** the default is a single `<Prefix>Constants.ts` at `src/` root.
+  A sim may instead keep constants nested (split into topical files under `common/`, or a
+  per-screen `model/`) when the domain warrants it — this is a documented-as-allowed
+  variation: note the layout in the sim's `CLAUDE.md` (as TheRamp, MazeGame,
+  OscillationsAndChaos, and RadioWaves do; VariableStarPhotometry's root file with grouped
+  `as const` objects is the same kind of documented variation). Constants must exist
+  somewhere under `src/` — no magic numbers inline in model or view code.
 
 ## 3. Preferences
 
@@ -84,7 +92,8 @@ views. Accessibility strings live under an `a11y` group — see [ACCESSIBILITY.m
 ## 5. Tests (optional, but standardized when present)
 
 Unit tests are **optional** — most sims rely on `npm run check`/`build` + manual testing, and
-only the more algorithm-heavy sims (OpticsLab, Resonance, WaveComposer, MazeGame) ship them.
+only the more algorithm-heavy sims (OpticsLab, Resonance, WaveComposer, MazeGame, QubitSketch,
+ExtrasolarPlanets, RotatingSky, SolarSystemModels) ship them.
 When a sim does have tests, they follow the template exactly:
 
 ```
@@ -166,7 +175,7 @@ rest are a quick manual scan.
 
 - [ ] Bootstrap: `src/{init,assert,splash,brand,main}.ts` exist; `main.ts`'s first import is `./brand.js`. *(auto)*
 - [ ] `<Prefix>Namespace.ts` is at `src/` root, not in `common/`. *(auto)*
-- [ ] `<Prefix>Colors.ts` and `<Prefix>Constants.ts` exist; no hardcoded colors/magic pixels in views. *(partly manual)*
+- [ ] `<Prefix>Colors.ts` exists at `src/` root; constants exist (root file or documented nested layout); no hardcoded colors/magic pixels in views. *(partly manual)*
 - [ ] Screen folders are kebab-case with `model/` + `view/`; no top-level `src/model/` or `src/view/`. *(auto warn)*
 - [ ] `src/preferences/` has `<Prefix>PreferencesModel.ts`, `<prefix>QueryParameters.ts`, and ≥1 `*PreferencesNode.ts`. *(auto)*
 - [ ] `src/i18n/` has `StringManager.ts` + `strings_{en,es,fr}.json`; `npm run check` is green. *(auto)*

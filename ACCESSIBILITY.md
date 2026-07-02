@@ -9,9 +9,10 @@ The canonical reference implementation lives in **`TemplateSingleSim`**. When in
 copy from the template. New sims are forked from it and therefore start accessible by
 default.
 
-> **Scope:** the 15 SceneryStack TypeScript sims (DopplerEffect, ElectricFieldOfDreams,
-> LadyBug, LunarLander, MazeGame, MovingMan, OpticsLab, OscillationsAndChaos, QubitSketch,
-> RadioWaves, Resonance, TheRamp, TrackLab, WaveComposer) and the template. The hardware
+> **Scope:** the 18 SceneryStack TypeScript sims (DopplerEffect, ElectricFieldOfDreams,
+> ExtrasolarPlanets, LadyBug, LunarLander, MazeGame, MovingMan, OpticsLab,
+> OscillationsAndChaos, QubitSketch, RadioWaves, Resonance, RotatingSky, SolarSystemModels,
+> TheRamp, TrackLab, VariableStarPhotometry, WaveComposer) and the template. The hardware
 > web UI `tscd48` and the Python apps are out of scope and keep their own a11y docs.
 
 ## The three required layers (this phase)

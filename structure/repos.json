@@ -233,6 +233,21 @@
       "status": "active"
     },
     {
+      "name": "SolarSystemModels",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": true,
+      "isNewSimulation": false,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "SceneryStack port of the NAAP 'Solar System Models' lab. Compare the Earth-centered Ptolemaic model (deferent and epicycle) with the Sun-centered system and the planetary configurations it produces.",
+      "deployedUrl": "https://OpenPhysics.github.io/SolarSystemModels",
+      "physicsTopics": ["astronomy", "geocentrism", "heliocentrism", "epicycles", "planetary configurations"],
+      "screens": ["Ptolemaic System", "Planetary Configurations"],
+      "status": "active"
+    },
+    {
       "name": "TemplateSingleSim",
       "type": "template",
       "isSimulation": false,
