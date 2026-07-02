@@ -19,12 +19,10 @@ on:
 permissions:
   contents: read
 
-# Cancel superseded runs on the same ref (e.g. rapid pushes to a PR) so the fleet
-# does not burn minutes on builds that a newer commit already obsoletes.
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
+# No concurrency block here: this workflow is workflow_call-only, and callers
+# already define the ci-${{ github.workflow }}-${{ github.ref }} group. Declaring
+# the same group in the called workflow makes GitHub detect a deadlock with the
+# caller's run and kill the reusable call at startup, so the build never runs.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
