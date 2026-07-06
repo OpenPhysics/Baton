@@ -18,6 +18,21 @@
       "status": "active"
     },
     {
+      "name": "Almanach",
+      "type": "tool",
+      "isSimulation": false,
+      "isPhETPort": false,
+      "isNAAPPort": false,
+      "isNewSimulation": false,
+      "language": ["TypeScript", "Markdown"],
+      "framework": "VitePress",
+      "description": "A file-based SceneryStack knowledge base with API guides, software patterns, styling, and accessibility conventions, designed for humans and LLM agents alike.",
+      "deployedUrl": "https://openphysics.github.io/Almanach/",
+      "physicsTopics": [],
+      "screens": null,
+      "status": "active"
+    },
+    {
       "name": "Baton",
       "type": "tool",
       "isSimulation": false,
