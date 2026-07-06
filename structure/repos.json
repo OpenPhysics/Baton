@@ -78,6 +78,21 @@
       "status": "active"
     },
     {
+      "name": "HabitableZones",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": true,
+      "isNewSimulation": false,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "SceneryStack port of the NAAP 'Habitable Zones' lab. Compare circumstellar and galactic habitable zones with orbiting planets in two screens: Circumstellar and Galactic / Milky Way Habitability.",
+      "deployedUrl": null,
+      "physicsTopics": ["astronomy", "habitable zone", "exoplanets", "galactic habitability", "stellar luminosity"],
+      "screens": ["Circumstellar", "Galactic"],
+      "status": "active"
+    },
+    {
       "name": "LadyBug",
       "type": "simulation",
       "isSimulation": true,
@@ -90,6 +105,21 @@
       "deployedUrl": "https://OpenPhysics.github.io/LadyBug",
       "physicsTopics": ["kinematics", "2D motion", "rotation", "vectors"],
       "screens": ["Lady Bug"],
+      "status": "active"
+    },
+    {
+      "name": "LightPropagation",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": false,
+      "isNewSimulation": true,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "Interactive simulation of how light propagates through polarizers and wave plates — Intro, Polarization, Wave Plates, and Lab screens.",
+      "deployedUrl": "https://OpenPhysics.github.io/LightPropagation",
+      "physicsTopics": ["optics", "light", "polarization", "wave plates"],
+      "screens": ["Intro", "Polarization", "Wave Plates", "Lab"],
       "status": "active"
     },
     {
