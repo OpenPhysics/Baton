@@ -194,7 +194,7 @@
       "description": "Web-based geometric optics simulation. Supports ray sources, parallel and divergent beams, mirrors, lenses, beam splitters, and refraction interfaces.",
       "deployedUrl": "https://OpenPhysics.github.io/OpticsLab",
       "physicsTopics": ["optics", "geometric optics", "reflection", "refraction", "lenses"],
-      "screens": ["Optics Lab"],
+      "screens": ["Intro", "Lab", "Presets", "Diffraction"],
       "status": "active"
     },
     {

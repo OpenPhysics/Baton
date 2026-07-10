@@ -23,11 +23,16 @@ secret scanning on public repos) is enabled fleet-wide.
 
 Five **NAAP astronomy ports** joined the fleet since the June audit
 (`ExtrasolarPlanets`, `HabitableZones`, `RotatingSky`, `SolarSystemModels`, `VariableStarPhotometry`).
-Four are **fully implemented** and structurally on parity with the rest of the fleet; **`HabitableZones`
-remains scaffold-only** (placeholder screens, no physics). Reference implementations to emulate are
-**`WaveComposer`** and **`DopplerEffect`** (both 24/24, fully green), with **`TemplateSingleSim`**
-as the canonical scaffold, **`ExtrasolarPlanets`** and **`RotatingSky`** as NAAP reference ports,
-and **`Resonance`** (449 passing unit tests) for verification depth.
+All five are **fully implemented** and structurally on parity with the rest of the fleet. Reference
+implementations to emulate are **`WaveComposer`** and **`DopplerEffect`** (both 24/24, fully green),
+with **`TemplateSingleSim`** as the canonical scaffold, **`ExtrasolarPlanets`**, **`HabitableZones`**,
+and **`RotatingSky`** as NAAP reference ports, and **`Resonance`** (449 passing unit tests) for
+verification depth.
+
+> **Stale-artifact note (2026-07-10):** this audit's July 3 draft still described HabitableZones as
+> scaffold-only. Sim docs and code were current as of 2026-07-09 (Circumstellar + Galactic implemented).
+> See [doc-freshness-audit.md](./doc-freshness-audit.md) for the per-sim freshness pass that flagged
+> the mismatch.
 
 Resolved since 2026-06-23: **OpticsLab** leak suite green (392/392); **QubitSketch** has
 `QubitSketchConstants.ts`, palette `dispose()`, and `tests/memory-leak.test.ts`; **SolarSystemModels**
@@ -37,8 +42,7 @@ hardcoded view colors migrated to `SolarSystemModelsColors.ts`; PhET-port CLAUDE
 Remaining systemic gaps: (1) **memory-leak verification is thin** — only OpticsLab and QubitSketch
 ship leak tests; dynamic NAAP views (RotatingSky, VariableStarPhotometry) have none; (2) **advisory
 lint debt** in OscChaos (~375), Resonance (~264), and QubitSketch (~33) warn-level Biome warnings,
-mostly `noNonNullAssertion`; (3) **`HabitableZones` is not a functional sim yet** — structural
-scaffold only, private repo, no GitHub Pages deploy.
+mostly `noNonNullAssertion`.
 
 **Legend:** ✅ compliant · ⚠️ partial/minor · ❌ missing/broken · N/A not applicable.
 Repo codes: `DE` DopplerEffect · `EFD` ElectricFieldOfDreams · `EP` ExtrasolarPlanets · `HZ`
@@ -60,12 +64,12 @@ Out of scope per `CONVENTIONS.md`: `Baton`, `.github`, `jscd48`, `tscd48`, `pycd
 | DopplerEffect | new sim | 1 | ✅ 17 | ^3.0.0 |
 | ElectricFieldOfDreams | PhET port | 1 | — | ^3.0.0 |
 | ExtrasolarPlanets | NAAP port | 2 | ✅ 64 | ^3.0.0 |
-| HabitableZones | NAAP port | 2 | ✅ 5 | ^3.0.0 |
+| HabitableZones | NAAP port | 2 | ✅ 19 | ^3.0.0 |
 | LadyBug | PhET port | 1 | — | ^3.0.0 |
 | LunarLander | PhET port | 1 | — | ^3.0.0 |
 | MazeGame | PhET port | 1 | ✅ 8 | ^3.0.0 |
 | MovingMan | PhET port | 2 | — | ^3.0.0 |
-| OpticsLab | new sim | 1 | ✅ 392 | ^3.0.0 |
+| OpticsLab | new sim | 4 | ✅ 392 | ^3.0.0 |
 | OscillationsAndChaos | new sim | 4 | — | ^3.0.0 |
 | QubitSketch | new sim | 1 | ✅ 7 | ^3.0.0 |
 | RadioWaves | PhET port | 1 | — | ^3.0.0 |
@@ -95,11 +99,11 @@ Compliance PASS · check/lint/build green · tests ✅ 64/64 · 0 Biome warnings
 Rich CLAUDE.md (163 lines). No memory-leak test.
 </details>
 
-<details><summary>HabitableZones — 22/24, scaffold only</summary>
+<details><summary>HabitableZones — 24/24, NAAP reference</summary>
 
-Compliance PASS · check/lint/build green · tests ✅ 5/5 (`TimeModel` only). 0 Biome warnings.
-❌ **Not functionally ported** — both screens are placeholder label + Reset All; CLAUDE.md documents
-scaffold status. Private GitHub repo, no Pages deploy. Listed in `structure/repos.json`.
+Compliance PASS · check/lint/build green · tests ✅ 19/19 (star evolution, planet evolution,
+galactic habitability, `TimeModel`). Two implemented screens: **Circumstellar** (stellar evolution +
+HZ) and **Galactic** (Milky Way habitability curves). Rich CLAUDE.md. No memory-leak test.
 </details>
 
 <details><summary>RotatingSky — 24/24, NAAP reference</summary>
@@ -178,14 +182,13 @@ All green; Biome warnings cleared in `scripts/bouncingBallToSVG.ts`. Raw timers 
 | i18n (StringManager en/es/fr) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | doc/model.md filled | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | CI workflow (Baton + sec) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Functional sim (not scaffold) | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Functional sim (not scaffold) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Unit tests present | ⚠️ | ⚠️ | ✅ | ⚠️ | ⚠️ | ⚠️ | ✅ | ⚠️ | ✅ | ⚠️ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ✅ |
 | Memory-leak test | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ✅ | ⚠️ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
 
 Notes:
-- **Functional sim:** HZ fails — both screens are template placeholders.
 - **Biome clean:** exit 0 everywhere; ⚠️ = warn-level advisory count (OC, QS, RES).
-- **Unit tests:** ⚠️ = no suite or scaffold-only coverage (HZ: `TimeModel` only; VSP: 6 tests for 4 screens).
+- **Unit tests:** ⚠️ = no suite or thin coverage (VSP: 6 tests for 4 screens).
 - **Memory-leak test:** only OL and QS ship `memory-leak.test.ts`.
 
 ---
@@ -194,13 +197,8 @@ Notes:
 
 ### Major
 
-#### HabitableZones — functional port not started
-**Severity:** Major (functional)
-**Finding:** Both screens are scaffolding (placeholder text + Reset All). No NAAP physics ported.
-Private repo with no GitHub Pages deploy.
-**Fix:** Port circumstellar and galactic habitable-zone models from NAAP Flash sources; wire views;
-enable public deploy when ready.
-**Reference:** `HabitableZones/CLAUDE.md`; `NAAP/` decompiled sources via `scripts/decompile-flash.ts`.
+*(No major items as of 2026-07-10 — HabitableZones functional port completed 2026-07-09; see
+[doc-freshness-audit.md](./doc-freshness-audit.md).)*
 
 ### Minor
 
@@ -238,6 +236,8 @@ enable public deploy when ready.
 
 - **ExtrasolarPlanets → fleet:** richest NAAP CLAUDE.md (163 lines); two-screen shared-constants
   pattern with per-screen model/view folders.
+- **HabitableZones → fleet:** two-screen NAAP port with Circumstellar star-evolution/HZ model and
+  Galactic parametric habitability curves; see `HabitableZones/CLAUDE.md`.
 - **RotatingSky → fleet:** shared sky engine (`SkyModel`, `SkyCoordinates`, `SkyProjection`) reused
   across three screens — the multi-screen pattern for astronomy sims.
 - **SolarSystemModels → fleet:** `zodiacGhostBarColor()` in `*Colors.ts` for computed decorative fills
@@ -253,13 +253,12 @@ Score = weighted matrix rows (✅ 1 · ⚠️ 0.5 · ❌ 0), normalized. Top tie
 
 | Rank | Repo | Blocking | Major | Minor | Notes |
 |---|---|---|---|---|---|
-| 1 | DopplerEffect, LunarLander, TemplateSingleSim, TheRamp, WaveComposer, EP, RS, SSM | 0 | 0 | 0 | Fully green |
+| 1 | DopplerEffect, LunarLander, TemplateSingleSim, TheRamp, WaveComposer, EP, HZ, RS, SSM | 0 | 0 | 0 | Fully green |
 | 2 | Most PhET ports + OpticsLab + MG + TL | 0 | 0 | 0–1 | Polish only |
 | 3 | VSP, RES, OC, QS | 0 | 0 | 1–2 | Tests or lint debt |
-| 4 | **HabitableZones** | 0 | **1** | 0 | Scaffold only |
 
-> **HabitableZones** is the only repo that fails *functional* parity despite passing every structural
-> gate. Everything else is polish-level (lint debt, leak-test coverage, thin VSP tests).
+> All in-scope repos pass structural and functional parity. Remaining deltas are polish-level
+> (lint debt, leak-test coverage, thin VSP tests).
 
 ---
 
