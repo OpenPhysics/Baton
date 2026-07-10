@@ -102,7 +102,7 @@
       "language": ["TypeScript"],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Habitable Zones' lab. Compare circumstellar and galactic habitable zones with orbiting planets in two screens: Circumstellar and Galactic / Milky Way Habitability.",
-      "deployedUrl": null,
+      "deployedUrl": "https://OpenPhysics.github.io/HabitableZones",
       "physicsTopics": ["astronomy", "habitable zone", "exoplanets", "galactic habitability", "stellar luminosity"],
       "screens": ["Circumstellar", "Galactic"],
       "status": "active"
