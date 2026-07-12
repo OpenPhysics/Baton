@@ -48,6 +48,21 @@
       "status": "active"
     },
     {
+      "name": "BasicCoordinatesAndSeasons",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": true,
+      "isNewSimulation": false,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "SceneryStack port of the NAAP 'Basic Coordinates and Seasons' lab. Explore terrestrial and celestial coordinates and how Earth's axial tilt produces the seasons across three screens.",
+      "deployedUrl": "https://OpenPhysics.github.io/BasicCoordinatesAndSeasons",
+      "physicsTopics": ["astronomy", "coordinates", "seasons", "celestial sphere", "latitude", "longitude"],
+      "screens": ["Terrestrial Coordinates", "Celestial Coordinates", "Seasons"],
+      "status": "active"
+    },
+    {
       "name": "DopplerEffect",
       "type": "simulation",
       "isSimulation": true,
@@ -165,6 +180,21 @@
       "deployedUrl": "https://OpenPhysics.github.io/MazeGame",
       "physicsTopics": ["kinematics", "vectors", "motion", "acceleration"],
       "screens": ["Maze Game"],
+      "status": "active"
+    },
+    {
+      "name": "MotionsOfTheSun",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": true,
+      "isNewSimulation": false,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "SceneryStack port of the NAAP 'Motions of the Sun' lab. Trace the Sun's daily path, compare sidereal and solar time, and explore the zodiac on the celestial sphere.",
+      "deployedUrl": "https://OpenPhysics.github.io/MotionsOfTheSun",
+      "physicsTopics": ["astronomy", "sun paths", "sidereal time", "solar time", "zodiac", "ecliptic"],
+      "screens": ["Sun Paths", "Sidereal and Solar Time", "Zodiac"],
       "status": "active"
     },
     {
