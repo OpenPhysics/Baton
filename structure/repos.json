@@ -398,6 +398,21 @@
       "status": "active"
     },
     {
+      "name": "Zenith",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": false,
+      "isNewSimulation": true,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "SceneryStack planetarium renderer. Project the night sky for an observer on Earth from latitude, longitude, and local sidereal time.",
+      "deployedUrl": "https://OpenPhysics.github.io/Zenith",
+      "physicsTopics": ["astronomy", "planetarium", "celestial sphere", "sidereal time", "horizon coordinates"],
+      "screens": ["Planetarium"],
+      "status": "active"
+    },
+    {
       "name": "jscd48",
       "type": "hardware-interface",
       "isSimulation": false,
