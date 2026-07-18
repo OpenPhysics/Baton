@@ -129,7 +129,7 @@ License / Contributing` (enforced by Baton's compliance check). Do **not** add a
 |---|---|
 | `biome.json` | `2.5.0` schema; 2-space indent, 120-char width, double quotes, semicolons |
 | `tsconfig.json` / `tsconfig.scripts.json` | shared template versions (TS6, `erasableSyntaxOnly`, `verbatimModuleSyntax`) |
-| `package.json` | `scenerystack ^3`, `vite ^8`, `typescript ^6`, `@biomejs/biome ^2.5`; standard `scripts` block |
+| `package.json` | `scenerystack ^3`, `vite ^8`, `typescript ^7`, `@biomejs/biome ^2.5`, `vitest ^4`; standard `scripts` block |
 | `.githooks/{pre-commit,pre-push}` | present; activated via `prepare` script on `npm install` |
 | `.github/workflows/ci.yml` | calls `OpenPhysics/Baton` reusable CI + shared security workflows |
 | `.github/dependabot.yml` | present |

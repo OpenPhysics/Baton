@@ -323,6 +323,21 @@
       "status": "active"
     },
     {
+      "name": "SternGerlach",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": false,
+      "isNewSimulation": true,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "Interactive Stern–Gerlach experiment: assemble analyzers, magnets, and counters; fire spin-½ / spin-1 atoms; compare Monte Carlo counts with analytic quantum predictions.",
+      "deployedUrl": "https://OpenPhysics.github.io/SternGerlach",
+      "physicsTopics": ["quantum mechanics", "spin", "Stern-Gerlach", "measurement", "superposition"],
+      "screens": ["Stern Gerlach"],
+      "status": "active"
+    },
+    {
       "name": "TemplateSingleSim",
       "type": "template",
       "isSimulation": false,
