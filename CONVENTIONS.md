@@ -99,9 +99,11 @@ When a sim does have tests, they follow the template exactly:
 ```
 tests/
   setup.ts                  vitest setup (assertion helpers, globals)
+  memory-leak.test.ts       WeakRef + --expose-gc dispose regression (fleet pattern)
   **/*.test.ts              unit tests (mirror the source tree under tests/)
   **/*.spec.ts              Playwright specs, if any (e.g. tests/fuzz/)
-vitest.config.ts            root; include: ["tests/**/*.test.ts"]; setupFiles: ["./tests/setup.ts"]
+vitest.config.ts            root; include: ["tests/**/*.test.ts"]; setupFiles: ["./tests/setup.ts"];
+                            execArgv: ["--expose-gc"] when a memory-leak suite is present
 ```
 
 - Tests live **only** under root `tests/`. Do **not** co-locate `*.test.ts` next to source and
@@ -109,6 +111,9 @@ vitest.config.ts            root; include: ["tests/**/*.test.ts"]; setupFiles: [
 - The setup file is `tests/setup.ts` (not a root `vitest.setup.ts`).
 - The vitest `environment` may vary by sim's needs (`happy-dom` is the template default;
   `jsdom` or `node` are acceptable where justified) — document the choice in the sim's `CLAUDE.md`.
+- **Memory-leak suite:** new sims should ship `tests/memory-leak.test.ts` modeled on
+  `TemplateSingleSim` / `QubitSketch` (dispose in a function boundary → `WeakRef` → `forceGC`).
+  Dynamic sims that add/remove nodes at runtime should expand it like `OpticsLab`.
 
 ## 6. Documentation
 
@@ -127,8 +132,8 @@ License / Contributing` (enforced by Baton's compliance check). Do **not** add a
 
 | File | Standard |
 |---|---|
-| `biome.json` | `2.5.0` schema; 2-space indent, 120-char width, double quotes, semicolons |
-| `tsconfig.json` / `tsconfig.scripts.json` | shared template versions (TS6, `erasableSyntaxOnly`, `verbatimModuleSyntax`) |
+| `biome.json` | `2.5.4` schema; 2-space indent, 120-char width, double quotes, semicolons |
+| `tsconfig.json` / `tsconfig.scripts.json` | shared template versions (TS7, `erasableSyntaxOnly`, `verbatimModuleSyntax`) |
 | `package.json` | `scenerystack ^3`, `vite ^8`, `typescript ^7`, `@biomejs/biome ^2.5`, `vitest ^4`; standard `scripts` block |
 | `.githooks/{pre-commit,pre-push}` | present; activated via `prepare` script on `npm install` |
 | `.github/workflows/ci.yml` | calls `OpenPhysics/Baton` reusable CI + shared security workflows |
@@ -182,7 +187,7 @@ rest are a quick manual scan.
 - [ ] Any tests live only under root `tests/` with `tests/setup.ts`; no co-located / `__tests__/`. *(auto)*
 - [ ] `doc/model.md` + `doc/implementation-notes.md` exist and are filled. *(auto presence; manual content)*
 - [ ] `README.md` follows the six-section outline; no local `CONTRIBUTING.md` / `LICENSE`. *(auto)*
-- [ ] `biome.json` is on the `2.5.0` schema; `npm run lint` is green. *(auto)*
+- [ ] `biome.json` is on the `2.5.4` schema; `npm run lint` is green. *(auto)*
 - [ ] Any deliberate deviation is documented in the sim's `CLAUDE.md`. *(manual)*
 
 ## Verification

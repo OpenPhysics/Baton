@@ -30,6 +30,7 @@ the monorepo checkout.
 | [`make-thumbnails.mjs`](make-thumbnails.mjs) | Downscale `screenshots/*.png` to `docs/assets/*.webp` with sharp |
 | [`generate-screenshots.sh`](generate-screenshots.sh) | Capture each sim's screen to `<sim>/assets/screenshot.png` |
 | [`screenshot.mjs`](screenshot.mjs) | Playwright driver behind `generate-screenshots.sh` |
+| [`../.github/workflows/refresh-screenshots.yml`](../.github/workflows/refresh-screenshots.yml) | Weekly/manual Pages thumbnail refresh → PR |
 
 ## parse-repos.sh
 
