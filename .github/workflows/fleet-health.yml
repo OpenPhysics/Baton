@@ -58,9 +58,9 @@ jobs:
       matrix:
         sim: ${{ fromJson(needs.discover.outputs.matrix) }}
     steps:
-      - uses: actions/setup-node@v6.4.0
+      - uses: actions/setup-node@v7.0.0
         with:
-          # Mirrors the node-version default in ci.yml / deploy.yml — bump together.
+          # Mirrors the fleet Node default — bump all setup-node workflows together.
           # See Baton/README.md ("Node version").
           node-version: '24'
 

@@ -30,9 +30,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.0
 
-      - uses: actions/setup-node@v6.0.0
+      - uses: actions/setup-node@v7.0.0
         with:
-          node-version: "22"
+          # Mirrors the fleet Node default in ci.yml / deploy.yml / fleet-health.yml.
+          node-version: "24"
           cache: npm
 
       - name: Install dependencies
@@ -73,7 +74,7 @@ jobs:
         run: scripts/generate-pages-index.sh
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8.1.1
         with:
           commit-message: "chore: refresh Pages screenshot thumbnails"
           title: "chore: refresh Pages screenshot thumbnails"

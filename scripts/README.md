@@ -153,7 +153,7 @@ Run by [`baton-selfcheck.yml`](../.github/workflows/baton-selfcheck.yml) on ever
 
 ```bash
 scripts/check-skills.sh         # every skills/<name>/SKILL.md is well-formed and indexed in skills/README.md
-scripts/check-node-version.sh   # ci.yml / deploy.yml / fleet-health.yml all declare the same Node version
+scripts/check-node-version.sh   # all setup-node workflows declare the same Node version
 ```
 
 ## generate-screenshots.sh

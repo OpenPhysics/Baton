@@ -157,14 +157,17 @@ Cross-repo automation, all driven from the catalog:
 
 ## Node version
 
-The default Node version for the fleet is **`"24"`**, declared in three places that must stay in
-sync — bump them together:
+The default Node version for the fleet is **`"24"`**, declared in every Baton workflow that
+runs `setup-node` — bump them together:
 
 - [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — `node-version` input default
 - [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) — `node-version` input default
 - [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) — `setup-node` step
+- [`.github/workflows/fleet-exec.yml`](.github/workflows/fleet-exec.yml) — `setup-node` step
+- [`.github/workflows/optimize-assets.yml`](.github/workflows/optimize-assets.yml) — `setup-node` step
+- [`.github/workflows/refresh-screenshots.yml`](.github/workflows/refresh-screenshots.yml) — `setup-node` step
 
-[`scripts/check-node-version.sh`](scripts/check-node-version.sh) enforces that the three stay in
+[`scripts/check-node-version.sh`](scripts/check-node-version.sh) enforces that they stay in
 sync (run in CI by [`baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml)), so a half-done
 bump fails fast instead of drifting silently.
 

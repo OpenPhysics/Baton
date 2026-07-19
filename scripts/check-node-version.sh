@@ -16,8 +16,6 @@ FAIL=0
 fail() { echo "FAIL: $1"; FAIL=1; }
 
 # Each entry: "label|file|extractor" where extractor is a grep -oP that yields the version.
-# ci.yml / deploy.yml declare it as the `node-version` input default; fleet-health.yml
-# sets it on the setup-node step.
 declare -A VERSIONS
 
 extract() {
@@ -30,11 +28,15 @@ extract() {
 # ci.yml / deploy.yml declare it as the `node-version` input `default:`.
 VERSIONS[ci.yml]="$(extract "$WF/ci.yml" $'default:\\s*["\']\\K[0-9]+(?=["\'])' || true)"
 VERSIONS[deploy.yml]="$(extract "$WF/deploy.yml" $'default:\\s*["\']\\K[0-9]+(?=["\'])' || true)"
-# fleet-health.yml: node-version: '24'  on the setup-node step.
-VERSIONS[fleet-health.yml]="$(extract "$WF/fleet-health.yml" $'node-version:\\s*["\']\\K[0-9]+(?=["\'])' || true)"
+# Other workflows: node-version on the setup-node step.
+for f in fleet-health.yml fleet-exec.yml optimize-assets.yml refresh-screenshots.yml; do
+  VERSIONS[$f]="$(extract "$WF/$f" $'node-version:\\s*["\']\\K[0-9]+(?=["\'])' || true)"
+done
+
+FILES=(ci.yml deploy.yml fleet-health.yml fleet-exec.yml optimize-assets.yml refresh-screenshots.yml)
 
 echo "Declared Node versions:"
-for f in ci.yml deploy.yml fleet-health.yml; do
+for f in "${FILES[@]}"; do
   v="${VERSIONS[$f]:-}"
   echo "  $f: ${v:-<not found>}"
   [ -n "$v" ] || fail "$f: could not extract a Node version"
@@ -43,7 +45,7 @@ done
 # All present versions must be identical.
 uniq_versions="$(printf '%s\n' "${VERSIONS[@]}" | grep -v '^$' | sort -u | tr '\n' ' ' | sed 's/ $//')"
 if [ "$FAIL" -eq 0 ] && [ "$(printf '%s' "$uniq_versions" | wc -w)" -ne 1 ]; then
-  fail "Node versions diverge across workflows: $uniq_versions — bump all three together (see README 'Node version')"
+  fail "Node versions diverge across workflows: $uniq_versions — bump all declared workflows together (see README 'Node version')"
 fi
 
 if [ "$FAIL" -ne 0 ]; then

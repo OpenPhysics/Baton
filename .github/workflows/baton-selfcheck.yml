@@ -13,19 +13,15 @@ on:
       - "skills/**"
       - ".claude-plugin/**"
       - "scripts/**"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/deploy.yml"
-      - ".github/workflows/fleet-health.yml"
-      - ".github/workflows/baton-selfcheck.yml"
+      - ".github/workflows/**"
+      - ".github/actions/**"
   pull_request:
     paths:
       - "skills/**"
       - ".claude-plugin/**"
       - "scripts/**"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/deploy.yml"
-      - ".github/workflows/fleet-health.yml"
-      - ".github/workflows/baton-selfcheck.yml"
+      - ".github/workflows/**"
+      - ".github/actions/**"
 
 permissions:
   contents: read

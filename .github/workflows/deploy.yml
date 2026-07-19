@@ -4,8 +4,8 @@ on:
   workflow_call:
     inputs:
       node-version:
-        # Mirrors the node-version default in ci.yml / fleet-health.yml — bump all
-        # three together. See Baton/README.md ("Node version").
+        # Mirrors the fleet Node default — bump all setup-node workflows together.
+        # See Baton/README.md ("Node version").
         type: string
         default: "24"
       dist-path:
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v7.0.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: ${{ inputs.node-version }}
           cache: "npm"

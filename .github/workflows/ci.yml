@@ -4,8 +4,8 @@ on:
   workflow_call:
     inputs:
       node-version:
-        # Default Node version for the fleet. Single source of truth: this default
-        # is mirrored in deploy.yml and fleet-health.yml — bump all three together.
+        # Default Node version for the fleet. Mirrored in every Baton workflow that
+        # runs setup-node — bump them together (enforced by check-node-version.sh).
         # See Baton/README.md ("Node version").
         type: string
         default: "24"
@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v7.0.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: ${{ inputs.node-version }}
           cache: "npm"
@@ -51,9 +51,9 @@ jobs:
       - name: Type check
         run: npm run check
 
-      # Run tests when run-tests is "true", or when it is unset ("") and the repo
-      # defines a "test" script. Skipped only when run-tests is explicitly "false"
-      # or no test script exists. Keeps testless sims green with no per-repo config.
+      # SceneryStack sims ship a "test" script (fleet-standard). Auto-run when the
+      # script exists; force on/off via run-tests "true"/"false". Non-sim callers
+      # without a test script stay green without per-repo config.
       - name: Test
         if: inputs.run-tests != 'false'
         run: |
