@@ -28,7 +28,7 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
    NumberProperty dispose harnesses).
 2. **Baseline + deepened unit tests** — smoke suites for former zero-test sims; extra
    physics invariants on MovingMan, TheRamp, LunarLander, LadyBug, RadioWaves, OC spring.
-3. **Docs / legal / conventions** — LICENSE, SECURITY, CREDITS, CODEOWNERS; README/CLAUDE
+3. **Docs / legal / conventions** — SECURITY, CREDITS, CODEOWNERS (no local LICENSE — org default); README/CLAUDE
    Testing parity; testing skill refresh; doc-freshness re-audit; this parity refresh.
 4. **Accessibility** — WaveComposer `pdomOrder`; OC `a11y` rename; Layer-3 keyboard-drag
    pairing on primary play-area objects (see a11y audit).
@@ -71,12 +71,14 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
 
 | Item | Severity | Notes |
 |---|---|---|
-| Graph-chrome keyboard pan/zoom (`GraphInteractionHandler`) | Minor | Play-area Layer-3 pairing largely done 2026-07-18; see [fleet-a11y-audit.md](./fleet-a11y-audit.md) |
-| Biome `noNonNullAssertion` warn debt (OC / Resonance / QubitSketch) | Minor | Rule enabled as `warn`; StatePropertyMapper + QubitSketch simulator/QASM cleaned; more remain |
-| Nested `*Constants.ts` compliance WARNs | Cosmetic | Documented carve-outs / layout variants |
-| Expand leak suites beyond TimeModel / NumberProperty fallback | Minor | OpticsLab remains the deep reference; several sims use Property.dispose harness |
+| Deferred a11y chrome (palette previews, video/axis resize, analyzer bars) | Cosmetic | Documented out-of-scope in ACCESSIBILITY.md + a11y audit |
 | OscillationsAndChaos extract `*ScreenSummaryContent.ts` | Cosmetic | Behavior already correct |
 | Template Playwright fuzz not in default CI | Cosmetic | `npm run test:fuzz` / `test:fuzz:quick` available locally |
+| Live `currentDetailsContent` on a few shared summaries | Minor | Spot-check DerivedProperty usage |
+
+**Resolved 2026-07-18 (follow-up):** root `LICENSE` removed (org default); graph pan +
+secondary keyboard drag; deepened model-layer leak suites; nested-constants / color
+carve-outs documented in per-sim `CLAUDE.md`.
 
 ## §2 Best-practice harvest
 

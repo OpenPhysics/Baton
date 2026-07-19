@@ -3,8 +3,8 @@
 **Date:** 2026-07-18 · **Scope:** 24 `isSimulation: true` SceneryStack repos +
 `TemplateSingleSim` from [`structure/repos.json`](../structure/repos.json) ·
 **Mode:** triage refresh (identification + fleet doc hygiene) ·
-**Docs in scope:** `README.md`, `CLAUDE.md`, `CREDITS.md`, `LICENSE`, `SECURITY.md`,
-and `doc/*.md` when present.
+**Docs in scope:** `README.md`, `CLAUDE.md`, `CREDITS.md`, `SECURITY.md`,
+and `doc/*.md` when present. (No local `LICENSE` — org default from `.github`.)
 
 > Prior pass: 2026-07-10 (20 sims). This refresh folds in **SternGerlach**,
 > **Zenith**, **MotionsOfTheSun**, **BasicCoordinatesAndSeasons**, and checks
@@ -13,7 +13,7 @@ and `doc/*.md` when present.
 ## Method
 
 1. **Inventory** — every active sim has `README.md`, `CLAUDE.md`, `CREDITS.md`,
-   `LICENSE` (AGPL), `SECURITY.md`, and `.github/CODEOWNERS`.
+   `SECURITY.md`, and `.github/CODEOWNERS`.
 2. **Triage flags** — scaffold/status keywords, screen-count vs catalog, Tech Stack
    claiming TypeScript ^5, Scripts table missing `npm test`, CLAUDE missing Testing.
 3. **Spot verification** — only when a flag suggests a dated physics/product claim.
@@ -22,7 +22,7 @@ and `doc/*.md` when present.
 
 | Bucket | Count | Notes |
 |---|---|---|
-| **Legal / meta docs present** | **25/25** | LICENSE, SECURITY, CREDITS, CODEOWNERS added 2026-07-18 |
+| **Legal / meta docs present** | **25/25** | SECURITY, CREDITS, CODEOWNERS (no local LICENSE — org default) added 2026-07-18 |
 | **README Scripts include `npm test`** | **25/25** | Fan-out from Template |
 | **CLAUDE Testing section** | **25/25** | Fan-out from Template |
 | **Suspect product/physics claims** | **re-spot as needed** | July 10 update pass covered the prior top offenders; new sims below |
@@ -44,9 +44,10 @@ and SolarSystemModels. Treat those as **current unless `src/` drifts again**.
 
 ## Fleet hygiene completed this pass
 
-- Root `LICENSE` (AGPL-3.0) + `SECURITY.md` + `.github/CODEOWNERS` on every sim
+- `SECURITY.md` + `.github/CODEOWNERS` on every sim (no local `LICENSE` — org default)
 - `CREDITS.md` for PhET / NAAP / original sims (WaveComposer keeps its audio credits)
 - README Scripts + CLAUDE Testing sections aligned with Vitest + memory-leak suite
+- Nested-constants / color carve-outs documented in per-sim `CLAUDE.md`
 - `Baton/skills/scenerystack-testing/SKILL.md` updated (tests are fleet-standard, not optional)
 
 ## Related

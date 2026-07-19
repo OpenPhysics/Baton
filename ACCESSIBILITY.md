@@ -16,7 +16,11 @@ default.
 > web UI `tscd48` and the Python apps are out of scope and keep their own a11y docs.
 >
 > **Audit:** see [`doc/fleet-a11y-audit.md`](doc/fleet-a11y-audit.md) for the latest
-> fleet-wide checklist pass and remaining Layer-3 keyboard-drag gaps.
+> fleet-wide checklist pass. Layer-3 keyboard drag is required for **play-area objects and
+> primary secondary controls** (`RichDragListener` / `KeyboardDragListener` /
+> `KeyboardListener`). Pointer-only **chrome** (palette drag previews, axis-resize handles,
+> video scrubbers, decorative hit-targets) may stay mouse/touch-only when an equivalent
+> keyboard path already exists elsewhere (sliders, toolbar pan, hotkeys).
 
 ## The three required layers (this phase)
 

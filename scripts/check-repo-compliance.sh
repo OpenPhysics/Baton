@@ -145,7 +145,11 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
   if compgen -G "src/*Constants.ts" >/dev/null; then
     pass "<Prefix>Constants.ts at src/ root"
   elif [ -n "$(find src -mindepth 2 -name '*Constants.ts' -print -quit)" ]; then
-    warn "no root <Prefix>Constants.ts — nested constants found; ensure the layout is documented in CLAUDE.md"
+    if [ -f CLAUDE.md ] && grep -qE '^## Compliance carve-outs' CLAUDE.md && grep -qiE 'nested constants' CLAUDE.md; then
+      pass "nested *Constants.ts layout documented in CLAUDE.md Compliance carve-outs"
+    else
+      warn "no root <Prefix>Constants.ts — nested constants found; document under CLAUDE.md ## Compliance carve-outs"
+    fi
   else
     fail "no *Constants.ts anywhere under src/"
   fi
@@ -165,8 +169,12 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
   color_hits="$(grep -rEn '"#[0-9a-fA-F]{3,8}"|rgba?\(' src --include='*.ts' 2>/dev/null \
     | grep -vE 'Colors\.ts|Icon|brand\.ts|rgba\( *0, *0, *0, *0 *\)|rgba\(0,0,0,0\)' || true)"
   if [ -n "$color_hits" ]; then
-    warn "possible hardcoded colors outside <Prefix>Colors.ts (theme or document as carve-out):"
-    echo "$color_hits" | sed 's/^/  /'
+    if [ -f CLAUDE.md ] && grep -qE '^## Compliance carve-outs' CLAUDE.md && grep -qiE 'hardcoded colors' CLAUDE.md; then
+      pass "hardcoded color carve-outs documented in CLAUDE.md ($(echo "$color_hits" | wc -l | tr -d ' ') hit(s))"
+    else
+      warn "possible hardcoded colors outside <Prefix>Colors.ts (theme or document under CLAUDE.md ## Compliance carve-outs):"
+      echo "$color_hits" | sed 's/^/  /'
+    fi
   else
     pass "no hardcoded colors outside <Prefix>Colors.ts"
   fi

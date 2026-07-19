@@ -14,56 +14,53 @@ and `*KeyboardHelpContent`. After this pass:
 | WaveComposer missing `pdomOrder` | **Fixed** — `BaseAnalysisScreenView.establishPdomOrder` on all 3 screens |
 | OscillationsAndChaos nonstandard `accessibility` string group | **Fixed** — renamed to `a11y` + `getA11yStrings()` |
 | ACCESSIBILITY.md scope list stale (18 sims) | **Fixed** — points at catalog + this audit |
+| Play-area + secondary keyboard drag | **Fixed** — see matrix; graph pan keyboard added for OC/Resonance/TrackLab |
 
-**Layer 3 keyboard drag (2026-07-18 follow-up):** play-area objects gained
-`KeyboardDragListener` (or `RichDragListener`) in LadyBug, RadioWaves,
-ElectricFieldOfDreams, OscillationsAndChaos (spring/pendulum masses), TheRamp
-(surface + FBD), DopplerEffect (`DragHandlerManager`), SolarSystemModels
-(Configurations planets), QubitSketch (Bloch camera), and OpticsLab (protractor).
-Many NAAP map/camera sims already paired `DragListener` with `KeyboardListener`.
-Remaining gaps are mostly **graph chrome** (pan/zoom/resize handlers in
-OscillationsAndChaos / Resonance `GraphInteractionHandler`) and a few secondary
-UI hit-targets (seek bars, timeline strips, palette drag previews).
+**Layer 3:** Primary play-area drags and high-traffic secondary controls (seek bars, field
+pads, timeline, PE zero line, chart pan) now have `KeyboardDragListener` /
+`RichDragListener` / `KeyboardListener` paths. Remaining pointer-only sites are
+**documented out-of-scope chrome** (palette drag previews, axis-resize handles, video
+scrubbers, analyzer delta bars, zodiac strip) — see ACCESSIBILITY.md.
 
 ## Checklist matrix (2026-07-18)
 
-| Sim | `a11y` strings | Screen summary | Keyboard help | `screenSummaryContent` | Explicit `pdomOrder` / PDOM areas | Keyboard drag gap |
+| Sim | `a11y` strings | Screen summary | Keyboard help | `screenSummaryContent` | Explicit `pdomOrder` / PDOM areas | Keyboard drag |
 |---|---|---|---|---|---|---|
 | TemplateSingleSim | ✅ | ✅ | ✅ | ✅ | ✅ wrapper | — |
-| BasicCoordinatesAndSeasons | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ DragListener-only sites |
-| DopplerEffect | ✅ | ✅ | ✅ | ✅ | ✅ | — (KeyboardDragListener in DragHandlerManager) |
-| ElectricFieldOfDreams | ✅ | ✅ | ✅ | ✅ | ✅ | — (KeyboardDragListener on particles) |
+| BasicCoordinatesAndSeasons | ✅ | ✅ | ✅ | ✅ | ✅ | — (`KeyboardListener` on map/globe sites) |
+| DopplerEffect | ✅ | ✅ | ✅ | ✅ | ✅ | — (source/observer + mic `RichDragListener`) |
+| ElectricFieldOfDreams | ✅ | ✅ | ✅ | ✅ | ✅ | — (particles + external-field pad) |
 | ExtrasolarPlanets | ✅ | ✅ | ✅ | ✅ | ✅ | — |
-| HabitableZones | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| LadyBug | ✅ | ✅ | ✅ | ✅ | ✅ | — (KeyboardDragListener on bug) |
-| LightPropagation | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| HabitableZones | ✅ | ✅ | ✅ | ✅ | ✅ | — (`KeyboardListener` / paired sites) |
+| LadyBug | ✅ | ✅ | ✅ | ✅ | ✅ | — (bug + seek bar + remote pad) |
+| LightPropagation | ✅ | ✅ | ✅ | ✅ | ✅ | — (paired sites) |
 | LunarLander | ✅ | ✅ | ✅ | ✅ | ✅ | — |
-| MazeGame | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| MotionsOfTheSun | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| MovingMan | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| OpticsLab | ✅ | ✅ shared | ✅ shared | ✅ | ✅ | — (RichDragListener fleet-wide; ToolsPanel protractor) |
-| OscillationsAndChaos | ✅ (`a11y`) | ✅ inline | ✅ shared | ✅ `setScreenSummaryContent` | ✅ `pdomPlayAreaNode` | — masses/bob; ⚠️ graph chrome |
-| QubitSketch | ✅ | ✅ | ✅ | ✅ | ✅ | — (KeyboardDragListener on Bloch camera) |
-| RadioWaves | ✅ | ✅ | ✅ | ✅ | ✅ | — (KeyboardDragListener on electron) |
-| Resonance | ✅ | ✅ shared | ✅ shared | ✅ | ✅ | ⚠️ |
-| RotatingSky | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| SolarSystemModels | ✅ | ✅ | ✅ | ✅ | ✅ | — (Configurations planet KeyboardDragListener; other screens TBD) |
+| MazeGame | ✅ | ✅ | ✅ | ✅ | ✅ | — (control panel / keyboard modes) |
+| MotionsOfTheSun | ✅ | ✅ | ✅ | ✅ | ✅ | — (`KeyboardListener` on map/sun sites) |
+| MovingMan | ✅ | ✅ | ✅ | ✅ | ✅ | — (sprite Drag+KeyboardDrag) |
+| OpticsLab | ✅ | ✅ shared | ✅ shared | ✅ | ✅ | — (RichDragListener + protractor) |
+| OscillationsAndChaos | ✅ (`a11y`) | ✅ inline | ✅ shared | ✅ `setScreenSummaryContent` | ✅ `pdomPlayAreaNode` | — (masses/bob + graph pan) |
+| QubitSketch | ✅ | ✅ | ✅ | ✅ | ✅ | — (Bloch camera); palette preview chrome deferred |
+| RadioWaves | ✅ | ✅ | ✅ | ✅ | ✅ | — (transmitter electron) |
+| Resonance | ✅ | ✅ shared | ✅ shared | ✅ | ✅ | — (oscillator sites + graph pan) |
+| RotatingSky | ✅ | ✅ | ✅ | ✅ | ✅ | — (`KeyboardListener` on map/sky) |
+| SolarSystemModels | ✅ | ✅ | ✅ | ✅ | ✅ | — (Configurations planets + timeline) |
 | SternGerlach | ✅ | ✅ | ✅ | ✅ | ✅ | — |
-| TheRamp | ✅ | ✅ shared | ✅ shared | ✅ | ✅ | — (surface + FBD; BlockNode already had KeyboardListener) |
-| TrackLab | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| VariableStarPhotometry | ✅ | ✅ | ✅ shared | ✅ | ✅ | ⚠️ |
-| WaveComposer | ✅ | ✅ shared | ✅ shared | ✅ | ✅ **fixed** | — |
-| Zenith | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| TheRamp | ✅ | ✅ shared | ✅ shared | ✅ | ✅ | — (block, surface, FBD, PE line, time cursor) |
+| TrackLab | ✅ | ✅ | ✅ | ✅ | ✅ | — (chart pan); video/axis chrome deferred |
+| VariableStarPhotometry | ✅ | ✅ | ✅ shared | ✅ | ✅ | — (aperture/registration); analyzer bars deferred |
+| WaveComposer | ✅ | ✅ shared | ✅ shared | ✅ | ✅ | — |
+| Zenith | ✅ | ✅ | ✅ | ✅ | ✅ | — (observer / planetarium paired) |
 
 ## Ranked remaining work
 
-1. **Graph-chrome keyboard pan/zoom** — `GraphInteractionHandler` in OscillationsAndChaos /
-   Resonance (and similar timeline/seek UI) still uses pointer-only `DragListener`s for
-   chart pan/resize. Prefer keyboard affordances or `RichDragListener` where continuous.
+1. **Deferred chrome** — Gate-palette drag previews (QubitSketch), analyzer delta-bar
+   hit-targets (VSP), zodiac strip / Ptolemaic extras (SSM), TrackLab video/axis resize:
+   out of Layer-3 scope unless they become primary keyboard workflows.
 2. **OscillationsAndChaos structural polish** — Extract inline `createScreenSummaryContent()`
    bodies into per-screen `*ScreenSummaryContent.ts` files (behavior already correct).
-3. **Secondary UI hit-targets** — Palette drag previews, analyzer delta bars, zodiac/timeline
-   strips: add keyboard paths where they are primary interactions, not decorative chrome.
+3. **Live `currentDetailsContent`** — Prefer `DerivedProperty` over static strings on every
+   multi-state screen summary (spot-check remaining shared summary bases).
 
 ## Verification
 
