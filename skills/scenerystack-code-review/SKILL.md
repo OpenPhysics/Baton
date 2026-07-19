@@ -63,6 +63,8 @@ These standard issues should exist and be complete. If any are missing, pause th
 
 ### Memory Leaks
 
+- [ ] `tests/memory-leak.test.ts` exists and passes under `npm test` (WeakRef +
+  `execArgv: ["--expose-gc"]` in `vitest.config.ts` — see scenerystack-testing / CONVENTIONS §5).
 - [ ] A Chrome DevTools heap comparison shows no leak. Build with mangling disabled for readable names
   (e.g. `vite build --minify false`). Compare against the responsible dev's results: {{ISSUE}}.
 - [ ] Every SceneryStack component that registers internal observers/listeners is `dispose()`d where
@@ -134,8 +136,15 @@ Compare against `TemplateSingleSim`. Source lives in `src/`, not `js/`; tooling 
     vitest.config.ts
     README.md
     CLAUDE.md
+    CREDITS.md                  PhET / NAAP / original attribution (fleet standard)
+    SECURITY.md                 points at org security policy
+    .github/CODEOWNERS
   ```
 
+- [ ] No local `LICENSE` or `CONTRIBUTING.md` — org defaults from `OpenPhysics/.github` apply
+  (compliance fails if a root `LICENSE` is present).
+- [ ] `README.md` follows the six-section outline only: Features / Quick Start / Scripts /
+  Tech Stack / License / Contributing (no extra top-level `##` sections).
 - [ ] `src/` follows the template layout — one folder per screen (even single-screen), shared code in
   `src/common/`, model/view split, preferences and i18n in their own folders:
 
@@ -173,7 +182,8 @@ Compare against `TemplateSingleSim`. Source lives in `src/`, not `js/`; tooling 
   scenerystack-color-profiles).
 - [ ] Sim-specific preferences are `Property` instances in `SimPreferencesModel.ts`, initialized from
   the query-parameter schema (see scenerystack-preferences).
-- [ ] Constants are centralized in `{prefix}Constants.ts` (see scenerystack-constants).
+- [ ] Primary constants live in `src/{Prefix}Constants.ts`; any nested topical constants files
+  are documented in `CLAUDE.md` (see scenerystack-constants).
 - [ ] `package.json` has no unused dependencies.
 - [ ] `package.json`, `tsconfig*.json`, `vite.config.ts`, `vitest.config.ts`, and `biome.json` contain
   no dev-only relaxations that should be removed before release (disabled lint rules, loosened
@@ -190,8 +200,9 @@ Compare against `TemplateSingleSim`. Source lives in `src/`, not `js/`; tooling 
 
 ### Math Libraries
 
-- [ ] Use `DOT/Utils.toFixed` / `Utils.toFixedNumber`, never JavaScript's native `Number.toFixed`
-  (cross-browser rounding inconsistencies).
+- [ ] Format numbers with `toFixed` / `toFixedNumber` from `scenerystack/dot` (or
+  `Utils.toFixed` / `Utils.toFixedNumber`), never JavaScript's native `Number.toFixed`
+  (cross-browser rounding inconsistencies). See scenerystack-numerics.
 
 ### Organization, Readability & Maintainability
 
@@ -221,8 +232,8 @@ Compare against `TemplateSingleSim`. Source lives in `src/`, not `js/`; tooling 
 - [ ] No significant duplicated blocks; anything reusable is lifted into `src/common/` or shared code.
 - [ ] No leftover `TODO` / `FIXME` / `REVIEW` comments — resolve them or promote to GitHub issues.
 - [ ] No undocumented magic numbers; extract them as named, documented constants.
-- [ ] Constants shared across files are centralized in `{prefix}Constants.ts`; the sim doesn't silently
-  break when plausible constant values change.
+- [ ] Constants shared across files are centralized in `src/{Prefix}Constants.ts` (plus any
+  documented nested extras); the sim doesn't silently break when plausible constant values change.
 - [ ] `PhetColorScheme` is used for standardized colors rather than re-inventing them; note any colors
   worth contributing upstream.
 - [ ] Dependent Properties are `DerivedProperty`, not hand-synced plain `Property`s.

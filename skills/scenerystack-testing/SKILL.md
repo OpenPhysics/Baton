@@ -19,11 +19,13 @@ reference (CONVENTIONS §5).
 ```
 tests/
   setup.ts                 vitest setup (Canvas/Audio mocks, init({ name }))
+                           — happy-dom default; see carve-out below
   memory-leak.test.ts      WeakRef + --expose-gc dispose regression (fleet pattern)
   **/*.test.ts             unit tests, mirroring the source tree under tests/
   **/*.spec.ts             Playwright specs, if any (e.g. tests/fuzz/)
-vitest.config.ts           include: ["tests/**/*.test.ts"]; setupFiles: ["./tests/setup.ts"];
-                           execArgv: ["--expose-gc"] when a memory-leak suite is present
+vitest.config.ts           include: ["tests/**/*.test.ts"];
+                           setupFiles: ["./tests/setup.ts"]  // happy-dom sims
+                           execArgv: ["--expose-gc"]         // required with leak suite
 ```
 
 Tests live **only** under root `tests/` — never co-located next to source, never in

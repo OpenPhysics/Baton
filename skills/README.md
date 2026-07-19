@@ -29,7 +29,7 @@ folder is well-formed and listed here.
 |---|---|
 | [`scenerystack-coding-conventions`](scenerystack-coding-conventions/SKILL.md) | Writing/reviewing TypeScript — naming, constructor signatures, optionize, access modifiers, type inference, assertions, read-vs-write Property APIs. |
 | [`scenerystack-code-review`](scenerystack-code-review/SKILL.md) | Running a pre-release Code Review (CRC) on a sim — build/fuzz, memory leaks, performance, i18n, structure conformance, accessibility. |
-| [`scenerystack-testing`](scenerystack-testing/SKILL.md) | Adding/changing unit tests — `vitest` specs for model/physics code, the `tests/` layout, fuzz/Playwright specs, the build/fuzz check that substitutes where none exist. |
+| [`scenerystack-testing`](scenerystack-testing/SKILL.md) | Adding/changing unit tests — `vitest` specs for model/physics code, the fleet-standard `tests/` layout + memory-leak suite, and optional Playwright fuzz. |
 
 ### Model & math
 
@@ -37,8 +37,8 @@ folder is well-formed and listed here.
 |---|---|
 | [`scenerystack-model`](scenerystack-model/SKILL.md) | Creating/changing a model — state, physics, the `step(dt)`/`reset()` loop, reactive Properties, the `TModel` contract, model/view separation. |
 | [`scenerystack-model-view-transform`](scenerystack-model-view-transform/SKILL.md) | Converting between model and view coordinates or scaling physical quantities to pixels — `ModelViewTransform2`. |
-| [`scenerystack-constants`](scenerystack-constants/SKILL.md) | A number, size, or physical parameter appears in code — define it in `*Constants.ts` instead of inlining a magic value. |
-| [`scenerystack-numerics`](scenerystack-numerics/SKILL.md) | Writing a model's numerical core — integrating motion over `dt`, stable time steps, Euler vs. higher-order integration, `Utils`/`LinearFunction`/`dotRandom`, determinism. |
+| [`scenerystack-constants`](scenerystack-constants/SKILL.md) | A number, size, or physical parameter appears in code — define it in root `*Constants.ts` (plus documented nested extras) instead of inlining a magic value. |
+| [`scenerystack-numerics`](scenerystack-numerics/SKILL.md) | Writing a model's numerical core — integrating motion over `dt`, stable time steps, Euler vs. higher-order integration, `Utils`/`LinearFunction`/`dotRandom`, `toFixed` (never `Number.toFixed`), determinism. |
 | [`scenerystack-enumeration`](scenerystack-enumeration/SKILL.md) | A model/view needs a fixed set of named choices (mode, state, tool) — `EnumerationValue`, `EnumerationProperty`, and why to prefer it over string unions or numeric constants. |
 
 ### View & layout
@@ -49,7 +49,7 @@ folder is well-formed and listed here.
 | [`scenerystack-color-profiles`](scenerystack-color-profiles/SKILL.md) | Adding/theming colors — `ProfileColorProperty`, the per-sim `*Colors.ts`, projector mode. |
 | [`scenerystack-drag-listener`](scenerystack-drag-listener/SKILL.md) | Making a node draggable by mouse, touch, or keyboard — `DragListener`, `KeyboardDragListener`, `RichDragListener`, drag bounds. |
 | [`scenerystack-optionize`](scenerystack-optionize/SKILL.md) | A constructor takes configurable options — `optionize<>()`, `SelfOptions`/`Options`, `EmptySelfOptions`, `combineOptions`. |
-| [`scenerystack-ui-controls`](scenerystack-ui-controls/SKILL.md) | Adding standard controls — sliders, spinners, checkboxes, radio buttons, combo boxes, buttons, Reset All — from `sun`/`scenery-phet`, wired to model Properties. |
+| [`scenerystack-ui-controls`](scenerystack-ui-controls/SKILL.md) | Adding standard controls — sliders, spinners, checkboxes, radio buttons, combo boxes, buttons, Reset All, themed `<Prefix>Panel`/`Dialog` — from `sun`/`scenery-phet`, wired to model Properties. |
 | [`scenerystack-custom-drawing`](scenerystack-custom-drawing/SKILL.md) | Rendering custom graphics the standard nodes don't cover — curves, filled regions, arrows, dynamic paths — `Path` + kite `Shape`, primitive nodes, renderer hints. |
 | [`scenerystack-animation`](scenerystack-animation/SKILL.md) | Something must move or change smoothly over time, independent of the physics step — the twixt `Animation` class, `Easing`, chaining/looping, animate vs. integrate. |
 
@@ -64,7 +64,7 @@ folder is well-formed and listed here.
 
 | Skill | Use when |
 |---|---|
-| [`scenerystack-screen-view`](scenerystack-screen-view/SKILL.md) | Wiring a sim's entry point — the joist `Sim`/`Screen`/`ScreenView` trio, the model factory, screen icons/background, the per-frame `step` hand-off. |
+| [`scenerystack-screen-view`](scenerystack-screen-view/SKILL.md) | Wiring a sim's entry point — the `scenerystack/sim` `Sim`/`Screen`/`ScreenView` trio, multi-screen `*ScreenIcons.ts`, the model factory, screen icons/background, the per-frame `step` hand-off. |
 | [`scenerystack-disposal`](scenerystack-disposal/SKILL.md) | Creating nodes/listeners/Properties that don't live for the whole sim — `dispose()`, `disposeEmitter`, unlinking, tearing down `DerivedProperty`/`Multilink`, avoiding leaks. |
 
 ### Configuration & accessibility

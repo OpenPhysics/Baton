@@ -1,6 +1,6 @@
 ---
 name: scenerystack-ui-controls
-description: Use when adding standard UI controls to a simulation — sliders, number spinners, checkboxes, radio buttons, combo boxes, push buttons, the Reset All button, or playback controls. Covers the sun and scenery-phet component libraries, the Property-backed value pattern, and wiring controls to model state.
+description: Use when adding standard UI controls to a simulation — sliders, number spinners, checkboxes, radio buttons, combo boxes, push buttons, the Reset All button, playback controls, or themed Panel/Dialog chrome. Covers the sun and scenery-phet component libraries, the Property-backed value pattern, and wiring controls to model state.
 ---
 
 # SceneryStack UI Controls
@@ -74,12 +74,45 @@ const timeControl = new TimeControlNode(model.isPlayingProperty, {
 });
 ```
 
+## Themed Panel and Dialog
+
+Don't style raw `Panel` / `Dialog` with one-off fills in every call site. Fork
+`TemplateSingleSim`'s `SimPanel` into `<Prefix>Panel` (and `<Prefix>Dialog` when the sim has
+modals) under `src/common/`, wiring fill/stroke from `*Colors.ts` so projector mode follows
+automatically:
+
+```typescript
+import type { Node } from "scenerystack/scenery";
+import type { PanelOptions } from "scenerystack/sun";
+import { Panel } from "scenerystack/sun";
+import SimColors from "../SimColors.js";
+import { PANEL_CORNER_RADIUS } from "../SimConstants.js";
+
+export class SimPanel extends Panel {
+  public constructor(content: Node, providedOptions?: PanelOptions) {
+    super(content, {
+      fill: SimColors.panelBackgroundColorProperty,
+      stroke: SimColors.panelBorderColorProperty,
+      cornerRadius: PANEL_CORNER_RADIUS,
+      xMargin: 12,
+      yMargin: 10,
+      ...providedOptions,
+    });
+  }
+}
+```
+
+Same idea for dialogs (`Dialog` / `DialogOptions` from `scenerystack/sim`, plus
+`closeButtonColor: …textColorProperty`). Prefer `<Prefix>Panel` / `<Prefix>Dialog` for every
+sim-owned chrome surface; leave the framework Preferences dialog on its own light chrome.
+Title `Text` nodes still need an explicit `fill` from `textColorProperty`.
+
 ## Rules
 
 - Bind every control to a model `Property`; the control is the view of that state, not a second copy. After `model.reset()` the controls follow automatically.
 - `ResetAllButton`'s listener should `interruptSubtreeInput()` first, then reset the model **and** any view-only state.
 - Pass localized `*StringProperty`s for all labels — never literal strings (see scenerystack-strings).
-- Style via `optionize` defaults and `*Constants`/`*Colors`, not inline literals (see scenerystack-optionize, scenerystack-color-profiles).
+- Style via `optionize` defaults and `*Constants`/`*Colors`, not inline literals (see scenerystack-optionize, scenerystack-color-profiles). Use the themed `<Prefix>Panel` / `<Prefix>Dialog`, not ad-hoc `new Panel(...)` fills.
 - `ComboBox` and other popups need a `listParent` Node high in the tree (commonly the `ScreenView`) so the open list isn't clipped by a panel.
 - Lay controls out with `VBox`/`HBox`/`Panel` (see scenerystack-layout); don't hand-place each one.
 - These controls are keyboard-accessible out of the box — keep that by giving groups `accessibleName`/help text (see scenerystack-accessibility) and documenting them in the keyboard-help dialog.
@@ -90,5 +123,6 @@ const timeControl = new TimeControlNode(model.isPlayingProperty, {
 - Reaching for a bare `HSlider` when the quantity needs a title and readout — `NumberControl` already bundles them.
 - Forgetting the `ComboBox` list parent → the dropdown is clipped inside a panel.
 - A `ResetAllButton` that resets the model but leaves view-only Properties (e.g. a "show ruler" toggle) stale.
+- `new Panel(content, { fill: "#fff" })` instead of `<Prefix>Panel` → breaks projector mode and duplicates chrome.
 
-Related skills: scenerystack-layout, scenerystack-optionize, scenerystack-strings, scenerystack-enumeration, scenerystack-accessibility.
+Related skills: scenerystack-layout, scenerystack-optionize, scenerystack-strings, scenerystack-enumeration, scenerystack-accessibility, scenerystack-color-profiles.

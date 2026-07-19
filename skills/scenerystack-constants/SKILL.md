@@ -1,6 +1,6 @@
 ---
 name: scenerystack-constants
-description: Use when a number, size, color-independent magnitude, or physical parameter appears in code — define it in a *Constants.ts module instead of inlining a magic value. Covers the SI-unit constants pattern, layout constants, and as const grouping.
+description: Use when a number, size, color-independent magnitude, or physical parameter appears in code — define it in a *Constants.ts module instead of inlining a magic value. Covers the SI-unit constants pattern, layout constants, root vs documented nested extras, and as const grouping.
 ---
 
 # SceneryStack Constants
@@ -44,22 +44,23 @@ export const CONTROL_PANEL_VBOX_SPACING = 6;
 
 ## Where constants live
 
-Two layouts are accepted (CONVENTIONS.md §2); match the sim's existing choice:
+Two layouts are accepted (CONVENTIONS.md §2); match the sim's existing choice and note any
+non-default layout in `CLAUDE.md`:
 
-- **Single root file (the template default).** All sim-wide values in `src/<Prefix>Constants.ts`.
-  Larger domains group inside the one file with frozen `as const` objects — e.g.
-  VariableStarPhotometry's `VSPConstants.ts` (`FIELD`, `APERTURE`, `TIME`, `LAYOUT`,
-  `FONT_SIZE` groups) or ExtrasolarPlanets' `ExtrasolarPlanetsConstants.ts` (layout +
-  SI physics + slider ranges + presets in one place).
-- **Documented nested split.** Constants live next to their consumers when the sim's
-  `CLAUDE.md` documents the layout: **model/physics** values in a `model/` constants file
-  (e.g. MazeGame's `model/MazeGameConstants.ts`, RadioWaves' `model/RadioWavesConstants.ts`),
-  **layout/view** values in a `view/` or screen-level file (e.g. `MazeGameLayoutConstants.ts`),
-  shared values under `common/` (e.g. TheRamp's `common/RampConstants.ts`,
-  OscillationsAndChaos' topical `common/view/*Constants.ts` files).
+- **Single root file (the template default).** All sim-wide values in
+  `src/<Prefix>Constants.ts`. Larger domains group inside that one file with frozen
+  `as const` objects — e.g. VariableStarPhotometry (`FIELD`, `APERTURE`, `TIME`, `LAYOUT`,
+  `FONT_SIZE`) or ExtrasolarPlanets (layout + SI physics + slider ranges + presets).
+- **Root primary + documented nested extras.** The **primary** sim constants module lives
+  at `src/<Prefix>Constants.ts`. Additional topical files are allowed when the domain
+  warrants it and `CLAUDE.md` says so — e.g. MazeGame's `maze-game/MazeGameLayoutConstants.ts`,
+  TheRamp's `common/model/RampPhysicsConstants.ts`, Resonance's
+  `chladni-patterns/model/ChladniConstants.ts`, OpticsLab's optics/light-source constants,
+  or OscillationsAndChaos' topical `common/view/*Constants.ts` files.
 
-Either way, constants must exist somewhere under `src/` — and match the sim's existing
-file: don't invent a second constants file when one already covers the area.
+Do **not** put the primary `<Prefix>Constants.ts` under `model/` or `common/` — that was
+an older layout; the fleet moved primary modules to `src/` root. Don't invent a second
+constants file when an existing one already covers the area.
 
 ## Rules
 

@@ -1,6 +1,6 @@
 ---
 name: scenerystack-numerics
-description: Use when writing the numerical core of a model — integrating motion over dt, choosing a stable time step, clamping or mapping values, or using the dot math utilities. Covers fixed vs. variable time steps, Euler vs. higher-order integration, Utils/LinearFunction/dotRandom, and keeping physics deterministic.
+description: Use when writing the numerical core of a model — integrating motion over dt, choosing a stable time step, clamping or mapping values, or using the dot math utilities. Covers fixed vs. variable time steps, Euler vs. higher-order integration, Utils/LinearFunction/dotRandom, toFixed (never Number.toFixed), and keeping physics deterministic.
 ---
 
 # SceneryStack Numerics
@@ -45,13 +45,22 @@ private integrate(dt: number): void {
 `scenerystack/dot` carries the math you'd otherwise rewrite:
 
 ```typescript
-import { Utils, LinearFunction, dotRandom, Range } from "scenerystack/dot";
+import {
+  Utils, LinearFunction, dotRandom, Range,
+  toFixed, toFixedNumber,
+} from "scenerystack/dot";
 
 const clamped = Utils.clamp(value, range.min, range.max);
-const rounded = Utils.toFixedNumber(value, 2);              // numeric round to N places
+const label   = toFixed(value, 2);                          // string, cross-browser rounding
+const rounded = toFixedNumber(value, 2);                    // numeric round to N places
 const mapped  = new LinearFunction(0, 100, 0, 343)(percent); // linear remap, with clamp option
 const jitter  = dotRandom.nextDoubleBetween(-1, 1);          // seedable RNG — deterministic fuzz
 ```
+
+Prefer the named `toFixed` / `toFixedNumber` exports (or `Utils.toFixed` /
+`Utils.toFixedNumber`) — **never** JavaScript's `Number.prototype.toFixed`, which has
+cross-browser rounding inconsistencies. For RTL readouts in i18n-sensitive UI, use
+`StringUtils.toFixedLTR` / `toFixedNumberLTR` instead (see scenerystack-i18n).
 
 Use `dotRandom` (seedable) rather than `Math.random()` so fuzz runs and replays are reproducible. `Vector2`/`Matrix3`/`Range` provide the vector and interval algebra.
 
@@ -61,6 +70,7 @@ Use `dotRandom` (seedable) rather than `Math.random()` so fuzz runs and replays 
 - Keep `step(dt)` in **real seconds**; apply slow-motion / time-speed as an explicit multiplier, never baked into constants (echoes scenerystack-model).
 - Put `FIXED_DT`, tolerances, and physical constants in `*Constants.ts` in SI units (see scenerystack-constants).
 - Prefer `Utils.clamp`/`LinearFunction`/`Vector2` math over open-coded arithmetic — clearer and tested.
+- Format displayed numbers with `toFixed` / `toFixedNumber` from `scenerystack/dot`, not `Number.toFixed`.
 - Use `dotRandom`, not `Math.random()`, anywhere randomness must be reproducible.
 - For oscillators/orbits use semi-implicit Euler or RK4; reserve forward Euler for non-stiff, non-conservative motion.
 
@@ -71,5 +81,6 @@ Use `dotRandom` (seedable) rather than `Math.random()` so fuzz runs and replays 
 - Forward Euler on a spring/orbit → energy creeps up and the sim visibly drifts.
 - `Math.random()` in model code → non-reproducible fuzz failures you can't replay.
 - Re-implementing clamp/lerp/round inline instead of `Utils`/`LinearFunction`.
+- `value.toFixed(2)` (native) in a readout or a11y string → use `toFixed(value, 2)` from `scenerystack/dot`.
 
 Related skills: scenerystack-model, scenerystack-constants, scenerystack-testing.
