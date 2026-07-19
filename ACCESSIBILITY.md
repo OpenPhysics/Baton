@@ -11,7 +11,7 @@ default.
 
 > **Scope:** every active SceneryStack TypeScript simulation in
 > [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
-> plus `TemplateSingleSim`. As of 2026-07-18 that is 24 sims including BasicCoordinatesAndSeasons,
+> plus `TemplateSingleSim`. As of 2026-07-19 that is 24 sims including BasicCoordinatesAndSeasons,
 > HabitableZones, LightPropagation, MotionsOfTheSun, SternGerlach, and Zenith. The hardware
 > web UI `tscd48` and the Python apps are out of scope and keep their own a11y docs.
 >

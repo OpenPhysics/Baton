@@ -10,11 +10,11 @@ The canonical reference implementation lives in **`TemplateSingleSim`**. When in
 copy from the template. New sims are forked from it via `npm run rename`, so they start
 conformant by default.
 
-> **Scope:** the 18 SceneryStack TypeScript sims (DopplerEffect, ElectricFieldOfDreams,
-> ExtrasolarPlanets, LadyBug, LunarLander, MazeGame, MovingMan, OpticsLab,
-> OscillationsAndChaos, QubitSketch, RadioWaves, Resonance, RotatingSky, SolarSystemModels,
-> TheRamp, TrackLab, VariableStarPhotometry, WaveComposer) and the template. The hardware web
-> UI `tscd48` and the Python apps (`pyro`, `pycd48`) are out of scope. Orchestration (`Baton`)
+> **Scope:** every active SceneryStack TypeScript simulation in
+> [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
+> plus `TemplateSingleSim`. As of 2026-07-19 that is 24 sims including BasicCoordinatesAndSeasons,
+> HabitableZones, LightPropagation, MotionsOfTheSun, SternGerlach, and Zenith. The hardware
+> web UI `tscd48` and the Python apps (`pyro`, `pycd48`) are out of scope. Orchestration (`Baton`)
 > and community-health (`.github`) repos follow their own conventions.
 
 ## 1. Bootstrap chain
@@ -89,29 +89,36 @@ All three locales ship in every sim; a missing key in any locale is a **build er
 (enforced by `satisfies` parity checks in `StringManager.ts`). Never hardcode display text in
 views. Accessibility strings live under an `a11y` group — see [ACCESSIBILITY.md](ACCESSIBILITY.md).
 
-## 5. Tests (optional, but standardized when present)
+## 5. Tests (fleet-standard)
 
-Unit tests are **optional** — most sims rely on `npm run check`/`build` + manual testing, and
-only the more algorithm-heavy sims (OpticsLab, Resonance, WaveComposer, MazeGame, QubitSketch,
-ExtrasolarPlanets, RotatingSky, SolarSystemModels) ship them.
-When a sim does have tests, they follow the template exactly:
+Every SceneryStack sim ships Vitest unit tests under root `tests/` and a `test` script in
+`package.json` (CI runs it). Prefer testing the **model** (pure logic, physics, math) — not
+Scenery rendering. Algorithm-heavy sims carry denser suites; PhET/NAAP ports often start with
+smoke + reset + a memory-leak harness and grow physics invariants over time.
+
+Layout (match the template):
 
 ```
 tests/
-  setup.ts                  vitest setup (assertion helpers, globals)
+  setup.ts                  vitest setup (Canvas/Audio mocks + init) — see carve-out below
   memory-leak.test.ts       WeakRef + --expose-gc dispose regression (fleet pattern)
   **/*.test.ts              unit tests (mirror the source tree under tests/)
   **/*.spec.ts              Playwright specs, if any (e.g. tests/fuzz/)
-vitest.config.ts            root; include: ["tests/**/*.test.ts"]; setupFiles: ["./tests/setup.ts"];
+vitest.config.ts            root; include: ["tests/**/*.test.ts"];
                             execArgv: ["--expose-gc"] when a memory-leak suite is present
 ```
 
 - Tests live **only** under root `tests/`. Do **not** co-locate `*.test.ts` next to source and
   do **not** use `__tests__/` directories.
-- The setup file is `tests/setup.ts` (not a root `vitest.setup.ts`).
+- The setup file is `tests/setup.ts` (not a root `vitest.setup.ts`). Happy-dom sims wire it via
+  `setupFiles: ["./tests/setup.ts"]`.
 - The vitest `environment` may vary by sim's needs (`happy-dom` is the template default;
   `jsdom` or `node` are acceptable where justified) — document the choice in the sim's `CLAUDE.md`.
-- **Memory-leak suite:** new sims should ship `tests/memory-leak.test.ts` modeled on
+- **Documented carve-out:** pure-math suites that alias `scenerystack` → `scenerystack/dot`
+  (jsdom) or run under `node` (no DOM) may omit `tests/setup.ts` / `setupFiles` when no Canvas
+  or `init()` is needed — note that in the sim's `CLAUDE.md` (DopplerEffect, VariableStarPhotometry,
+  WaveComposer).
+- **Memory-leak suite:** every sim ships `tests/memory-leak.test.ts` modeled on
   `TemplateSingleSim` / `QubitSketch` (dispose in a function boundary → `WeakRef` → `forceGC`).
   Dynamic sims that add/remove nodes at runtime should expand it like `OpticsLab`.
 

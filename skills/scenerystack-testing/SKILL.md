@@ -30,6 +30,11 @@ Tests live **only** under root `tests/` — never co-located next to source, nev
 `__tests__/` (the compliance gate fails on those). Mirror the source path: a test for
 `src/optics-lab/model/Lens.ts` is `tests/optics-lab/model/Lens.test.ts`.
 
+**Documented carve-out:** pure-math suites that alias `scenerystack` → `scenerystack/dot`
+(jsdom) or run under `node` (no DOM) may omit `tests/setup.ts` / `setupFiles` when no Canvas
+or `init()` is needed — note that in the sim's `CLAUDE.md` (DopplerEffect,
+VariableStarPhotometry, WaveComposer). See CONVENTIONS §5.
+
 ## A model unit test
 
 Test physics/algorithm code directly — construct the model object, step or call it, assert
