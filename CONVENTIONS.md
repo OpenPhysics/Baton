@@ -192,6 +192,9 @@ rest are a quick manual scan.
 - [ ] `src/preferences/` has `<Prefix>PreferencesModel.ts`, `<prefix>QueryParameters.ts`, and ≥1 `*PreferencesNode.ts`. *(auto)*
 - [ ] `src/i18n/` has `StringManager.ts` + `strings_{en,es,fr}.json`; `npm run check` is green. *(auto)*
 - [ ] Any tests live only under root `tests/` with `tests/setup.ts`; no co-located / `__tests__/`. *(auto)*
+- [ ] `tests/memory-leak.test.ts` exists and `vitest.config.ts` enables `--expose-gc`. *(auto)*
+- [ ] `*KeyboardHelpContent.ts` exists under `src/` (Keyboard Shortcuts dialog). *(auto)*
+- [ ] `.githooks/{pre-commit,pre-push}` present; `prepare` sets `core.hooksPath`. *(auto)*
 - [ ] `doc/model.md` + `doc/implementation-notes.md` exist and are filled. *(auto presence; manual content)*
 - [ ] `README.md` follows the six-section outline; no local `CONTRIBUTING.md` / `LICENSE`. *(auto)*
 - [ ] `biome.json` is on the `2.5.4` schema; `npm run lint` is green. *(auto)*

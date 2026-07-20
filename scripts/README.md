@@ -22,7 +22,7 @@ the monorepo checkout.
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
 | [`sync-claude-settings.sh`](sync-claude-settings.sh) | Roll the `scenerystack` Claude Code plugin out to sim repos' `.claude/settings.json` |
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
-| [`check-repo-compliance.sh`](check-repo-compliance.sh) | README/CI compliance checks |
+| [`check-repo-compliance.sh`](check-repo-compliance.sh) | README/CI/structure compliance (bootstrap, i18n, memory-leak suite, KeyboardHelp, githooks, …) |
 | [`check-skills.sh`](check-skills.sh) | Validate the `skills/` collection and its README index (Baton self-check) |
 | [`check-node-version.sh`](check-node-version.sh) | Assert the fleet Node version agrees across workflows (Baton self-check) |
 | [`sync-dependabot.sh`](sync-dependabot.sh) | Copy Dependabot configs to sim repos |

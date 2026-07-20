@@ -190,6 +190,14 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
     warn "no *ScreenSummaryContent.ts and no ScreenSummaryContent construction — a11y screen summaries appear unwired (ACCESSIBILITY.md)"
   fi
 
+  # Keyboard help dialog (ACCESSIBILITY.md layer 2): every sim ships a
+  # *KeyboardHelpContent.ts wired via createKeyboardHelpNode on each Screen.
+  if [ -n "$(find src -name '*KeyboardHelpContent.ts' -print -quit)" ]; then
+    pass "*KeyboardHelpContent.ts present"
+  else
+    fail "no *KeyboardHelpContent.ts under src/ (ACCESSIBILITY.md — Keyboard Shortcuts dialog)"
+  fi
+
   if [ ! -d src/preferences ]; then
     fail "src/preferences/ is missing"
   else
@@ -221,6 +229,38 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
   else
     pass "no tests co-located under src/"
   fi
+
+  # Memory-leak suite (CONVENTIONS.md §5): fleet-standard WeakRef + --expose-gc
+  # dispose regression. Presence is gated here; `npm test` exercises it in CI.
+  if [ ! -f tests/memory-leak.test.ts ]; then
+    fail "tests/memory-leak.test.ts is missing (fleet-standard dispose regression)"
+  elif [ ! -f vitest.config.ts ]; then
+    fail "vitest.config.ts is missing (needed for --expose-gc with the memory-leak suite)"
+  elif ! grep -q -- '--expose-gc' vitest.config.ts; then
+    fail "vitest.config.ts must set execArgv: [\"--expose-gc\"] for tests/memory-leak.test.ts"
+  else
+    pass "memory-leak suite + vitest --expose-gc"
+  fi
+
+  # Git hooks (CONVENTIONS.md §7): pre-commit / pre-push under .githooks/, activated
+  # by the prepare script on npm install.
+  hooks_ok=1
+  if [ ! -d .githooks ]; then
+    fail ".githooks/ is missing"
+    hooks_ok=0
+  else
+    for hook in pre-commit pre-push; do
+      if [ ! -f ".githooks/$hook" ]; then
+        fail ".githooks/$hook is missing"
+        hooks_ok=0
+      fi
+    done
+  fi
+  if ! grep -qE '"prepare".*core\.hooksPath \.githooks' package.json; then
+    fail "package.json prepare script must set core.hooksPath to .githooks"
+    hooks_ok=0
+  fi
+  [ "$hooks_ok" -eq 1 ] && pass ".githooks/ pre-commit + pre-push with prepare activation"
 
   for d in doc/model.md doc/implementation-notes.md; do
     if [ ! -f "$d" ]; then
