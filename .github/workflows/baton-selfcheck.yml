@@ -45,3 +45,13 @@ jobs:
             echo "bash -n $s"
             bash -n "$s"
           done
+
+      - name: Lint shell scripts (shellcheck)
+        # ubuntu-latest ships shellcheck. -x follows `source` into lib/repos.sh.
+        # SC2034 is excluded: caller scripts set FILTER_*/REPOS_JSON globals that
+        # are read inside the sourced lib's functions, which shellcheck can't track
+        # across that boundary and wrongly reports as unused.
+        run: |
+          set -euo pipefail
+          find scripts -name '*.sh' -print0 \
+            | xargs -0 shellcheck -x -S warning -e SC2034

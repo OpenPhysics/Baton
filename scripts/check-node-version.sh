@@ -20,7 +20,7 @@ declare -A VERSIONS
 
 extract() {
   local file="$1" pattern="$2"
-  [ -f "$file" ] || { fail "missing workflow: ${file#$ROOT/}"; return 1; }
+  [ -f "$file" ] || { fail "missing workflow: ${file#"$ROOT/"}"; return 1; }
   grep -oP "$pattern" "$file" | head -n1
 }
 
