@@ -20,11 +20,17 @@ runs:
         echo "## Security Audit Results" >> "$GITHUB_STEP_SUMMARY"
         echo "" >> "$GITHUB_STEP_SUMMARY"
 
-        npm audit --audit-level="$AUDIT_LEVEL" --json > audit.json || true
+        # Keep the audit payload out of the workspace. Writing audit.json into the
+        # checkout made `biome check .` fail on Dependabot (and any other) PRs
+        # whenever npm's JSON formatting disagreed with Biome's formatter.
+        AUDIT_FILE="${RUNNER_TEMP:-/tmp}/npm-audit.json"
+        npm audit --audit-level="$AUDIT_LEVEL" --json > "$AUDIT_FILE" || true
+        export AUDIT_FILE
         node <<'NODE'
         const fs = require( 'fs' );
         const summary = process.env.GITHUB_STEP_SUMMARY;
-        const audit = JSON.parse( fs.readFileSync( 'audit.json', 'utf8' ) );
+        const auditPath = process.env.AUDIT_FILE;
+        const audit = JSON.parse( fs.readFileSync( auditPath, 'utf8' ) );
         const counts = audit.metadata?.vulnerabilities ?? {};
         const lines = [
           `- Total: ${counts.total ?? 0}`,
@@ -60,3 +66,4 @@ runs:
           fs.appendFileSync( summary, 'No vulnerabilities found at moderate severity or above.\n' );
         }
         NODE
+        rm -f "$AUDIT_FILE"
