@@ -243,6 +243,21 @@
       "status": "active"
     },
     {
+      "name": "Oscilloscope",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": false,
+      "isNewSimulation": true,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "Single-screen SceneryStack bench oscilloscope. Display a synthetic function-generator signal or live microphone audio on a phosphor-green CRT graticule, with two channels, triggering, X-Y and FFT modes, measurement cursors, and live auto-measurements.",
+      "deployedUrl": "https://OpenPhysics.github.io/Oscilloscope",
+      "physicsTopics": ["oscilloscope", "waveforms", "signals", "function generator", "audio", "FFT"],
+      "screens": ["Oscilloscope"],
+      "status": "active"
+    },
+    {
       "name": "QubitSketch",
       "type": "simulation",
       "isSimulation": true,
