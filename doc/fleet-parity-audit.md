@@ -1,12 +1,14 @@
 # SceneryStack Fleet Parity Audit
 
-**Date:** 2026-07-19 · **Scope:** 24 active SceneryStack simulations + `TemplateSingleSim` ·
-**Mode:** refresh of the 2026-07-18 audit · **Basis:** `Baton/CONVENTIONS.md` +
-`Baton/scripts/check-repo-compliance.sh`
+**Date:** 2026-07-27 · **Scope:** 27 active SceneryStack simulations + `TemplateSingleSim` ·
+**Mode:** refresh of the 2026-07-19 audit · **Basis:** `Baton/CONVENTIONS.md` +
+`Baton/scripts/check-repo-compliance.sh` · **Catalog:** `structure/repos.json`
+(13 original · 7 PhET · 7 NAAP)
 
-> Prior drafts covered 19–20 sims. The 2026-07-18 refresh folded in **BasicCoordinatesAndSeasons**,
-> **HabitableZones**, **LightPropagation**, **MotionsOfTheSun**, **SternGerlach**, and **Zenith**.
-> This pass corrects the leak-suite inventory and records the 2026-07-19 alignment fixes.
+> Prior drafts covered 19–24 sims. The 2026-07-19 pass folded in
+> **BasicCoordinatesAndSeasons**, **HabitableZones**, **LightPropagation**, **MotionsOfTheSun**,
+> **SternGerlach**, and **Zenith**. This refresh adds **Oscilloscope**, **Precession**, and
+> **ACPhasor**, re-runs the compliance gate, and updates the test / leak inventory.
 
 ## Executive summary
 
@@ -14,36 +16,29 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
 
 | Gate | Status |
 |---|---|
-| Package pins (`vite ^8`, `typescript ^7`, `vitest ^4`, `biome ^2.5.4`, `scenerystack ^3`) | Identical across all 24 sims |
-| `engines.node` | `>=22` everywhere |
-| `.github/workflows/ci.yml` / `deploy.yml` | Bit-identical across the fleet |
-| Org Pages screenshots | All 24 sims have `assets/screenshot.png` + Baton card thumbs |
-| Memory-leak suite (`tests/memory-leak.test.ts` + `--expose-gc`) | Present on all 24 sims + template |
-| Compliance gate | Passes (nested `*Constants.ts` / color carve-outs documented in CLAUDE.md) |
+| Package pins (`vite ^8.1.5`, `typescript ^7.0.2`, `vitest ^4.1.10`, `@biomejs/biome ^2.5.5`, `scenerystack ^3.0.0`) | Identical across all 27 sims + template |
+| `engines.node` | `>=22.0.0` everywhere |
+| `.github/workflows/ci.yml` / `deploy.yml` | Bit-identical to `TemplateSingleSim` across the fleet |
+| Org Pages screenshots | All 27 sims have `assets/screenshot.png` + Baton card thumbs (`screenshots/*.png` + `docs/assets/*.webp`) |
+| Memory-leak suite (`tests/memory-leak.test.ts` + `--expose-gc`) | Present on all 27 sims + template |
+| Legal / meta docs | `SECURITY.md`, `CREDITS.md`, `.github/CODEOWNERS` on every sim + template |
+| Compliance gate (structure / README / a11y scaffolding / GitHub security) | Passes on all 27 sims + template (documented color WARN carve-outs only) |
 
-**2026-07-19 alignment fixes:**
+**2026-07-27 follow-ups (done this pass):**
 
-1. **SternGerlach** — README six-section outline (dropped extra `## Documentation`); renamed
-   `SimDialog` → `SternGerlachDialog`; `Number.toFixed` → `toFixed` from `scenerystack/dot`.
-2. **MotionsOfTheSun** — `toFixed` for degree readouts.
-3. **tsconfig** — `noImplicitOverride` / `allowUnreachableCode` / `allowUnusedLabels` restored on
-   BasicCoordinatesAndSeasons, HabitableZones, LightPropagation, MotionsOfTheSun.
-4. **CONVENTIONS.md** — scope points at the catalog (24 sims); §5 tests are fleet-standard (not
-   optional), with a documented `setup.ts` carve-out for jsdom/node pure-math suites.
+1. **Oscilloscope**, **Precession**, **ACPhasor** — enabled Dependabot security updates + secret
+   scanning on GitHub (vulnerability alerts were already on).
+2. **Precession** — moved gyroscope scene fills into `RigidBodyPrecessionColors`
+   (`sceneGroundColorProperty`, `sceneInsetCardColorProperty`).
+3. **ACPhasor** — catalog + Pages assets already on `main`; finished hand-edited tallies
+   (CONVENTIONS / ACCESSIBILITY / org profile / OpenPhysics README) and documented IEC resistor
+   band-color carve-out in `CLAUDE.md`.
 
-**2026-07-18 workstreams completed:**
+**Resolved since 2026-07-19 (spot-check):**
 
-1. **Memory-leak pattern** — `tests/memory-leak.test.ts` + `vitest` `--expose-gc` on
-   **all** active SceneryStack sims (TimeModel / MazeGameModel / ListenerTracker /
-   NumberProperty dispose harnesses).
-2. **Baseline + deepened unit tests** — smoke suites for former zero-test sims; extra
-   physics invariants on MovingMan, TheRamp, LunarLander, LadyBug, RadioWaves, OC spring.
-3. **Docs / legal / conventions** — SECURITY, CREDITS, CODEOWNERS (no local LICENSE — org default); README/CLAUDE
-   Testing parity; testing skill refresh; doc-freshness re-audit; this parity refresh.
-4. **Accessibility** — WaveComposer `pdomOrder`; OC `a11y` rename; Layer-3 keyboard-drag
-   pairing on primary play-area objects (see a11y audit).
-5. **Template fuzz + Pages thumbs** — TemplateSingleSim Playwright fuzz smoke;
-   Baton `refresh-screenshots.yml` weekly/manual PR workflow.
+- OscillationsAndChaos `*ScreenSummaryContent.ts` extraction — done (per-screen classes).
+- Native `Number.toFixed` — none found under `src/` on the prior 26-sim set + template.
+- Package pin drift — biome advanced to `^2.5.5` fleet-wide (was `^2.5.4` in the prior note).
 
 ## §0 Inventory (test files)
 
@@ -51,20 +46,23 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
 
 | Repo | Kind | Test files | Leak suite |
 |---|---|---|---|
+| ACPhasor | new | 7 | ✅ |
 | BasicCoordinatesAndSeasons | NAAP | 9 | ✅ |
 | DopplerEffect | new | 3 | ✅ |
-| ElectricFieldOfDreams | PhET | 2 | ✅ |
-| ExtrasolarPlanets | NAAP | 8 | ✅ |
+| ElectricFieldOfDreams | PhET | 3 | ✅ |
+| ExtrasolarPlanets | NAAP | 9 | ✅ |
 | HabitableZones | NAAP | 5 | ✅ |
 | LadyBug | PhET | 2 | ✅ |
-| LightPropagation | new | 7 | ✅ |
+| LightPropagation | new | 8 | ✅ |
 | LunarLander | PhET | 2 | ✅ |
 | MazeGame | PhET | 3 | ✅ |
 | MotionsOfTheSun | NAAP | 14 | ✅ |
 | MovingMan | PhET | 2 | ✅ |
-| OpticsLab | new | 2 | ✅ |
+| OpticsLab | new | 4 | ✅ |
 | OscillationsAndChaos | new | 2 | ✅ |
-| QubitSketch | new | 1 | ✅ |
+| Oscilloscope | new | 15 | ✅ |
+| Precession | new | 6 | ✅ |
+| QubitSketch | new | 7 | ✅ |
 | RadioWaves | PhET | 2 | ✅ |
 | Resonance | new | 14 | ✅ |
 | RotatingSky | NAAP | 6 | ✅ |
@@ -72,39 +70,48 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
 | SternGerlach | new | 14 | ✅ |
 | TemplateSingleSim | template | 2 | ✅ |
 | TheRamp | PhET | 2 | ✅ |
-| TrackLab | tool | 2 | ✅ |
+| TrackLab | new | 8 | ✅ |
 | VariableStarPhotometry | NAAP | 3 | ✅ |
 | WaveComposer | new | 13 | ✅ |
-| Zenith | new | 15 | ✅ |
+| Zenith | new | 21 | ✅ |
+
+Notable test-suite growth since 2026-07-19: ElectricFieldOfDreams 2→3, ExtrasolarPlanets 8→9,
+LightPropagation 7→8, OpticsLab 2→4, QubitSketch 1→7, TrackLab 2→8, Zenith 15→21; plus new
+rows for Oscilloscope (15), Precession (6), and ACPhasor (7).
 
 ## §1 Remaining polish (non-blocking)
 
 | Item | Severity | Notes |
 |---|---|---|
 | Deferred a11y chrome (palette previews, video/axis resize, analyzer bars) | Cosmetic | Documented out-of-scope in ACCESSIBILITY.md + a11y audit |
-| OscillationsAndChaos extract `*ScreenSummaryContent.ts` | Cosmetic | Behavior already correct |
 | Template Playwright fuzz not in default CI | Cosmetic | `npm run test:fuzz` / `test:fuzz:quick` available locally |
 | Live `currentDetailsContent` on a few shared summaries | Minor | Spot-check DerivedProperty usage |
-| Native `Number.toFixed` elsewhere (e.g. Zenith readouts) | Minor | Prefer `toFixed` from `scenerystack/dot` when touching those files |
+| `fleet-a11y-audit.md` / `doc-freshness-audit.md` still dated 2026-07-18 | Docs | Re-run on next a11y / freshness pass (matrix missing newest sims) |
 
-**Resolved 2026-07-18 (follow-up):** root `LICENSE` removed (org default); graph pan +
-secondary keyboard drag; deepened model-layer leak suites; nested-constants / color
-carve-outs documented in per-sim `CLAUDE.md`.
+**Resolved earlier (kept for history):**
 
-**Resolved 2026-07-19:** SternGerlach README compliance; `SternGerlachDialog` rename;
-`toFixed` on SternGerlach + MotionsOfTheSun; four NAAP tsconfigs; CONVENTIONS scope + §5.
+- **2026-07-18:** memory-leak pattern fleet-wide; SECURITY / CREDITS / CODEOWNERS; README/CLAUDE
+  Testing parity; WaveComposer `pdomOrder`; OC `a11y` rename; Layer-3 keyboard-drag pairing.
+- **2026-07-19:** SternGerlach README compliance; `SternGerlachDialog` rename; `toFixed` on
+  SternGerlach + MotionsOfTheSun; four NAAP tsconfigs; CONVENTIONS scope + §5.
+- **2026-07-27:** OC screen-summary extract; no remaining native `Number.toFixed` under `src/`;
+  GitHub security settings on Oscilloscope / Precession / ACPhasor; Precession scene colors;
+  ACPhasor hand-edited tallies + resistor carve-out.
 
 ## §2 Best-practice harvest
 
 - **OpticsLab / QubitSketch → fleet:** deep vs. compact `memory-leak.test.ts` patterns.
 - **TemplateSingleSim → fleet:** baseline `TimeModel` leak suite + `--expose-gc` vitest config.
-- **Resonance → fleet:** densest physics unit-test suite.
+- **Resonance / Oscilloscope / Zenith → fleet:** densest unit-test suites (14 / 15 / 21 files).
 - **WaveComposer → fleet:** shared `BaseAnalysisScreenView.establishPdomOrder` for multi-screen shells.
+- **Oscilloscope → fleet:** documented transparent hit-fill carve-out pattern in `CLAUDE.md`.
+- **ACPhasor → fleet:** documented IEC-standard color-code carve-out (not themeable UI).
 
 ## §3 Related docs
 
-- [`doc-freshness-audit.md`](./doc-freshness-audit.md) — doc/code claim mismatches (2026-07-18)
-- [`fleet-a11y-audit.md`](./fleet-a11y-audit.md) — accessibility checklist (2026-07-18)
+- [`doc-freshness-audit.md`](./doc-freshness-audit.md) — doc/code claim mismatches (still dated 2026-07-18)
+- [`fleet-a11y-audit.md`](./fleet-a11y-audit.md) — accessibility checklist (still dated 2026-07-18)
+- [`add-simulation.md`](./add-simulation.md) — onboarding + hand-edited count locations
 - [`CONVENTIONS.md`](../CONVENTIONS.md) · [`ACCESSIBILITY.md`](../ACCESSIBILITY.md)
 
 <sub>Re-run per sim: `npm run check && npm run lint && npm run build && npm test`, plus

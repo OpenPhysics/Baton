@@ -215,7 +215,7 @@ jq '[.repos[] | select(.isSimulation==true and .status=="active" and .isPhETPort
 jq '[.repos[] | select(.isSimulation==true and .status=="active" and .isNAAPPort==true)] | length' structure/repos.json                           # NAAP ports
 ```
 
-*(As of 2026-07-27 the fleet has **26** active sims: **12** original, **7** PhET, **7** NAAP.)*
+*(As of 2026-07-27 the fleet has **27** active sims: **13** original, **7** PhET, **7** NAAP.)*
 
 ### Auto-generated — no manual count edit
 
@@ -248,9 +248,9 @@ the audit:
 
 | File | Typical stale content |
 |---|---|
-| [`doc/fleet-parity-audit.md`](fleet-parity-audit.md) | Scope line and table rows saying “all 24 sims” |
-| [`doc/fleet-a11y-audit.md`](fleet-a11y-audit.md) | Scope line “24 active … sims” |
-| [`doc/doc-freshness-audit.md`](doc-freshness-audit.md) | Scope “24 … repos”, `25/25` ratio rows, “Prior pass: … (20 sims)” |
+| [`doc/fleet-parity-audit.md`](fleet-parity-audit.md) | Scope line / “all N sims” claims; inventory table missing new sims (last refresh 2026-07-27 → 27) |
+| [`doc/fleet-a11y-audit.md`](fleet-a11y-audit.md) | Scope line “N active … sims”; checklist matrix missing new sims |
+| [`doc/doc-freshness-audit.md`](doc-freshness-audit.md) | Scope “N … repos”, `N/N` ratio rows, “Prior pass: … (M sims)” |
 
 When you add a sim you do **not** have to rewrite these immediately; do bump
 CONVENTIONS/ACCESSIBILITY scope lines and the org profile if you want public tallies to stay
