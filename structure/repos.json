@@ -258,6 +258,21 @@
       "status": "active"
     },
     {
+      "name": "Precession",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": false,
+      "isNewSimulation": true,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "Rigid-body dynamics of a spinning gyroscope: steady precession under gravity, nutation, and torque-free tumbling.",
+      "deployedUrl": "https://OpenPhysics.github.io/Precession",
+      "physicsTopics": ["rigid body", "precession", "nutation", "gyroscope", "angular momentum", "torque"],
+      "screens": ["Steady Precession", "Nutation", "Torque-Free Tumbling"],
+      "status": "active"
+    },
+    {
       "name": "QubitSketch",
       "type": "simulation",
       "isSimulation": true,

@@ -156,6 +156,11 @@ scripts/check-skills.sh         # every skills/<name>/SKILL.md is well-formed an
 scripts/check-node-version.sh   # all setup-node workflows declare the same Node version
 ```
 
+## Adding a simulation
+
+End-to-end checklist (create repo → `repos.json` → screenshot → WebP → regenerate
+`docs/index.html`): [`../doc/add-simulation.md`](../doc/add-simulation.md).
+
 ## generate-screenshots.sh
 
 Captures a screenshot of every SceneryStack simulation into `<sim>/assets/screenshot.png`.

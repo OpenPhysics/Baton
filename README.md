@@ -32,6 +32,7 @@ Pages simulation landing page.
 | [`skills/`](skills/) | SceneryStack development reference docs for AI assistants |
 | [`.claude-plugin/`](.claude-plugin/) | Marketplace + plugin manifests that package `skills/` as the `scenerystack@openphysics` Claude Code plugin |
 | [`docs/`](docs/) | Generated landing page ([openphysics.github.io/Baton](https://openphysics.github.io/Baton/)) |
+| [`doc/add-simulation.md`](doc/add-simulation.md) | Checklist for adding a sim to the catalog and landing page |
 
 ## Claude Code plugin
 
@@ -130,6 +131,10 @@ scripts/list-repos.sh --json
 scripts/sync-github-metadata.sh --dry-run
 ```
 
+**Adding a new simulation** (catalog row, screenshot, WebP card, regenerating the landing page):
+follow [`doc/add-simulation.md`](doc/add-simulation.md). The webpage is generated from
+`repos.json` + `screenshots/` — there is no separate Markdown card list to edit.
+
 Scripts assume the `Baton` repo lives beside member repos in a shared workspace; set
 `OPENPHYSICS_WORKSPACE` or pass `--catalog /path/to/repos.json` if your checkout differs.
 
@@ -154,6 +159,8 @@ Cross-repo automation, all driven from the catalog:
   git across your local checkouts (`pull all`, `push all`, `status all`), built on
   `parse-repos.sh paths`. Use it for ad-hoc local work; use `fleet-exec.sh` to land the same
   change as PRs.
+- **Add a simulation** — [`doc/add-simulation.md`](doc/add-simulation.md) covers catalog entry,
+  screenshot capture, WebP thumbnails, and regenerating the Pages index.
 
 ## Node version
 
