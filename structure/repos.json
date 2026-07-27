@@ -48,6 +48,21 @@
       "status": "active"
     },
     {
+      "name": "ACPhasor",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": false,
+      "isNewSimulation": true,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "AC phasor simulation exploring resistors, inductors, and capacitors across four screens — Intro (single element), Series RLC, Resonance, and Power.",
+      "deployedUrl": "https://OpenPhysics.github.io/ACPhasor",
+      "physicsTopics": ["AC circuits", "phasors", "RLC", "impedance", "resonance"],
+      "screens": ["Intro", "Series RLC", "Resonance", "Power"],
+      "status": "active"
+    },
+    {
       "name": "BasicCoordinatesAndSeasons",
       "type": "simulation",
       "isSimulation": true,
