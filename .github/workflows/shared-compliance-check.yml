@@ -24,12 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository under test
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       # The compliance script lives in this orchestration repo (Baton), not in the
       # caller, so check it out alongside and run it against the caller's working tree.
       - name: Check out OpenPhysics/Baton for the compliance script
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           repository: OpenPhysics/Baton
           path: .org-compliance
@@ -54,7 +54,7 @@ jobs:
     outputs:
       matrix: ${{ steps.list.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Build the sim matrix
         id: list
@@ -72,7 +72,7 @@ jobs:
         sim: ${{ fromJson(needs.discover-all.outputs.matrix) }}
     steps:
       - name: Check out OpenPhysics/Baton for the compliance script
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Audit ${{ matrix.sim }}
         env:

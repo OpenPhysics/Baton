@@ -30,7 +30,7 @@ jobs:
   selfcheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Validate the skills collection
         run: scripts/check-skills.sh
