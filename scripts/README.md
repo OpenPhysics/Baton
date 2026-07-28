@@ -17,6 +17,7 @@ the monorepo checkout.
 | [`parse-repos.sh`](parse-repos.sh) | Core parser/CLI for `repos.json` |
 | [`list-repos.sh`](list-repos.sh) | Human-friendly listing wrapper |
 | [`clone-fleet.sh`](clone-fleet.sh) | Clone/update every catalog repo into the workspace as a sibling |
+| [`fleet`](fleet) | Run a git command across every local checkout (`fleet push`, `fleet status -s`, …) |
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
 | [`../doc/fleet-git.md`](../doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
@@ -94,6 +95,22 @@ scripts/clone-fleet.sh --dry-run --https
 
 Reuses the same catalog filters as `parse-repos.sh` (`--simulation`, `--type`, `--status`,
 `--only NAME`, `--skip NAME`). Clones over SSH by default; `--https` for token/anonymous use.
+
+## fleet
+
+Run any git command across every catalog repo already checked out locally:
+
+```bash
+# put on PATH once (if ~/.local/bin is already there)
+ln -sfn ~/OpenPhysics/Baton/scripts/fleet ~/.local/bin/fleet
+
+fleet push
+fleet pull --ff-only
+fleet status -s
+fleet --simulation log -1 --oneline
+```
+
+Same catalog filters as `parse-repos.sh`. Full cheat sheet: [`doc/fleet-git.md`](../doc/fleet-git.md).
 
 ## fleet-exec.sh
 
