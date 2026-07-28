@@ -86,7 +86,6 @@ rows for Oscilloscope (15), Precession (6), and ACPhasor (7).
 | Deferred a11y chrome (palette previews, video/axis resize, analyzer bars) | Cosmetic | Documented out-of-scope in ACCESSIBILITY.md + a11y audit |
 | Template Playwright fuzz not in default CI | Cosmetic | `npm run test:fuzz` / `test:fuzz:quick` available locally |
 | Live `currentDetailsContent` on a few shared summaries | Minor | Spot-check DerivedProperty usage |
-| `fleet-a11y-audit.md` / `doc-freshness-audit.md` still dated 2026-07-18 | Docs | Re-run on next a11y / freshness pass (matrix missing newest sims) |
 
 **Resolved earlier (kept for history):**
 
@@ -109,8 +108,6 @@ rows for Oscilloscope (15), Precession (6), and ACPhasor (7).
 
 ## §3 Related docs
 
-- [`doc-freshness-audit.md`](./doc-freshness-audit.md) — doc/code claim mismatches (still dated 2026-07-18)
-- [`fleet-a11y-audit.md`](./fleet-a11y-audit.md) — accessibility checklist (still dated 2026-07-18)
 - [`add-simulation.md`](./add-simulation.md) — onboarding + hand-edited count locations
 - [`CONVENTIONS.md`](../CONVENTIONS.md) · [`ACCESSIBILITY.md`](../ACCESSIBILITY.md)
 

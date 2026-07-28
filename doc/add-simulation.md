@@ -97,7 +97,7 @@ Asset pipeline (all paths relative to the `Baton` repo):
 
 | Stage | Path | Role |
 |---|---|---|
-| Sim-owned capture | `<Sim>/assets/screenshot.png` | Ground truth in the **sim** repo (optional to commit there; many sims do). |
+| Sim-owned capture | `<Sim>/assets/screenshot.png` | Fleet-standard capture in the **sim** repo (commit it; all active sims keep one). |
 | Baton full-size | `screenshots/<Sim>.png` | Ground truth **in Baton** for the org page. |
 | Card thumbnail | `docs/assets/<Sim>.webp` | Lightweight image served by the landing page. |
 | Page | `docs/index.html` | Generated HTML (cards come from `repos.json` + thumbnails). |
@@ -123,6 +123,10 @@ npm run pages
 when the sibling file exists, then writes `docs/assets/MyNewSim.webp`. Open
 `docs/index.html` in a browser to sanity-check the new card (placeholder monogram means the
 WebP is still missing).
+
+Commit in the **sim** repo:
+
+- `assets/screenshot.png` (from `generate-screenshots.sh`)
 
 Commit in **Baton** at least:
 
@@ -243,16 +247,9 @@ independently.
 
 ### Audit snapshots — update on the next audit pass, not every sim
 
-These are dated fleet reports; treat counts inside them as historical unless you are refreshing
-the audit:
-
-| File | Typical stale content |
-|---|---|
-| [`doc/fleet-parity-audit.md`](fleet-parity-audit.md) | Scope line / “all N sims” claims; inventory table missing new sims (last refresh 2026-07-27 → 27) |
-| [`doc/fleet-a11y-audit.md`](fleet-a11y-audit.md) | Scope line “N active … sims”; checklist matrix missing new sims |
-| [`doc/doc-freshness-audit.md`](doc-freshness-audit.md) | Scope “N … repos”, `N/N` ratio rows, “Prior pass: … (M sims)” |
-
-When you add a sim you do **not** have to rewrite these immediately; do bump
+[`doc/fleet-parity-audit.md`](fleet-parity-audit.md) is a dated fleet report (last refresh
+2026-07-27 → 27 sims). Treat counts inside it as a snapshot unless you are refreshing the
+audit. When you add a sim you do **not** have to rewrite it immediately; do bump
 CONVENTIONS/ACCESSIBILITY scope lines and the org profile if you want public tallies to stay
 accurate.
 
@@ -264,6 +261,7 @@ accurate.
 
 - [ ] Created from `TemplateSingleSim` via `npm run rename`
 - [ ] CI + Pages deploy wired; first deploy succeeded
+- [ ] `assets/screenshot.png` committed (via `Baton/scripts/generate-screenshots.sh`)
 - [ ] `scripts/check-repo-compliance.sh` passes
 
 **Baton**
