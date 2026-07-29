@@ -176,7 +176,14 @@ runs `setup-node` — bump them together:
 
 [`scripts/check-node-version.sh`](scripts/check-node-version.sh) enforces that they stay in
 sync (run in CI by [`baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml)), so a half-done
-bump fails fast instead of drifting silently.
+bump fails fast instead of drifting silently. When sibling member checkouts are present (local
+OpenPhysics workspace), it also asserts each `package.json` matches the same major.
 
-When bumping, also update `@types/node` across member repos (Dependabot ignores its major bumps so
-the runtime and types stay aligned — see the note in the Dependabot templates under `config/`).
+Member repos must keep:
+
+- `engines.node`: `>=24` (floor matching the workflow major)
+- `@types/node`: major **24** (Dependabot ignores `@types/node` major bumps — bump
+  TemplateSingleSim and repos together when CI `node-version` changes; see `config/dependabot-npm.yml`)
+
+[`scripts/check-repo-compliance.sh`](scripts/check-repo-compliance.sh) fails a sim if those pins
+drift. Prefer no `.nvmrc` / `.node-version`; if present, the major must match the fleet.

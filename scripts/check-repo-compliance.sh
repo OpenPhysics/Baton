@@ -102,6 +102,57 @@ if [ -f package.json ]; then
   else
     pass "dependabot.yml present"
   fi
+
+  # Node engine / @types/node must track Baton's fleet Node major (ci.yml default).
+  # When this script is checked out from Baton (.org-compliance/…), read the major
+  # from that tree; otherwise fall back to 24.
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  CI_YML="$SCRIPT_DIR/../.github/workflows/ci.yml"
+  if [ -f "$CI_YML" ]; then
+    EXPECTED_NODE_MAJOR="$(grep -oP 'default:\s*["'\'']\K[0-9]+' "$CI_YML" | head -n1 || true)"
+  fi
+  EXPECTED_NODE_MAJOR="${EXPECTED_NODE_MAJOR:-24}"
+
+  PKG_META="$(python3 -c "
+import json
+p = json.load(open('package.json'))
+engines = (p.get('engines') or {}).get('node') or ''
+types = (p.get('devDependencies') or {}).get('@types/node') or (p.get('dependencies') or {}).get('@types/node') or ''
+print(engines + '\t' + types)
+")"
+  ENGINES_NODE="${PKG_META%%$'\t'*}"
+  TYPES_NODE="${PKG_META#*$'\t'}"
+
+  if [ -z "$ENGINES_NODE" ]; then
+    fail "package.json engines.node is missing (expected >=${EXPECTED_NODE_MAJOR})"
+  elif [[ ! "$ENGINES_NODE" =~ ^\>=${EXPECTED_NODE_MAJOR}(\.0\.0)?$ ]]; then
+    fail "engines.node must be >=${EXPECTED_NODE_MAJOR} to match fleet Node (found: $ENGINES_NODE)"
+  else
+    pass "engines.node is $ENGINES_NODE"
+  fi
+
+  if [ -z "$TYPES_NODE" ]; then
+    fail "package.json @types/node is missing (expected major ${EXPECTED_NODE_MAJOR})"
+  else
+    TYPES_MAJOR="$(sed -E 's/^[^0-9]*([0-9]+).*/\1/' <<<"$TYPES_NODE")"
+    if [ "$TYPES_MAJOR" != "$EXPECTED_NODE_MAJOR" ]; then
+      fail "@types/node major must be ${EXPECTED_NODE_MAJOR} to match fleet Node (found: $TYPES_NODE)"
+    else
+      pass "@types/node major is $TYPES_MAJOR"
+    fi
+  fi
+
+  for pinfile in .nvmrc .node-version; do
+    if [ -f "$pinfile" ]; then
+      PIN="$(tr -d 'v[:space:]' <"$pinfile")"
+      PIN_MAJOR="${PIN%%.*}"
+      if [ "$PIN_MAJOR" != "$EXPECTED_NODE_MAJOR" ]; then
+        fail "$pinfile pins Node $PIN but fleet major is $EXPECTED_NODE_MAJOR (remove it or set to $EXPECTED_NODE_MAJOR)"
+      else
+        pass "$pinfile matches fleet Node $EXPECTED_NODE_MAJOR"
+      fi
+    fi
+  done
 elif [ -f pyproject.toml ] || [ -f setup.py ] || [ -f requirements.txt ]; then
   if [ ! -f .github/dependabot.yml ]; then
     fail ".github/dependabot.yml is missing for python repository"

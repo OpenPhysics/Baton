@@ -25,7 +25,7 @@ the monorepo checkout.
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
 | [`check-repo-compliance.sh`](check-repo-compliance.sh) | README/CI/structure compliance (bootstrap, i18n, memory-leak suite, KeyboardHelp, githooks, …) |
 | [`check-skills.sh`](check-skills.sh) | Validate the `skills/` collection and its README index (Baton self-check) |
-| [`check-node-version.sh`](check-node-version.sh) | Assert the fleet Node version agrees across workflows (Baton self-check) |
+| [`check-node-version.sh`](check-node-version.sh) | Assert fleet Node major agrees across workflows; with sibling checkouts, also engines.node / `@types/node` |
 | [`sync-dependabot.sh`](sync-dependabot.sh) | Copy Dependabot configs from `config/` to catalog npm/pip repos (see `structure/repos.json`) |
 | [`generate-pages-index.sh`](generate-pages-index.sh) | Build `docs/index.html` simulation landing page |
 | [`make-thumbnails.mjs`](make-thumbnails.mjs) | Downscale `screenshots/*.png` to `docs/assets/*.webp` with sharp |
