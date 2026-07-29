@@ -20,6 +20,7 @@ Pages simulation landing page.
 | [`.github/workflows/shared-compliance-check.yml`](.github/workflows/shared-compliance-check.yml) | README and repo-structure compliance audit |
 | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | Build and deploy the org simulation index to GitHub Pages |
 | [`.github/workflows/optimize-assets.yml`](.github/workflows/optimize-assets.yml) | Regenerate WebP card thumbnails from screenshots and commit them back |
+| [`.github/workflows/refresh-screenshots.yml`](.github/workflows/refresh-screenshots.yml) | Weekly/manual refresh of card screenshots from live Pages → WebP thumbnails + `docs/index.html` (opens a PR) |
 | [`.github/workflows/fleet-exec.yml`](.github/workflows/fleet-exec.yml) | Fan a command across many repos and open one PR each (manual dispatch) |
 | [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) | Weekly lint / type-check / build / test of every simulation, reported as a table |
 | [`.github/workflows/sync-dependabot.yml`](.github/workflows/sync-dependabot.yml) | Validate the Dependabot templates |
@@ -33,6 +34,9 @@ Pages simulation landing page.
 | [`.claude-plugin/`](.claude-plugin/) | Marketplace + plugin manifests that package `skills/` as the `scenerystack@openphysics` Claude Code plugin |
 | [`docs/`](docs/) | Generated landing page ([openphysics.github.io/Baton](https://openphysics.github.io/Baton/)) |
 | [`doc/add-simulation.md`](doc/add-simulation.md) | Checklist for adding a sim to the catalog and landing page |
+| [`doc/fleet-git.md`](doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
+| [`doc/fleet-auth.md`](doc/fleet-auth.md) | Setting up the `FLEET_PAT` / GitHub App that lets `fleet-exec` open PRs |
+| [`doc/fleet-parity-audit.md`](doc/fleet-parity-audit.md) | Dated snapshot of fleet-wide structure / toolchain / a11y health |
 
 ## Claude Code plugin
 
@@ -104,14 +108,32 @@ jobs:
 
 [`shared-compliance-check.yml`](.github/workflows/shared-compliance-check.yml) runs weekly (Mondays 06:00 UTC)
 and on manual dispatch. It reads [`structure/repos.json`](structure/repos.json), clones each simulation repo,
-and checks:
+and runs [`scripts/check-repo-compliance.sh`](scripts/check-repo-compliance.sh). The gate enforces (FAIL
+unless marked *(warn)*):
 
-- **FAIL** if `CONTRIBUTING.md` or `LICENSE` exists at repo root (use the org defaults from `OpenPhysics/.github`)
-- **FAIL** if `README.md` is missing `## Features`, `## Quick Start`, `## Scripts`, `## Tech Stack`, `## License`, or `## Contributing`
-- **FAIL** if `README.md` sections are out of order or include extra top-level sections (only the six standard sections allowed)
-- **FAIL** if `.github/workflows/ci.yml` does not call this repo's shared reusable CI workflow
+- **Legal & README** — no root `CONTRIBUTING.md` / `LICENSE` (org defaults from `OpenPhysics/.github`);
+  `README.md` has the six sections in order with no extras (**Features → Quick Start → Scripts → Tech
+  Stack → License → Contributing**).
+- **CI wiring** — `.github/workflows/ci.yml` calls this repo's reusable `ci.yml` plus
+  [`shared-dependency-review.yml`](.github/workflows/shared-dependency-review.yml) and
+  [`shared-codeql.yml`](.github/workflows/shared-codeql.yml); `.github/dependabot.yml` present.
+- **Node pins** — `engines.node` is `>=24` and `@types/node` major is `24` (matching the fleet Node
+  version); a `.nvmrc` / `.node-version`, if present, agrees.
+- **SceneryStack structure** (sims only) — the five-file bootstrap chain with `main.ts` importing
+  `./brand.js` first; `<Prefix>Namespace.ts`, `<Prefix>Colors.ts`, and `*Constants.ts` at the `src/`
+  root; the `preferences/` trio; `i18n/` with `StringManager.ts` + `en`/`es`/`fr` locales; a
+  `*KeyboardHelpContent.ts`; `.claude/settings.json` enabling the `scenerystack` plugin; no tests
+  co-located under `src/`; no top-level `src/model` or `src/view` *(warn)*.
+- **Tests & hooks** — `tests/memory-leak.test.ts` + a `vitest.config.ts` that sets `--expose-gc`;
+  `.githooks/{pre-commit,pre-push}` activated via the `prepare` script.
+- **Docs & tooling** — `doc/model.md` + `doc/implementation-notes.md` present and filled
+  *(warn if stub)*; `biome.json` on the `2.5` schema.
+- **GitHub security** (when `gh` is authenticated) — Dependabot vulnerability alerts + security
+  updates, and secret scanning on public repos.
 
-Simulation READMEs use a fixed six-section outline (in order): **Features → Quick Start → Scripts → Tech Stack → License → Contributing**.
+Simulation READMEs use the fixed six-section outline above. Items marked *(warn)* — plus hardcoded
+colors and nested constants — surface as **warnings**, not failures: document each as a carve-out
+under `## Compliance carve-outs` in the sim's `CLAUDE.md`.
 
 Run locally against a checkout:
 

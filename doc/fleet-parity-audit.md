@@ -17,7 +17,7 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
 | Gate | Status |
 |---|---|
 | Package pins (`vite ^8.1.5`, `typescript ^7.0.2`, `vitest ^4.1.10`, `@biomejs/biome ^2.5.5`, `scenerystack ^3.0.0`) | Identical across all 27 sims + template |
-| `engines.node` | `>=22.0.0` everywhere |
+| `engines.node` / `@types/node` | `>=24` and `@types/node ^24.13.3` everywhere (matches the fleet Node major) |
 | `.github/workflows/ci.yml` / `deploy.yml` | Bit-identical to `TemplateSingleSim` across the fleet |
 | Org Pages screenshots | All 27 sims have `assets/screenshot.png` + Baton card thumbs (`screenshots/*.png` + `docs/assets/*.webp`) |
 | Memory-leak suite (`tests/memory-leak.test.ts` + `--expose-gc`) | Present on all 27 sims + template |
@@ -39,6 +39,10 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
 - OscillationsAndChaos `*ScreenSummaryContent.ts` extraction — done (per-screen classes).
 - Native `Number.toFixed` — none found under `src/` on the prior 26-sim set + template.
 - Package pin drift — biome advanced to `^2.5.5` fleet-wide (was `^2.5.4` in the prior note).
+- Node floor — `engines.node` is now `>=24` with `@types/node` `^24.13.3` across all 27 sims +
+  template (supersedes the earlier `>=22` note). Enforced by
+  [`check-node-version.sh`](../scripts/check-node-version.sh) and the engines/types checks in
+  [`check-repo-compliance.sh`](../scripts/check-repo-compliance.sh).
 
 ## §0 Inventory (test files)
 

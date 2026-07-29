@@ -165,8 +165,9 @@ scripts/sync-claude-settings.sh DopplerEffect # limit to named repo(s)
 
 ## Self-check scripts
 
-Run by [`baton-selfcheck.yml`](../.github/workflows/baton-selfcheck.yml) on every PR that touches
-`skills/`, `.claude-plugin/`, or `scripts/`, and runnable locally:
+Run by [`baton-selfcheck.yml`](../.github/workflows/baton-selfcheck.yml) on every PR or `main` push that
+touches `skills/`, `.claude-plugin/`, `scripts/`, or Baton's own `.github/workflows`/`.github/actions`,
+and runnable locally:
 
 ```bash
 scripts/check-skills.sh         # every skills/<name>/SKILL.md is well-formed and indexed in skills/README.md
