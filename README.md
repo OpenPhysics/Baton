@@ -185,7 +185,7 @@ Cross-repo automation, all driven from the catalog:
   `parse-repos.sh paths`. Use it for ad-hoc local work; use `fleet-exec.sh` to land the same
   change as PRs.
 - **Add a simulation** — [`scripts/create-sim.sh`](scripts/create-sim.sh) bootstraps from
-  TemplateSingleSim; [`doc/add-simulation.md`](doc/add-simulation.md) covers catalog entry,
+  SceneryStackTemplate; [`doc/add-simulation.md`](doc/add-simulation.md) covers catalog entry,
   screenshot capture, WebP thumbnails, and regenerating the Pages index.
 
 ## Node version
@@ -209,7 +209,7 @@ Member repos must keep:
 
 - `engines.node`: `>=24` (floor matching the workflow major)
 - `@types/node`: major **24** (Dependabot ignores `@types/node` major bumps — bump
-  TemplateSingleSim and repos together when CI `node-version` changes; see `config/dependabot-npm.yml`)
+  SceneryStackTemplate and repos together when CI `node-version` changes; see `config/dependabot-npm.yml`)
 
 [`scripts/check-repo-compliance.sh`](scripts/check-repo-compliance.sh) fails a sim if those pins
 drift. Prefer no `.nvmrc` / `.node-version`; if present, the major must match the fleet.

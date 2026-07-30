@@ -5,13 +5,13 @@ SceneryStack simulation must follow, so that all sims behave the same way intern
 present the same experience to assistive-technology users. It is built on SceneryStack's
 accessibility toolkit — see https://scenerystack.org/accessibility/a11y_guides.
 
-The canonical reference implementation lives in **`TemplateSingleSim`**. When in doubt,
+The canonical reference implementation lives in **`SceneryStackTemplate`**. When in doubt,
 copy from the template. New sims are forked from it and therefore start accessible by
 default.
 
 > **Scope:** every active SceneryStack TypeScript simulation in
 > [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
-> plus `TemplateSingleSim`. As of 2026-07-27 that is 27 sims including ACPhasor,
+> plus `SceneryStackTemplate`. As of 2026-07-27 that is 27 sims including ACPhasor,
 > BasicCoordinatesAndSeasons, HabitableZones, LightPropagation, MotionsOfTheSun, Oscilloscope,
 > Precession, SternGerlach, and Zenith. The hardware
 > web UI `tscd48` and the Python apps are out of scope and keep their own a11y docs.
@@ -53,7 +53,7 @@ supplies four regions:
 - `currentDetailsContent` — a **live** `DerivedProperty` over model state
 - `interactionHintContent` — how to get started
 
-Reference: `TemplateSingleSim/src/sim-screen/view/SimScreenSummaryContent.ts` (static
+Reference: `SceneryStackTemplate/src/sim-screen/view/SimScreenSummaryContent.ts` (static
 details) and `LunarLander/src/lunar-lander/view/LunarLanderScreenSummaryContent.ts` (live
 details derived from model Properties).
 

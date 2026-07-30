@@ -4,7 +4,7 @@
 # Targets are read from structure/repos.json (not a hardcoded list):
 #   - Baton itself          → config/dependabot-actions.yml
 #   - npm member repos      → config/dependabot-npm.yml
-#       • framework == "SceneryStack" (all sims + TemplateSingleSim)
+#       • framework == "SceneryStack" (all sims + SceneryStackTemplate)
 #       • jscd48, tscd48, pyro, Almanach (other npm packages in the org)
 #   - pycd48                  → config/dependabot-pip.yml
 #

@@ -5,7 +5,7 @@ description: Use when writing or reviewing TypeScript in an OpenPhysics SceneryS
 
 # SceneryStack TypeScript Coding Conventions
 
-How TypeScript is written in OpenPhysics SceneryStack sims (single-sim template: Vite + TypeScript +
+How TypeScript is written in OpenPhysics SceneryStack sims (SceneryStack template: Vite + TypeScript +
 **Biome**, source under `src/`). Adapted from PhET's coding conventions and trimmed to what applies here.
 Formatting and import ordering are enforced by `biome.json` (`npm run lint` / `npm run fix`) — this skill
 covers the judgment calls Biome can't make. Related skills: scenerystack-optionize,

@@ -1,12 +1,12 @@
 ---
 name: scenerystack-code-review
-description: Use to run a pre-release Code Review (CRC) on an OpenPhysics SceneryStack sim built from the single-sim template — build/run/fuzz checks, memory-leak audit, performance, usability, i18n, repo-structure conformance, coding conventions, math libraries, maintainability, and accessibility. Trigger when asked to "code review", "do a CRC", "pre-release review", or audit a sim against project standards.
+description: Use to run a pre-release Code Review (CRC) on an OpenPhysics SceneryStack sim built from the SceneryStack template — build/run/fuzz checks, memory-leak audit, performance, usability, i18n, repo-structure conformance, coding conventions, math libraries, maintainability, and accessibility. Trigger when asked to "code review", "do a CRC", "pre-release review", or audit a sim against project standards.
 ---
 
 # SceneryStack Code Review (CRC)
 
 A Code Review is the pre-release audit of an OpenPhysics sim against project standards. Our sims are
-single-sim **Vite + TypeScript + Biome** projects forked from `TemplateSingleSim` (`npm run rename`), so
+**Vite + TypeScript + Biome** projects forked from `SceneryStackTemplate` (`npm run rename`), so
 this checklist is tailored to that layout (`src/`, `doc/`, `public/`, `biome.json`) — **not** the classic
 PhET `js/`/grunt layout. Related skills: scenerystack-accessibility, scenerystack-i18n,
 scenerystack-color-profiles, scenerystack-constants, scenerystack-query-parameters,
@@ -114,7 +114,7 @@ accessed through `src/i18n/StringManager.ts`.
 
 ### Repository Structure
 
-Compare against `TemplateSingleSim`. Source lives in `src/`, not `js/`; tooling is Biome + Vite.
+Compare against `SceneryStackTemplate`. Source lives in `src/`, not `js/`; tooling is Biome + Vite.
 
 - [ ] Repo name matches the sim title (e.g. "The Ramp" → `TheRamp` per OpenPhysics naming).
 - [ ] Top-level layout matches the template (resource dirs may be absent if unused):

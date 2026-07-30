@@ -46,7 +46,7 @@ super({
 });
 ```
 
-`ScreenSummaryContent` supplies four regions: `playAreaContent` (what the play area holds), `controlAreaContent` (what the controls do), `currentDetailsContent` (a **live** `DerivedProperty` over model state), and `interactionHintContent` (how to start). See the shared [ACCESSIBILITY.md](../../ACCESSIBILITY.md) convention and `TemplateSingleSim/src/sim-screen/view/SimScreenSummaryContent.ts` for the canonical pattern.
+`ScreenSummaryContent` supplies four regions: `playAreaContent` (what the play area holds), `controlAreaContent` (what the controls do), `currentDetailsContent` (a **live** `DerivedProperty` over model state), and `interactionHintContent` (how to start). See the shared [ACCESSIBILITY.md](../../ACCESSIBILITY.md) convention and `SceneryStackTemplate/src/sim-screen/view/SimScreenSummaryContent.ts` for the canonical pattern.
 
 ## 2. Accessible responses (announcing change)
 

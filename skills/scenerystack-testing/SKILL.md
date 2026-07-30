@@ -11,7 +11,7 @@ testing the **model** (pure logic, physics, math) — not Scenery rendering.
 
 Algorithm-heavy sims (OpticsLab, Resonance, WaveComposer, MazeGame, SternGerlach, Zenith,
 ExtrasolarPlanets, MotionsOfTheSun, …) carry denser suites; PhET ports often start with a
-smoke + reset suite and grow physics invariants over time. TemplateSingleSim is the layout
+smoke + reset suite and grow physics invariants over time. SceneryStackTemplate is the layout
 reference (CONVENTIONS §5).
 
 ## The standardized layout
@@ -68,7 +68,7 @@ describe("LensModel", () => {
 
 ## Memory-leak suite
 
-Ship `tests/memory-leak.test.ts` modeled on TemplateSingleSim / QubitSketch:
+Ship `tests/memory-leak.test.ts` modeled on SceneryStackTemplate / QubitSketch:
 
 - Require `execArgv: ["--expose-gc"]` in `vitest.config.ts`.
 - Allocate inside a **function** boundary, call `dispose()`, hold a `WeakRef`, then
@@ -88,7 +88,7 @@ Ship `tests/memory-leak.test.ts` modeled on TemplateSingleSim / QubitSketch:
 
 ## Optional Playwright fuzz
 
-TemplateSingleSim and Resonance ship `tests/fuzz/fuzz.spec.ts` + `playwright.config.ts`
+SceneryStackTemplate and Resonance ship `tests/fuzz/fuzz.spec.ts` + `playwright.config.ts`
 with `npm run test:fuzz` / `test:fuzz:quick`. Fuzz uses joist's `?fuzz` query parameter and
 fails on console/`pageerror`. Use it for pre-release / CRC stress; it is not required in
 the default CI path.

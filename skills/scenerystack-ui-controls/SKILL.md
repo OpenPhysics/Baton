@@ -77,7 +77,7 @@ const timeControl = new TimeControlNode(model.isPlayingProperty, {
 ## Themed Panel and Dialog
 
 Don't style raw `Panel` / `Dialog` with one-off fills in every call site. Fork
-`TemplateSingleSim`'s `SimPanel` into `<Prefix>Panel` (and `<Prefix>Dialog` when the sim has
+`SceneryStackTemplate`'s `SimPanel` into `<Prefix>Panel` (and `<Prefix>Dialog` when the sim has
 modals) under `src/common/`, wiring fill/stroke from `*Colors.ts` so projector mode follows
 automatically:
 

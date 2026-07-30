@@ -6,13 +6,13 @@ between sims and find everything in the same place. It is the structural compani
 [ACCESSIBILITY.md](ACCESSIBILITY.md) (which governs the a11y pattern) and to the shared
 coding guidance in [.github/CLAUDE.md](https://github.com/OpenPhysics/.github/blob/main/CLAUDE.md).
 
-The canonical reference implementation lives in **`TemplateSingleSim`**. When in doubt,
+The canonical reference implementation lives in **`SceneryStackTemplate`**. When in doubt,
 copy from the template. New sims are forked from it via `npm run rename`, so they start
 conformant by default.
 
 > **Scope:** every active SceneryStack TypeScript simulation in
 > [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
-> plus `TemplateSingleSim`. As of 2026-07-27 that is 27 sims including ACPhasor,
+> plus `SceneryStackTemplate`. As of 2026-07-27 that is 27 sims including ACPhasor,
 > BasicCoordinatesAndSeasons, HabitableZones, LightPropagation, MotionsOfTheSun, Oscilloscope,
 > Precession, SternGerlach, and Zenith. The hardware
 > web UI `tscd48` and the Python apps (`pyro`, `pycd48`) are out of scope. Orchestration (`Baton`)
@@ -120,7 +120,7 @@ vitest.config.ts            root; include: ["tests/**/*.test.ts"];
   or `init()` is needed — note that in the sim's `CLAUDE.md` (DopplerEffect, VariableStarPhotometry,
   WaveComposer).
 - **Memory-leak suite:** every sim ships `tests/memory-leak.test.ts` modeled on
-  `TemplateSingleSim` / `QubitSketch` (dispose in a function boundary → `WeakRef` → `forceGC`).
+  `SceneryStackTemplate` / `QubitSketch` (dispose in a function boundary → `WeakRef` → `forceGC`).
   Dynamic sims that add/remove nodes at runtime should expand it like `OpticsLab`.
 
 ## 6. Documentation

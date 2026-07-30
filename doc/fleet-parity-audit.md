@@ -1,6 +1,6 @@
 # SceneryStack Fleet Parity Audit
 
-**Date:** 2026-07-27 · **Scope:** 27 active SceneryStack simulations + `TemplateSingleSim` ·
+**Date:** 2026-07-27 · **Scope:** 27 active SceneryStack simulations + `SceneryStackTemplate` ·
 **Mode:** refresh of the 2026-07-19 audit · **Basis:** `Baton/CONVENTIONS.md` +
 `Baton/scripts/check-repo-compliance.sh` · **Catalog:** `structure/repos.json`
 (13 original · 7 PhET · 7 NAAP)
@@ -18,7 +18,7 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
 |---|---|
 | Package pins (`vite ^8.1.5`, `typescript ^7.0.2`, `vitest ^4.1.10`, `@biomejs/biome ^2.5.5`, `scenerystack ^3.0.0`) | Identical across all 27 sims + template |
 | `engines.node` / `@types/node` | `>=24` and `@types/node ^24.13.3` everywhere (matches the fleet Node major) |
-| `.github/workflows/ci.yml` / `deploy.yml` | Bit-identical to `TemplateSingleSim` across the fleet |
+| `.github/workflows/ci.yml` / `deploy.yml` | Bit-identical to `SceneryStackTemplate` across the fleet |
 | Org Pages screenshots | All 27 sims have `assets/screenshot.png` + Baton card thumbs (`screenshots/*.png` + `docs/assets/*.webp`) |
 | Memory-leak suite (`tests/memory-leak.test.ts` + `--expose-gc`) | Present on all 27 sims + template |
 | Legal / meta docs | `SECURITY.md`, `CREDITS.md`, `.github/CODEOWNERS` on every sim + template |
@@ -72,7 +72,7 @@ The fleet remains in **strong, uniform health** on structure and toolchain:
 | RotatingSky | NAAP | 6 | ✅ |
 | SolarSystemModels | NAAP | 4 | ✅ |
 | SternGerlach | new | 14 | ✅ |
-| TemplateSingleSim | template | 2 | ✅ |
+| SceneryStackTemplate | template | 2 | ✅ |
 | TheRamp | PhET | 2 | ✅ |
 | TrackLab | new | 8 | ✅ |
 | VariableStarPhotometry | NAAP | 3 | ✅ |
@@ -104,7 +104,7 @@ rows for Oscilloscope (15), Precession (6), and ACPhasor (7).
 ## §2 Best-practice harvest
 
 - **OpticsLab / QubitSketch → fleet:** deep vs. compact `memory-leak.test.ts` patterns.
-- **TemplateSingleSim → fleet:** baseline `TimeModel` leak suite + `--expose-gc` vitest config.
+- **SceneryStackTemplate → fleet:** baseline `TimeModel` leak suite + `--expose-gc` vitest config.
 - **Resonance / Oscilloscope / Zenith → fleet:** densest unit-test suites (14 / 15 / 21 files).
 - **WaveComposer → fleet:** shared `BaseAnalysisScreenView.establishPdomOrder` for multi-screen shells.
 - **Oscilloscope → fleet:** documented transparent hit-fill carve-out pattern in `CLAUDE.md`.

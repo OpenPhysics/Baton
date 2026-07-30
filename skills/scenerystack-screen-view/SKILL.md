@@ -91,7 +91,7 @@ export class DopplerEffectScreenView extends ScreenView {
 
 Multi-screen sims need a `homeScreenIcon` on each `Screen` (and usually a `navigationBarIcon`).
 Put shared `create*Icon()` factories in `src/common/<Prefix>ScreenIcons.ts` (see
-`TemplateSingleSim/doc/multi-screen.md` and the NAAP ports — BasicCoordinatesAndSeasons,
+`SceneryStackTemplate/doc/multi-screen.md` and the NAAP ports — BasicCoordinatesAndSeasons,
 MotionsOfTheSun):
 
 ```typescript

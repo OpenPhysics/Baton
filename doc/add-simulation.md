@@ -33,10 +33,10 @@ Omit `--screens` for a single screen named after `--name`. `--shared-model` scaf
 `src/common/model/SharedModel.ts` (fleet-style composition). `--onboard` inserts the catalog row, captures a
 screenshot, builds the WebP card, regenerates `docs/index.html`, and updates the
 OpenPhysics README Layout table; `--pr` opens Baton + OpenPhysics PRs.
-Pass `--local-only` to bootstrap from a local `TemplateSingleSim` checkout without
+Pass `--local-only` to bootstrap from a local `SceneryStackTemplate` checkout without
 creating a GitHub repo.
 
-**Or — GitHub UI:** open [TemplateSingleSim](https://github.com/OpenPhysics/TemplateSingleSim),
+**Or — GitHub UI:** open [SceneryStackTemplate](https://github.com/OpenPhysics/SceneryStackTemplate),
 click **Use this template**, then in the new clone:
 
 ```bash
@@ -88,7 +88,7 @@ Edit [`structure/repos.json`](../structure/repos.json). Insert a new object in `
 | `deployedUrl` | Canonical Pages URL (trailing slash optional; the generator normalizes). |
 | `physicsTopics` | Up to three tags are shown on the card. |
 | `screens` | Human-readable screen titles (documentation / compliance; not required for the card image). |
-| `status` | `"active"` to appear on the landing page and in fleet health. Use `"template"` / other values only for non-shipped entries (e.g. `TemplateSingleSim`). |
+| `status` | `"active"` to appear on the landing page and in fleet health. Use `"template"` / other values only for non-shipped entries (e.g. `SceneryStackTemplate`). |
 
 Validate locally:
 
@@ -231,7 +231,7 @@ Some places still carry a **hand-maintained number** or sim list. Others are **c
 Run from `Baton/`:
 
 ```bash
-# Active SceneryStack sims (excludes TemplateSingleSim, cd48, etc.)
+# Active SceneryStack sims (excludes SceneryStackTemplate, cd48, etc.)
 jq '[.repos[] | select(.isSimulation==true and .status=="active")] | length' structure/repos.json
 
 # Landing-page buckets (must match isPhETPort / isNAAPPort flags on each row)
@@ -280,7 +280,7 @@ accurate.
 
 **Sim repo**
 
-- [ ] Created from `TemplateSingleSim` via `create-sim.sh` or Use this template + rename + scaffold-screens
+- [ ] Created from `SceneryStackTemplate` via `create-sim.sh` or Use this template + rename + scaffold-screens
 - [ ] CI + Pages deploy wired; first deploy succeeded
 - [ ] `assets/screenshot.png` committed (via `Baton/scripts/generate-screenshots.sh`)
 - [ ] `scripts/check-repo-compliance.sh` passes

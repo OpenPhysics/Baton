@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create a new OpenPhysics simulation from TemplateSingleSim.
+# Create a new OpenPhysics simulation from SceneryStackTemplate.
 #
 # Uses the GitHub template repository (Use this template) when creating a remote,
 # then runs npm rename + scaffold-screens so single- or multi-screen sims share
@@ -18,7 +18,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/repos.sh"
 
 ORG="${OPENPHYSICS_ORG:-OpenPhysics}"
-TEMPLATE_REPO="${TEMPLATE_REPO:-OpenPhysics/TemplateSingleSim}"
+TEMPLATE_REPO="${TEMPLATE_REPO:-OpenPhysics/SceneryStackTemplate}"
 WORKSPACE="$(repos_workspace_root)"
 BATON_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
@@ -39,7 +39,7 @@ usage() {
   cat <<'EOF'
 Usage: create-sim.sh --repo <PascalCase> --name "<Display Name>" [options]
 
-Bootstrap a new SceneryStack simulation from TemplateSingleSim.
+Bootstrap a new SceneryStack simulation from SceneryStackTemplate.
 
 Required:
   --repo NAME          GitHub / folder name (PascalCase), e.g. Friction
@@ -52,7 +52,7 @@ Options:
   --shared-model       Scaffold src/common/model/SharedModel.ts; each screen composes it
   --path DIR           Checkout path (default: $OPENPHYSICS_WORKSPACE/<repo>)
   --description TEXT   GitHub + catalog description
-  --local-only         Copy local TemplateSingleSim; do not create a GitHub repo
+  --local-only         Copy local SceneryStackTemplate; do not create a GitHub repo
   --no-push            Do not git push the sim (default: no auto-push unless --pr)
   --catalog            Insert a repos.json entry in Baton (no commit)
   --onboard            Full fleet onboarding: catalog + screenshot + WebP + Pages
@@ -155,7 +155,7 @@ open_onboard_prs() {
         echo "  sim: nothing to commit"
       else
         git commit -m "$(cat <<EOF
-chore: bootstrap from TemplateSingleSim
+chore: bootstrap from SceneryStackTemplate
 
 Rename, scaffold screens, and capture the landing-page screenshot.
 EOF
@@ -403,7 +403,7 @@ PARENT="$(dirname "$TARGET_PATH")"
 mkdir -p "$PARENT"
 
 if [[ "$LOCAL_ONLY" -eq 1 ]]; then
-  SRC_TEMPLATE="$WORKSPACE/TemplateSingleSim"
+  SRC_TEMPLATE="$WORKSPACE/SceneryStackTemplate"
   if [[ ! -d "$SRC_TEMPLATE" ]]; then
     echo "error: local template not found at $SRC_TEMPLATE" >&2
     echo "  clone it first, or omit --local-only to use gh --template" >&2
@@ -419,7 +419,7 @@ if [[ "$LOCAL_ONLY" -eq 1 ]]; then
     "$SRC_TEMPLATE/" "$TARGET_PATH/"
   git -C "$TARGET_PATH" init -b main
   git -C "$TARGET_PATH" add -A
-  git -C "$TARGET_PATH" commit -m "chore: copy TemplateSingleSim" >/dev/null
+  git -C "$TARGET_PATH" commit -m "chore: copy SceneryStackTemplate" >/dev/null
 else
   echo "Creating GitHub repo from template..."
   (

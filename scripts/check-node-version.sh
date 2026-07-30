@@ -63,7 +63,7 @@ echo "Expected member-repo pins: engines.node \">=${FLEET_NODE_MAJOR}\" and @typ
 
 # Optional workspace scan: when Baton lives beside sibling checkouts (local
 # OpenPhysics bootstrap layout), assert catalog member pins match. Limited to
-# simulations, TemplateSingleSim, and Almanach — not every sibling npm repo
+# simulations, SceneryStackTemplate, and Almanach — not every sibling npm repo
 # (jscd48 / pyro / … keep their own engine floors). Skipped in Baton-only CI.
 PARENT="$(cd "$ROOT/.." && pwd)"
 CATALOG="$ROOT/structure/repos.json"
