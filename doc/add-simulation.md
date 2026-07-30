@@ -15,24 +15,45 @@ landing page at [openphysics.github.io/Baton](https://openphysics.github.io/Bato
 
 ## 1. Create the simulation repository
 
-1. Copy [`TemplateSingleSim`](https://github.com/OpenPhysics/TemplateSingleSim) (or clone it
-   beside `Baton` and work from that checkout).
-2. Run the template rename so package name, namespaces, and strings match the new sim:
+**Preferred — Baton create-sim** (creates the GitHub repo from the template, renames,
+scaffolds screens, runs check):
 
-   ```bash
-   cd TemplateSingleSim   # or your copy
-   npm install
-   npm run rename         # follow the prompts for id / title / package name
-   ```
+```bash
+# From the OpenPhysics workspace (Baton sibling to sims)
+Baton/scripts/create-sim.sh \
+  --repo MyNewSim \
+  --name "My New Sim" \
+  --screens Intro,Lab \
+  --shared-model \
+  --onboard \
+  --pr
+```
 
-3. Create the empty GitHub repo under the `OpenPhysics` org (same **PascalCase** name you
-   will use in the catalog, e.g. `MyNewSim`), push `main`, and confirm:
-   - `.github/workflows/ci.yml` calls `OpenPhysics/Baton/.../ci.yml@main`
-   - `.github/workflows/deploy.yml` (or equivalent) calls Baton's reusable Pages deploy
-   - README follows the six-section outline (enforced by compliance — see
-     [`CONVENTIONS.md`](../CONVENTIONS.md))
-4. In the GitHub repo settings, enable **Pages → Source: GitHub Actions**, then merge a
-   green `main` build so `https://openphysics.github.io/<SimName>/` goes live.
+Omit `--screens` for a single screen named after `--name`. `--shared-model` scaffolds
+`src/common/model/SharedModel.ts` (fleet-style composition). `--onboard` inserts the catalog row, captures a
+screenshot, builds the WebP card, regenerates `docs/index.html`, and updates the
+OpenPhysics README Layout table; `--pr` opens Baton + OpenPhysics PRs.
+Pass `--local-only` to bootstrap from a local `TemplateSingleSim` checkout without
+creating a GitHub repo.
+
+**Or — GitHub UI:** open [TemplateSingleSim](https://github.com/OpenPhysics/TemplateSingleSim),
+click **Use this template**, then in the new clone:
+
+```bash
+npm install
+npm run rename -- --id my-new-sim --name "My New Sim"
+npm run scaffold-screens -- --screens Intro,Lab
+npm run check
+```
+
+Then confirm:
+- `.github/workflows/ci.yml` calls `OpenPhysics/Baton/.../ci.yml@main`
+- `.github/workflows/deploy.yml` (or equivalent) calls Baton's reusable Pages deploy
+- README follows the six-section outline (enforced by compliance — see
+  [`CONVENTIONS.md`](../CONVENTIONS.md))
+
+In the GitHub repo settings, enable **Pages → Source: GitHub Actions**, then merge a
+green `main` build so `https://openphysics.github.io/<SimName>/` goes live.
 
 ---
 
@@ -259,7 +280,7 @@ accurate.
 
 **Sim repo**
 
-- [ ] Created from `TemplateSingleSim` via `npm run rename`
+- [ ] Created from `TemplateSingleSim` via `create-sim.sh` or Use this template + rename + scaffold-screens
 - [ ] CI + Pages deploy wired; first deploy succeeded
 - [ ] `assets/screenshot.png` committed (via `Baton/scripts/generate-screenshots.sh`)
 - [ ] `scripts/check-repo-compliance.sh` passes

@@ -13,7 +13,9 @@ usage() {
   cat <<'EOF'
 Usage: sync-github-metadata.sh [options]
 
-Update GitHub repo description and website URL using structure/repos.json.
+Update GitHub repo description, website URL, and template flag using structure/repos.json.
+Catalog rows with `"type": "template"` also get `gh repo edit --template` so
+"Use this template" stays enabled.
 
 Options:
   --dry-run          Print planned changes without calling gh
@@ -72,6 +74,7 @@ while IFS= read -r repo; do
   name="$(jq -r '.name' <<<"$repo")"
   description="$(jq -r '.description // ""' <<<"$repo")"
   homepage="$(jq -r '.githubHomepage // ""' <<<"$repo")"
+  repo_type="$(jq -r '.type // ""' <<<"$repo")"
 
   echo "$name: homepage=${homepage:-"(none)"}"
   if [[ -n "$description" ]]; then
@@ -80,6 +83,9 @@ while IFS= read -r repo; do
     else
       echo "  description: ${description:0:77}..."
     fi
+  fi
+  if [[ "$repo_type" == "template" ]]; then
+    echo "  template: ensure is_template=true"
   fi
 
   if [[ "$DRY_RUN" -eq 1 ]]; then
@@ -94,6 +100,10 @@ while IFS= read -r repo; do
   fi
   if [[ -n "$homepage" ]]; then
     cmd+=(--homepage "$homepage")
+  fi
+  # Catalog type "template" must stay a GitHub template repo (Use this template).
+  if [[ "$repo_type" == "template" ]]; then
+    cmd+=(--template)
   fi
 
   if ! "${cmd[@]}"; then

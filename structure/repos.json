@@ -391,7 +391,7 @@
       "isNewSimulation": false,
       "language": ["TypeScript"],
       "framework": "SceneryStack",
-      "description": "Reusable single-screen SceneryStack simulation template with Vite, TypeScript, Biome, PWA support, and i18n scaffolding.",
+      "description": "GitHub template for OpenPhysics SceneryStack sims — Use this template or Baton create-sim.sh; rename + scaffold-screens for one or N screens.",
       "deployedUrl": null,
       "physicsTopics": [],
       "screens": null,

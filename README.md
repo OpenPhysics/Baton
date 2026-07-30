@@ -153,9 +153,12 @@ scripts/list-repos.sh --json
 scripts/sync-github-metadata.sh --dry-run
 ```
 
-**Adding a new simulation** (catalog row, screenshot, WebP card, regenerating the landing page):
-follow [`doc/add-simulation.md`](doc/add-simulation.md). The webpage is generated from
-`repos.json` + `screenshots/` — there is no separate Markdown card list to edit.
+**Adding a new simulation** (create from template, catalog, screenshot, WebP, Pages,
+OpenPhysics README): run
+[`scripts/create-sim.sh --onboard`](scripts/create-sim.sh) (add `--pr` to open PRs), then
+see [`doc/add-simulation.md`](doc/add-simulation.md) for any remaining hand edits
+(`.github` profile tallies). The webpage is generated from `repos.json` + `screenshots/` —
+there is no separate Markdown card list to edit.
 
 Scripts assume the `Baton` repo lives beside member repos in a shared workspace; set
 `OPENPHYSICS_WORKSPACE` or pass `--catalog /path/to/repos.json` if your checkout differs.
@@ -181,7 +184,8 @@ Cross-repo automation, all driven from the catalog:
   git across your local checkouts (`pull all`, `push all`, `status all`), built on
   `parse-repos.sh paths`. Use it for ad-hoc local work; use `fleet-exec.sh` to land the same
   change as PRs.
-- **Add a simulation** — [`doc/add-simulation.md`](doc/add-simulation.md) covers catalog entry,
+- **Add a simulation** — [`scripts/create-sim.sh`](scripts/create-sim.sh) bootstraps from
+  TemplateSingleSim; [`doc/add-simulation.md`](doc/add-simulation.md) covers catalog entry,
   screenshot capture, WebP thumbnails, and regenerating the Pages index.
 
 ## Node version

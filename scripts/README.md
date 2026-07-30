@@ -21,6 +21,7 @@ the monorepo checkout.
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
 | [`../doc/fleet-git.md`](../doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
+| [`create-sim.sh`](create-sim.sh) | Bootstrap a new sim from TemplateSingleSim (rename + N screens; `--onboard` / `--pr` / `--shared-model`) |
 | [`sync-claude-settings.sh`](sync-claude-settings.sh) | Roll the `scenerystack` Claude Code plugin out to sim repos' `.claude/settings.json` |
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
 | [`check-repo-compliance.sh`](check-repo-compliance.sh) | README/CI/structure compliance (bootstrap, i18n, memory-leak suite, KeyboardHelp, githooks, …) |

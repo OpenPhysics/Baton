@@ -207,5 +207,6 @@ rest are a quick manual scan.
   superproject root, this enforces the structural and config rules above (it also runs in CI via
   `Baton/.github/workflows/shared-compliance-check.yml`). It must print `Compliance check passed`.
 - **Per sim:** `npm run lint && npm run check && npm run build`, plus `npm test` where tests exist.
-- **New sims:** `npm run rename` from a `TemplateSingleSim` copy produces a sim that passes the
+- **New sims:** `Baton/scripts/create-sim.sh` (or Use this template + `npm run rename` +
+  `npm run scaffold-screens`) produces a sim that passes the
   gate unchanged — that is the regression guarantee.
