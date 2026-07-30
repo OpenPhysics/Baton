@@ -11,9 +11,9 @@ default.
 
 > **Scope:** every active SceneryStack TypeScript simulation in
 > [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
-> plus `SceneryStackTemplate`. As of 2026-07-27 that is 27 sims including ACPhasor,
-> BasicCoordinatesAndSeasons, HabitableZones, LightPropagation, MotionsOfTheSun, Oscilloscope,
-> Precession, SternGerlach, and Zenith. The hardware
+> plus `SceneryStackTemplate`. As of 2026-07-30 that is 28 sims including ACPhasor,
+> BasicCoordinatesAndSeasons, CarnotHeatEngine, HabitableZones, LightPropagation, MotionsOfTheSun,
+> Oscilloscope, Precession, SternGerlach, and Zenith. The hardware
 > web UI `tscd48` and the Python apps are out of scope and keep their own a11y docs.
 >
 > **Fleet status:** structural Layer 1–2 coverage and Layer-3 keyboard drag for play-area

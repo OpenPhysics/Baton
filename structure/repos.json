@@ -78,6 +78,21 @@
       "status": "active"
     },
     {
+      "name": "CarnotHeatEngine",
+      "type": "simulation",
+      "isSimulation": true,
+      "isPhETPort": false,
+      "isNAAPPort": false,
+      "isNewSimulation": true,
+      "language": ["TypeScript"],
+      "framework": "SceneryStack",
+      "description": "Explore the Carnot cycle across three screens: a piston-cylinder tied to a live PV diagram, a quantitative efficiency lab with a T\u2013S view, and the same cycle reversed as a refrigerator or heat pump.",
+      "deployedUrl": "https://OpenPhysics.github.io/CarnotHeatEngine",
+      "physicsTopics": ["thermodynamics", "Carnot cycle", "heat engines", "efficiency", "entropy", "refrigeration"],
+      "screens": ["Intro", "Efficiency Lab", "Reversed Cycle"],
+      "status": "active"
+    },
+    {
       "name": "DopplerEffect",
       "type": "simulation",
       "isSimulation": true,

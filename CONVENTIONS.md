@@ -12,9 +12,9 @@ conformant by default.
 
 > **Scope:** every active SceneryStack TypeScript simulation in
 > [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
-> plus `SceneryStackTemplate`. As of 2026-07-27 that is 27 sims including ACPhasor,
-> BasicCoordinatesAndSeasons, HabitableZones, LightPropagation, MotionsOfTheSun, Oscilloscope,
-> Precession, SternGerlach, and Zenith. The hardware
+> plus `SceneryStackTemplate`. As of 2026-07-30 that is 28 sims including ACPhasor,
+> BasicCoordinatesAndSeasons, CarnotHeatEngine, HabitableZones, LightPropagation, MotionsOfTheSun,
+> Oscilloscope, Precession, SternGerlach, and Zenith. The hardware
 > web UI `tscd48` and the Python apps (`pyro`, `pycd48`) are out of scope. Orchestration (`Baton`)
 > and community-health (`.github`) repos follow their own conventions.
 
@@ -107,8 +107,12 @@ tests/
   **/*.spec.ts              Playwright specs, if any (e.g. tests/fuzz/)
 vitest.config.ts            root; include: ["tests/**/*.test.ts"];
                             execArgv: ["--expose-gc"] when a memory-leak suite is present
+tsconfig.test.json          extends tsconfig.json; include: ["tests"];
+                            types: ["node", "vite/client", "vitest/globals"]
 ```
 
+- `npm run check` typechecks app, scripts, and tests:
+  `tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit && tsc -p tsconfig.test.json --noEmit`.
 - Tests live **only** under root `tests/`. Do **not** co-locate `*.test.ts` next to source and
   do **not** use `__tests__/` directories.
 - The setup file is `tests/setup.ts` (not a root `vitest.setup.ts`). Happy-dom sims wire it via
@@ -141,7 +145,7 @@ License / Contributing` (enforced by Baton's compliance check). Do **not** add a
 | File | Standard |
 |---|---|
 | `biome.json` | `2.5.4` schema; 2-space indent, 120-char width, double quotes, semicolons |
-| `tsconfig.json` / `tsconfig.scripts.json` | shared template versions (TS7, `erasableSyntaxOnly`, `verbatimModuleSyntax`) |
+| `tsconfig.json` / `tsconfig.scripts.json` / `tsconfig.test.json` | shared template versions (TS7, `erasableSyntaxOnly`, `verbatimModuleSyntax`); `check` runs `tsc` on all three |
 | `package.json` | `scenerystack ^3`, `vite ^8`, `typescript ^7`, `@biomejs/biome ^2.5`, `vitest ^4`; standard `scripts` block |
 | `.githooks/{pre-commit,pre-push}` | present; activated via `prepare` script on `npm install` |
 | `.github/workflows/ci.yml` | calls `OpenPhysics/Baton` reusable CI + shared security workflows |
@@ -150,8 +154,8 @@ License / Contributing` (enforced by Baton's compliance check). Do **not** add a
 **Documented-as-allowed variations** (not violations — note each in the sim's `CLAUDE.md`):
 sim-specific `vite.config.ts` plugins (e.g. TrackLab's OpenCV/video serving), `biome.json` /
 `.gitignore` additions for vendored binaries or local references, extra `package.json` scripts
-(`release` / `serve` / `watch` / domain checks), an extra `tsconfig.test.json`, and the a11y
-traversal choice (`pdomOrder` wrapper-Node *or* `pdomPlayAreaNode`/`pdomControlAreaNode`, per
+(`release` / `serve` / `watch` / domain checks), and the a11y traversal choice (`pdomOrder`
+wrapper-Node *or* `pdomPlayAreaNode`/`pdomControlAreaNode`, per
 [ACCESSIBILITY.md §3](ACCESSIBILITY.md)).
 
 ## 8. Constructor options

@@ -49,7 +49,7 @@ These standard issues should exist and be complete. If any are missing, pause th
 
 *If any item here fails, pause the review.*
 
-- [ ] `npm run check` passes (`tsc --noEmit` for app and scripts) with no type errors.
+- [ ] `npm run check` passes (`tsc --noEmit` for app, scripts, and tests) with no type errors.
 - [ ] `npm run lint` (Biome) reports no errors.
 - [ ] `npm test` (Vitest) passes.
 - [ ] `npm run build` (`tsc && vite build`) completes without warnings/errors and emits `dist/`.
@@ -132,6 +132,7 @@ Compare against `SceneryStackTemplate`. Source lives in `src/`, not `js/`; tooli
     package.json
     tsconfig.json
     tsconfig.scripts.json
+    tsconfig.test.json
     vite.config.ts
     vitest.config.ts
     README.md
