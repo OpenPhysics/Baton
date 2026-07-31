@@ -692,12 +692,16 @@
       ],
       "framework": "SceneryStack",
       "description": "Explore special relativity across four screens: a moving light clock, an interactive Minkowski spacetime diagram, the twin paradox, and the relativistic Doppler effect.",
-      "deployedUrl": null,
+      "deployedUrl": "https://openphysics.github.io/SpecialRelativity",
       "physicsTopics": [
         "special relativity",
         "spacetime",
         "time dilation",
-        "light clock"
+        "light clock",
+        "Lorentz transformation",
+        "simultaneity",
+        "twin paradox",
+        "relativistic Doppler effect"
       ],
       "screens": [
         "Light Clock",
@@ -705,7 +709,7 @@
         "Twin Paradox",
         "Relativistic Doppler"
       ],
-      "status": "draft"
+      "status": "active"
     },
     {
       "name": "SternGerlach",

@@ -12,9 +12,9 @@ conformant by default.
 
 > **Scope:** every active SceneryStack TypeScript simulation in
 > [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
-> plus `SceneryStackTemplate`. As of 2026-07-30 that is 28 sims including ACPhasor,
+> plus `SceneryStackTemplate`. As of 2026-07-31 that is 29 sims including ACPhasor,
 > BasicCoordinatesAndSeasons, CarnotHeatEngine, HabitableZones, LightPropagation, MotionsOfTheSun,
-> Oscilloscope, Precession, SternGerlach, and Zenith. The hardware
+> Oscilloscope, Precession, SpecialRelativity, SternGerlach, and Zenith. The hardware
 > web UI `tscd48` and the Python apps (`pyro`, `pycd48`) are out of scope. Orchestration (`Baton`)
 > and community-health (`.github`) repos follow their own conventions.
 
