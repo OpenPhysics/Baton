@@ -144,7 +144,7 @@ License / Contributing` (enforced by Baton's compliance check). Do **not** add a
 
 | File | Standard |
 |---|---|
-| `biome.json` | `2.5.4` schema; 2-space indent, 120-char width, double quotes, semicolons |
+| `biome.json` | versioned `biomejs.dev` `$schema` matching the pinned `@biomejs/biome`; 2-space indent, 120-char width, double quotes, semicolons |
 | `tsconfig.json` / `tsconfig.scripts.json` / `tsconfig.test.json` | shared template versions (TS7, `erasableSyntaxOnly`, `verbatimModuleSyntax`); `check` runs `tsc` on all three |
 | `package.json` | `scenerystack ^3`, `vite ^8`, `typescript ^7`, `@biomejs/biome ^2.5`, `vitest ^4`; standard `scripts` block |
 | `.githooks/{pre-commit,pre-push}` | present; activated via `prepare` script on `npm install` |
@@ -202,7 +202,7 @@ rest are a quick manual scan.
 - [ ] `.githooks/{pre-commit,pre-push}` present; `prepare` sets `core.hooksPath`. *(auto)*
 - [ ] `doc/model.md` + `doc/implementation-notes.md` exist and are filled. *(auto presence; manual content)*
 - [ ] `README.md` follows the six-section outline; no local `CONTRIBUTING.md` / `LICENSE`. *(auto)*
-- [ ] `biome.json` is on the `2.5.4` schema; `npm run lint` is green. *(auto)*
+- [ ] `biome.json` `$schema` matches the pinned `@biomejs/biome` (resync with `npx @biomejs/biome migrate --write`); `npm run lint` is green. *(auto)*
 - [ ] Any deliberate deviation is documented in the sim's `CLAUDE.md`. *(manual)*
 
 ## Verification

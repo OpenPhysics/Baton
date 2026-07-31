@@ -127,7 +127,7 @@ unless marked *(warn)*):
 - **Tests & hooks** — `tests/memory-leak.test.ts` + a `vitest.config.ts` that sets `--expose-gc`;
   `.githooks/{pre-commit,pre-push}` activated via the `prepare` script.
 - **Docs & tooling** — `doc/model.md` + `doc/implementation-notes.md` present and filled
-  *(warn if stub)*; `biome.json` on the `2.5` schema.
+  *(warn if stub)*; `biome.json` `$schema` version matches the pinned `@biomejs/biome`.
 - **GitHub security** (when `gh` is authenticated) — Dependabot vulnerability alerts + security
   updates, and secret scanning on public repos.
 

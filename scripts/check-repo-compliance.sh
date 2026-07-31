@@ -2,6 +2,10 @@
 # Compliance checks for OpenPhysics SceneryStack simulation repositories.
 set -euo pipefail
 
+# Resolve before the cd below: BASH_SOURCE may be a relative path, and it stops
+# resolving once the working directory moves into the repo under test.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 REPO_DIR="${1:?Repository directory required}"
 cd "$REPO_DIR"
 
@@ -106,7 +110,6 @@ if [ -f package.json ]; then
   # Node engine / @types/node must track Baton's fleet Node major (ci.yml default).
   # When this script is checked out from Baton (.org-compliance/…), read the major
   # from that tree; otherwise fall back to 24.
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   CI_YML="$SCRIPT_DIR/../.github/workflows/ci.yml"
   if [ -f "$CI_YML" ]; then
     EXPECTED_NODE_MAJOR="$(grep -oP 'default:\s*["'\'']\K[0-9]+' "$CI_YML" | head -n1 || true)"
@@ -329,11 +332,21 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
     fi
   done
 
+  # Biome config and CLI must move in lockstep: Dependabot bumps the devDependency
+  # but never rewrites $schema, so the two silently drift. Assert equality rather
+  # than pinning a version here, so this check survives the next bump untouched.
+  # `biome migrate --write` is what resyncs biome.json after a bump.
   if [ -f biome.json ]; then
-    if grep -q 'biomejs.dev/schemas/2\.5' biome.json; then
-      pass "biome.json on 2.5 schema"
+    biome_schema_ver=$(grep -oE 'biomejs\.dev/schemas/[0-9]+\.[0-9]+\.[0-9]+' biome.json | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
+    biome_dep_ver=$(grep -oE '"@biomejs/biome"[[:space:]]*:[[:space:]]*"[^"]+"' package.json | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
+    if [ -z "$biome_schema_ver" ]; then
+      fail "biome.json \$schema must be a versioned biomejs.dev/schemas/<x.y.z>/schema.json URL"
+    elif [ -z "$biome_dep_ver" ]; then
+      fail "package.json must pin @biomejs/biome (biome.json \$schema is $biome_schema_ver)"
+    elif [ "$biome_schema_ver" != "$biome_dep_ver" ]; then
+      fail "biome.json \$schema ($biome_schema_ver) must match @biomejs/biome ($biome_dep_ver) — run: npx @biomejs/biome migrate --write"
     else
-      fail "biome.json must reference the 2.5.x schema"
+      pass "biome.json \$schema matches pinned @biomejs/biome ($biome_dep_ver)"
     fi
   fi
 
