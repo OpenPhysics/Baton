@@ -124,5 +124,6 @@ Title `Text` nodes still need an explicit `fill` from `textColorProperty`.
 - Forgetting the `ComboBox` list parent → the dropdown is clipped inside a panel.
 - A `ResetAllButton` that resets the model but leaves view-only Properties (e.g. a "show ruler" toggle) stale.
 - `new Panel(content, { fill: "#fff" })` instead of `<Prefix>Panel` → breaks projector mode and duplicates chrome.
+- Leaving Checkbox / ComboBox item labels / `NumberControl` title+`numberDisplayOptions` on framework black/white defaults → low contrast on dark default panels (projector mode usually looks fine). Theme them from `*Colors.ts` — see scenerystack-color-profiles.
 
 Related skills: scenerystack-layout, scenerystack-optionize, scenerystack-strings, scenerystack-enumeration, scenerystack-accessibility, scenerystack-color-profiles.

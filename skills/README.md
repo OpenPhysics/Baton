@@ -46,7 +46,7 @@ folder is well-formed and listed here.
 | Skill | Use when |
 |---|---|
 | [`scenerystack-layout`](scenerystack-layout/SKILL.md) | Positioning nodes — `layoutBounds`, `VBox`/`HBox`/`GridBox`, `AlignBox`/`AlignGroup`, struts, `Panel`. |
-| [`scenerystack-color-profiles`](scenerystack-color-profiles/SKILL.md) | Adding/theming colors — `ProfileColorProperty`, the per-sim `*Colors.ts`, projector mode. |
+| [`scenerystack-color-profiles`](scenerystack-color-profiles/SKILL.md) | Adding/theming colors — `ProfileColorProperty`, the per-sim `*Colors.ts`, projector mode, and contrast gotchas (Checkbox, ComboBox, NumberDisplay) that fail in the dark default profile. |
 | [`scenerystack-drag-listener`](scenerystack-drag-listener/SKILL.md) | Making a node draggable by mouse, touch, or keyboard — `DragListener`, `KeyboardDragListener`, `RichDragListener`, drag bounds. |
 | [`scenerystack-optionize`](scenerystack-optionize/SKILL.md) | A constructor takes configurable options — `optionize<>()`, `SelfOptions`/`Options`, `EmptySelfOptions`, `combineOptions`. |
 | [`scenerystack-ui-controls`](scenerystack-ui-controls/SKILL.md) | Adding standard controls — sliders, spinners, checkboxes, radio buttons, combo boxes, buttons, Reset All, themed `<Prefix>Panel`/`Dialog` — from `sun`/`scenery-phet`, wired to model Properties. |
