@@ -65,15 +65,15 @@ Edit [`structure/repos.json`](../structure/repos.json). Insert a new object in `
 ```json
 {
   "name": "MyNewSim",
+  "displayName": "My New Sim",
   "type": "simulation",
   "isSimulation": true,
-  "isPhETPort": false,
-  "isNAAPPort": false,
-  "isNewSimulation": true,
+  "lineage": "original",
+  "upstream": null,
   "language": ["TypeScript"],
   "framework": "SceneryStack",
   "description": "One or two sentences for GitHub and the landing-page card.",
-  "deployedUrl": "https://OpenPhysics.github.io/MyNewSim",
+  "deployedUrl": "https://openphysics.github.io/MyNewSim",
   "physicsTopics": ["topic-a", "topic-b"],
   "screens": ["Screen One"],
   "status": "active"
@@ -83,17 +83,19 @@ Edit [`structure/repos.json`](../structure/repos.json). Insert a new object in `
 | Field | Notes |
 |---|---|
 | `name` | Must match the GitHub repo name (and the sibling folder name in the workspace). |
-| `isPhETPort` / `isNAAPPort` / `isNewSimulation` | Exactly one of the three landing-page buckets should be the “home” for the card: set `isPhETPort` or `isNAAPPort` for ports; otherwise set `isNewSimulation: true`. The page generator groups by PhET / NAAP / everything else. |
+| `displayName` | Human title on the landing-page card (and for docs). |
+| `lineage` | Landing-page bucket: `"original"`, `"phet"`, or `"naap"`. Non-simulations use `null`. |
+| `upstream` | For `phet` / `naap` ports: `{ "org", "name", "url" }` pointing at the source lab. Otherwise `null`. |
 | `description` | Shown on the card and synced to the GitHub repo description. |
-| `deployedUrl` | Canonical Pages URL (trailing slash optional; the generator normalizes). |
+| `deployedUrl` | Canonical Pages URL with lowercase `openphysics` host (trailing slash optional). |
 | `physicsTopics` | Up to three tags are shown on the card. |
-| `screens` | Human-readable screen titles (documentation / compliance; not required for the card image). |
-| `status` | `"active"` to appear on the landing page and in fleet health. Use `"template"` / other values only for non-shipped entries (e.g. `SceneryStackTemplate`). |
+| `screens` | Human-readable screen titles (required for simulations; non-empty). |
+| `status` | `"active"` appears on the landing page and in fleet health. Also: `"draft"` / `"wip"` (in catalog, not shipped), `"archived"` (retained, skipped by Pages/health), `"template"` (seed repo). |
 
 Validate locally:
 
 ```bash
-jq empty structure/repos.json
+scripts/check-repos-catalog.sh
 scripts/parse-repos.sh names --simulation | grep MyNewSim
 ```
 
@@ -234,13 +236,13 @@ Run from `Baton/`:
 # Active SceneryStack sims (excludes SceneryStackTemplate, cd48, etc.)
 jq '[.repos[] | select(.isSimulation==true and .status=="active")] | length' structure/repos.json
 
-# Landing-page buckets (must match isPhETPort / isNAAPPort flags on each row)
-jq '[.repos[] | select(.isSimulation==true and .status=="active" and .isPhETPort==false and .isNAAPPort==false)] | length' structure/repos.json   # “New / original”
-jq '[.repos[] | select(.isSimulation==true and .status=="active" and .isPhETPort==true)] | length' structure/repos.json                          # PhET ports
-jq '[.repos[] | select(.isSimulation==true and .status=="active" and .isNAAPPort==true)] | length' structure/repos.json                           # NAAP ports
+# Landing-page buckets (must match lineage on each row)
+jq '[.repos[] | select(.isSimulation==true and .status=="active" and .lineage=="original")] | length' structure/repos.json
+jq '[.repos[] | select(.isSimulation==true and .status=="active" and .lineage=="phet")] | length' structure/repos.json
+jq '[.repos[] | select(.isSimulation==true and .status=="active" and .lineage=="naap")] | length' structure/repos.json
 ```
 
-*(As of 2026-07-27 the fleet has **27** active sims: **13** original, **7** PhET, **7** NAAP.)*
+*(As of 2026-07-31 the fleet has **28** active sims: **14** original, **7** PhET, **7** NAAP.)*
 
 ### Auto-generated — no manual count edit
 
@@ -258,7 +260,7 @@ Regenerate the landing page after catalog changes: `npm run pages` (see §4).
 | Location | Repo | What to update |
 |---|---|---|
 | [`OpenPhysics/README.md`](https://github.com/OpenPhysics/OpenPhysics/blob/main/README.md) `## Layout` | OpenPhysics | Comma-separated sim names (§7) — **no total count** in that file |
-| [`.github/profile/README.md`](https://github.com/OpenPhysics/.github/blob/main/profile/README.md) | `.github` | Top stats row `` **N** simulations ``; add a table row under **NAAP**, **PhET**, or **Other simulations** (match `isNAAPPort` / `isPhETPort` / original) |
+| [`.github/profile/README.md`](https://github.com/OpenPhysics/.github/blob/main/profile/README.md) | `.github` | Top stats row `` **N** simulations ``; add a table row under **NAAP**, **PhET**, or **Other simulations** (match `lineage`) |
 | [`CONVENTIONS.md`](../CONVENTIONS.md) scope blockquote | Baton | `` As of YYYY-MM-DD that is N sims … `` — bump **N**, date, and example names if you use them |
 | [`ACCESSIBILITY.md`](../ACCESSIBILITY.md) scope blockquote | Baton | Same pattern as CONVENTIONS |
 
@@ -287,7 +289,7 @@ accurate.
 
 **Baton**
 
-- [ ] Row added to `structure/repos.json` (`status: "active"`, correct port/new flags)
+- [ ] Row added to `structure/repos.json` (`status: "active"`, correct `lineage` / `upstream`, `displayName`, non-empty `screens`)
 - [ ] `screenshots/<Sim>.png` committed
 - [ ] `docs/assets/<Sim>.webp` committed (or produced by optimize-assets / refresh-screenshots)
 - [ ] `docs/index.html` regenerated (`npm run pages`) and committed if it changed

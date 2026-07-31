@@ -1,15 +1,18 @@
 {
-  "schemaVersion": "1.0.0",
+  "$schema": "./repos.schema.json",
+  "schemaVersion": "1.1.0",
   "organization": "OpenPhysics",
   "repos": [
     {
       "name": ".github",
+      "displayName": "OpenPhysics .github",
       "type": "config",
       "isSimulation": false,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["Markdown"],
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "Markdown"
+      ],
       "framework": null,
       "description": "Organization-level community health defaults (license, contributing, code of conduct, security, issue/PR templates) and shared AI-assistant guidance.",
       "deployedUrl": null,
@@ -19,12 +22,15 @@
     },
     {
       "name": "Almanach",
+      "displayName": "Almanach",
       "type": "tool",
       "isSimulation": false,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript", "Markdown"],
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "TypeScript",
+        "Markdown"
+      ],
       "framework": "VitePress",
       "description": "A file-based SceneryStack knowledge base with API guides, software patterns, styling, and accessibility conventions, designed for humans and LLM agents alike.",
       "deployedUrl": "https://openphysics.github.io/Almanach/",
@@ -34,12 +40,15 @@
     },
     {
       "name": "Baton",
+      "displayName": "Baton",
       "type": "tool",
       "isSimulation": false,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["Shell", "YAML"],
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "Shell",
+        "YAML"
+      ],
       "framework": null,
       "description": "Org orchestration: reusable CI/CD workflows, cross-repo automation scripts, Dependabot templates, the repository catalog, and the simulation landing page.",
       "deployedUrl": "https://openphysics.github.io/Baton/",
@@ -49,301 +58,559 @@
     },
     {
       "name": "ACPhasor",
+      "displayName": "AC Phasor",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "AC phasor simulation exploring resistors, inductors, and capacitors across four screens — Intro (single element), Series RLC, Resonance, and Power.",
-      "deployedUrl": "https://OpenPhysics.github.io/ACPhasor",
-      "physicsTopics": ["AC circuits", "phasors", "RLC", "impedance", "resonance"],
-      "screens": ["Intro", "Series RLC", "Resonance", "Power"],
+      "deployedUrl": "https://openphysics.github.io/ACPhasor",
+      "physicsTopics": [
+        "AC circuits",
+        "phasors",
+        "RLC",
+        "impedance",
+        "resonance"
+      ],
+      "screens": [
+        "Intro",
+        "Series RLC",
+        "Resonance",
+        "Power"
+      ],
       "status": "active"
     },
     {
       "name": "BasicCoordinatesAndSeasons",
+      "displayName": "Basic Coordinates and Seasons",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": true,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "naap",
+      "upstream": {
+        "org": "naap",
+        "name": "Basic Coordinates and Seasons",
+        "url": "https://astro.unl.edu/naap/motion1/motion1.html"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Basic Coordinates and Seasons' lab. Explore terrestrial and celestial coordinates and how Earth's axial tilt produces the seasons across three screens.",
-      "deployedUrl": "https://OpenPhysics.github.io/BasicCoordinatesAndSeasons",
-      "physicsTopics": ["astronomy", "coordinates", "seasons", "celestial sphere", "latitude", "longitude"],
-      "screens": ["Terrestrial Coordinates", "Celestial Coordinates", "Seasons"],
+      "deployedUrl": "https://openphysics.github.io/BasicCoordinatesAndSeasons",
+      "physicsTopics": [
+        "astronomy",
+        "coordinates",
+        "seasons",
+        "celestial sphere",
+        "latitude",
+        "longitude"
+      ],
+      "screens": [
+        "Terrestrial Coordinates",
+        "Celestial Coordinates",
+        "Seasons"
+      ],
       "status": "active"
     },
     {
       "name": "CarnotHeatEngine",
+      "displayName": "Carnot Heat Engine",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
-      "description": "Explore the Carnot cycle across three screens: a piston-cylinder tied to a live PV diagram, a quantitative efficiency lab with a T\u2013S view, and the same cycle reversed as a refrigerator or heat pump.",
-      "deployedUrl": "https://OpenPhysics.github.io/CarnotHeatEngine",
-      "physicsTopics": ["thermodynamics", "Carnot cycle", "heat engines", "efficiency", "entropy", "refrigeration"],
-      "screens": ["Intro", "Efficiency Lab", "Reversed Cycle"],
+      "description": "Explore the Carnot cycle across three screens: a piston-cylinder tied to a live PV diagram, a quantitative efficiency lab with a T–S view, and the same cycle reversed as a refrigerator or heat pump.",
+      "deployedUrl": "https://openphysics.github.io/CarnotHeatEngine",
+      "physicsTopics": [
+        "thermodynamics",
+        "Carnot cycle",
+        "heat engines",
+        "efficiency",
+        "entropy",
+        "refrigeration"
+      ],
+      "screens": [
+        "Intro",
+        "Efficiency Lab",
+        "Reversed Cycle"
+      ],
       "status": "active"
     },
     {
       "name": "DopplerEffect",
+      "displayName": "Doppler Effect",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Interactive simulation of the Doppler Effect — visualizes how the frequency of sound waves shifts with relative motion between source and observer.",
-      "deployedUrl": "https://OpenPhysics.github.io/DopplerEffect",
-      "physicsTopics": ["waves", "sound", "frequency", "motion"],
-      "screens": ["Doppler Effect"],
+      "deployedUrl": "https://openphysics.github.io/DopplerEffect",
+      "physicsTopics": [
+        "waves",
+        "sound",
+        "frequency",
+        "motion"
+      ],
+      "screens": [
+        "Doppler Effect"
+      ],
       "status": "active"
     },
     {
       "name": "ElectricFieldOfDreams",
+      "displayName": "Electric Field of Dreams",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": true,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "phet",
+      "upstream": {
+        "org": "phet",
+        "name": "Electric Field of Dreams",
+        "url": "https://phet.colorado.edu/en/simulation/efield"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET 'Electric Field of Dreams' simulation. Place charged particles and observe Coulomb interactions and an adjustable uniform external field.",
-      "deployedUrl": "https://OpenPhysics.github.io/ElectricFieldOfDreams",
-      "physicsTopics": ["electrostatics", "electric fields", "Coulomb's law"],
-      "screens": ["Electric Field of Dreams"],
+      "deployedUrl": "https://openphysics.github.io/ElectricFieldOfDreams",
+      "physicsTopics": [
+        "electrostatics",
+        "electric fields",
+        "Coulomb's law"
+      ],
+      "screens": [
+        "Electric Field of Dreams"
+      ],
       "status": "active"
     },
     {
       "name": "ExtrasolarPlanets",
+      "displayName": "Extrasolar Planets",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": true,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "naap",
+      "upstream": {
+        "org": "naap",
+        "name": "Extrasolar Planets",
+        "url": "https://astro.unl.edu/naap/esp/esp.html"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Interactive simulation of two exoplanet-detection methods — radial velocity (Doppler wobble) and transit (light-curve dip).",
-      "deployedUrl": "https://OpenPhysics.github.io/ExtrasolarPlanets",
-      "physicsTopics": ["astronomy", "exoplanets", "radial velocity", "transit photometry", "orbits"],
-      "screens": ["Radial Velocity", "Transit"],
+      "deployedUrl": "https://openphysics.github.io/ExtrasolarPlanets",
+      "physicsTopics": [
+        "astronomy",
+        "exoplanets",
+        "radial velocity",
+        "transit photometry",
+        "orbits"
+      ],
+      "screens": [
+        "Radial Velocity",
+        "Transit"
+      ],
       "status": "active"
     },
     {
       "name": "HabitableZones",
+      "displayName": "Habitable Zones",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": true,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "naap",
+      "upstream": {
+        "org": "naap",
+        "name": "Habitable Zones",
+        "url": "https://astro.unl.edu/naap/habitablezones/habitablezones.html"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Habitable Zones' lab. Compare circumstellar and galactic habitable zones with orbiting planets in two screens: Circumstellar and Galactic / Milky Way Habitability.",
-      "deployedUrl": "https://OpenPhysics.github.io/HabitableZones",
-      "physicsTopics": ["astronomy", "habitable zone", "exoplanets", "galactic habitability", "stellar luminosity"],
-      "screens": ["Circumstellar", "Galactic"],
+      "deployedUrl": "https://openphysics.github.io/HabitableZones",
+      "physicsTopics": [
+        "astronomy",
+        "habitable zone",
+        "exoplanets",
+        "galactic habitability",
+        "stellar luminosity"
+      ],
+      "screens": [
+        "Circumstellar",
+        "Galactic"
+      ],
       "status": "active"
     },
     {
       "name": "LadyBug",
+      "displayName": "Ladybug Motion 2D",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": true,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "phet",
+      "upstream": {
+        "org": "phet",
+        "name": "Ladybug Motion 2D",
+        "url": "https://phet.colorado.edu/en/simulations/ladybug-motion-2d"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET 'Ladybug Motion 2D' simulation. Explore 2D motion, position, velocity, and acceleration using a ladybug on a rotating platform.",
-      "deployedUrl": "https://OpenPhysics.github.io/LadyBug",
-      "physicsTopics": ["kinematics", "2D motion", "rotation", "vectors"],
-      "screens": ["Lady Bug"],
+      "deployedUrl": "https://openphysics.github.io/LadyBug",
+      "physicsTopics": [
+        "kinematics",
+        "2D motion",
+        "rotation",
+        "vectors"
+      ],
+      "screens": [
+        "Lady Bug"
+      ],
       "status": "active"
     },
     {
       "name": "LightPropagation",
+      "displayName": "Light Propagation",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Interactive simulation of how light propagates through polarizers and wave plates — Intro, Polarization, Wave Plates, and Lab screens.",
-      "deployedUrl": "https://OpenPhysics.github.io/LightPropagation",
-      "physicsTopics": ["optics", "light", "polarization", "wave plates"],
-      "screens": ["Intro", "Polarization", "Wave Plates", "Lab"],
+      "deployedUrl": "https://openphysics.github.io/LightPropagation",
+      "physicsTopics": [
+        "optics",
+        "light",
+        "polarization",
+        "wave plates"
+      ],
+      "screens": [
+        "Intro",
+        "Polarization",
+        "Wave Plates",
+        "Lab"
+      ],
       "status": "active"
     },
     {
       "name": "LunarLander",
+      "displayName": "Lunar Lander",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": true,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "phet",
+      "upstream": {
+        "org": "phet",
+        "name": "Lunar Lander",
+        "url": "https://phet.colorado.edu/en/simulations/lunar-lander"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the classic PhET Flash 'Lunar Lander' simulation. Pilot a lunar module to a soft landing by managing thrust and tilt against gravity.",
-      "deployedUrl": "https://OpenPhysics.github.io/LunarLander",
-      "physicsTopics": ["gravity", "forces", "kinematics", "energy"],
-      "screens": ["Lunar Lander"],
+      "deployedUrl": "https://openphysics.github.io/LunarLander",
+      "physicsTopics": [
+        "gravity",
+        "forces",
+        "kinematics",
+        "energy"
+      ],
+      "screens": [
+        "Lunar Lander"
+      ],
       "status": "active"
     },
     {
       "name": "MazeGame",
+      "displayName": "Maze Game",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": true,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "phet",
+      "upstream": {
+        "org": "phet",
+        "name": "Maze Game",
+        "url": "https://phet.colorado.edu/en/simulations/maze-game"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET 'Maze Game' simulation. Drive a particle through tile-based mazes using position, velocity, or acceleration control modes.",
-      "deployedUrl": "https://OpenPhysics.github.io/MazeGame",
-      "physicsTopics": ["kinematics", "vectors", "motion", "acceleration"],
-      "screens": ["Maze Game"],
+      "deployedUrl": "https://openphysics.github.io/MazeGame",
+      "physicsTopics": [
+        "kinematics",
+        "vectors",
+        "motion",
+        "acceleration"
+      ],
+      "screens": [
+        "Maze Game"
+      ],
       "status": "active"
     },
     {
       "name": "MotionsOfTheSun",
+      "displayName": "Motions of the Sun",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": true,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "naap",
+      "upstream": {
+        "org": "naap",
+        "name": "Motions of the Sun",
+        "url": "https://astro.unl.edu/naap/motion3/motion3.html"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Motions of the Sun' lab. Trace the Sun's daily path, compare sidereal and solar time, and explore the zodiac on the celestial sphere.",
-      "deployedUrl": "https://OpenPhysics.github.io/MotionsOfTheSun",
-      "physicsTopics": ["astronomy", "sun paths", "sidereal time", "solar time", "zodiac", "ecliptic"],
-      "screens": ["Sun Paths", "Sidereal and Solar Time", "Zodiac"],
+      "deployedUrl": "https://openphysics.github.io/MotionsOfTheSun",
+      "physicsTopics": [
+        "astronomy",
+        "sun paths",
+        "sidereal time",
+        "solar time",
+        "zodiac",
+        "ecliptic"
+      ],
+      "screens": [
+        "Sun Paths",
+        "Sidereal and Solar Time",
+        "Zodiac"
+      ],
       "status": "active"
     },
     {
       "name": "MovingMan",
+      "displayName": "Moving Man",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": true,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "phet",
+      "upstream": {
+        "org": "phet",
+        "name": "The Moving Man",
+        "url": "https://phet.colorado.edu/en/simulations/moving-man"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET Java 'Moving Man' simulation. Explore 1D kinematics by dragging a man or using position/velocity/acceleration sliders.",
-      "deployedUrl": "https://OpenPhysics.github.io/MovingMan",
-      "physicsTopics": ["kinematics", "1D motion", "graphs", "velocity", "acceleration"],
-      "screens": ["Introduction", "Charts"],
+      "deployedUrl": "https://openphysics.github.io/MovingMan",
+      "physicsTopics": [
+        "kinematics",
+        "1D motion",
+        "graphs",
+        "velocity",
+        "acceleration"
+      ],
+      "screens": [
+        "Introduction",
+        "Charts"
+      ],
       "status": "active"
     },
     {
       "name": "OpticsLab",
+      "displayName": "Optics Lab",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Web-based geometric optics simulation. Supports ray sources, parallel and divergent beams, mirrors, lenses, beam splitters, and refraction interfaces.",
-      "deployedUrl": "https://OpenPhysics.github.io/OpticsLab",
-      "physicsTopics": ["optics", "geometric optics", "reflection", "refraction", "lenses"],
-      "screens": ["Intro", "Lab", "Presets", "Diffraction"],
+      "deployedUrl": "https://openphysics.github.io/OpticsLab",
+      "physicsTopics": [
+        "optics",
+        "geometric optics",
+        "reflection",
+        "refraction",
+        "lenses"
+      ],
+      "screens": [
+        "Intro",
+        "Lab",
+        "Presets",
+        "Diffraction"
+      ],
       "status": "active"
     },
     {
       "name": "OscillationsAndChaos",
+      "displayName": "Oscillations and Chaos",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Collection of four classical mechanics simulations exploring oscillations and chaos: single spring, double spring, pendulum, and double pendulum.",
-      "deployedUrl": "https://OpenPhysics.github.io/OscillationsAndChaos",
-      "physicsTopics": ["oscillations", "chaos", "springs", "pendulum", "energy", "phase space"],
-      "screens": ["Single Spring", "Double Spring", "Pendulum", "Double Pendulum"],
+      "deployedUrl": "https://openphysics.github.io/OscillationsAndChaos",
+      "physicsTopics": [
+        "oscillations",
+        "chaos",
+        "springs",
+        "pendulum",
+        "energy",
+        "phase space"
+      ],
+      "screens": [
+        "Single Spring",
+        "Double Spring",
+        "Pendulum",
+        "Double Pendulum"
+      ],
       "status": "active"
     },
     {
       "name": "Oscilloscope",
+      "displayName": "Oscilloscope",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Single-screen SceneryStack bench oscilloscope. Display a synthetic function-generator signal or live microphone audio on a phosphor-green CRT graticule, with two channels, triggering, X-Y and FFT modes, measurement cursors, and live auto-measurements.",
-      "deployedUrl": "https://OpenPhysics.github.io/Oscilloscope",
-      "physicsTopics": ["oscilloscope", "waveforms", "signals", "function generator", "audio", "FFT"],
-      "screens": ["Oscilloscope"],
+      "deployedUrl": "https://openphysics.github.io/Oscilloscope",
+      "physicsTopics": [
+        "oscilloscope",
+        "waveforms",
+        "signals",
+        "function generator",
+        "audio",
+        "FFT"
+      ],
+      "screens": [
+        "Oscilloscope"
+      ],
       "status": "active"
     },
     {
       "name": "Precession",
+      "displayName": "Precession",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Rigid-body dynamics of a spinning gyroscope: steady precession under gravity, nutation, and torque-free tumbling.",
-      "deployedUrl": "https://OpenPhysics.github.io/Precession",
-      "physicsTopics": ["rigid body", "precession", "nutation", "gyroscope", "angular momentum", "torque"],
-      "screens": ["Steady Precession", "Nutation", "Torque-Free Tumbling"],
+      "deployedUrl": "https://openphysics.github.io/Precession",
+      "physicsTopics": [
+        "rigid body",
+        "precession",
+        "nutation",
+        "gyroscope",
+        "angular momentum",
+        "torque"
+      ],
+      "screens": [
+        "Steady Precession",
+        "Nutation",
+        "Torque-Free Tumbling"
+      ],
       "status": "active"
     },
     {
       "name": "QubitSketch",
+      "displayName": "Qubit Sketch",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Drag-and-drop quantum circuit builder with a live state simulator. Place quantum gates and watch probabilities, amplitudes, Bloch spheres, and measurements update in real time.",
-      "deployedUrl": "https://OpenPhysics.github.io/QubitSketch",
-      "physicsTopics": ["quantum mechanics", "quantum circuits", "qubits", "quantum gates"],
-      "screens": ["Circuit"],
+      "deployedUrl": "https://openphysics.github.io/QubitSketch",
+      "physicsTopics": [
+        "quantum mechanics",
+        "quantum circuits",
+        "qubits",
+        "quantum gates"
+      ],
+      "screens": [
+        "Circuit"
+      ],
       "status": "active"
     },
     {
       "name": "RadioWaves",
+      "displayName": "Radio Waves",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": true,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "phet",
+      "upstream": {
+        "org": "phet",
+        "name": "Radio Waves & Electromagnetic Fields",
+        "url": "https://phet.colorado.edu/en/simulations/radio-waves"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET 'Radio Waves & Electromagnetic Fields' simulation, rebuilt from the legacy PIXI.js + Backbone version. Wiggle an electron and watch EM radiation propagate.",
-      "deployedUrl": "https://OpenPhysics.github.io/RadioWaves",
-      "physicsTopics": ["electromagnetism", "radio waves", "EM fields", "antennas"],
-      "screens": ["Radio Waves"],
+      "deployedUrl": "https://openphysics.github.io/RadioWaves",
+      "physicsTopics": [
+        "electromagnetism",
+        "radio waves",
+        "EM fields",
+        "antennas"
+      ],
+      "screens": [
+        "Radio Waves"
+      ],
       "status": "active"
     },
     {
       "name": "Resonance",
+      "displayName": "Resonance",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Interactive simulation of resonance in driven oscillating systems. Visualizes driven mass-spring systems and Chladni plate patterns.",
-      "deployedUrl": "https://OpenPhysics.github.io/Resonance",
-      "physicsTopics": ["resonance", "oscillations", "waves", "Chladni patterns", "damping"],
+      "deployedUrl": "https://openphysics.github.io/Resonance",
+      "physicsTopics": [
+        "resonance",
+        "oscillations",
+        "waves",
+        "Chladni patterns",
+        "damping"
+      ],
       "screens": [
         "Single Oscillator",
         "Multiple Oscillators",
@@ -354,57 +621,100 @@
     },
     {
       "name": "RotatingSky",
+      "displayName": "Rotating Sky",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": true,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "naap",
+      "upstream": {
+        "org": "naap",
+        "name": "The Rotating Sky",
+        "url": "https://astro.unl.edu/naap/motion2/motion2.html"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Rotating Sky' lab. Explore how the sky appears to rotate for an observer on Earth through a horizon system, a celestial sphere, and a combined interactive explorer.",
-      "deployedUrl": "https://OpenPhysics.github.io/RotatingSky",
-      "physicsTopics": ["astronomy", "celestial sphere", "diurnal motion", "horizon coordinates", "Earth rotation"],
-      "screens": ["Horizon System", "Celestial Sphere", "Explorer"],
+      "deployedUrl": "https://openphysics.github.io/RotatingSky",
+      "physicsTopics": [
+        "astronomy",
+        "celestial sphere",
+        "diurnal motion",
+        "horizon coordinates",
+        "Earth rotation"
+      ],
+      "screens": [
+        "Horizon System",
+        "Celestial Sphere",
+        "Explorer"
+      ],
       "status": "active"
     },
     {
       "name": "SolarSystemModels",
+      "displayName": "Solar System Models",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": true,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "naap",
+      "upstream": {
+        "org": "naap",
+        "name": "Solar System Models",
+        "url": "https://astro.unl.edu/naap/ssm/ssm.html"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Solar System Models' lab. Compare the Earth-centered Ptolemaic model (deferent and epicycle) with the Sun-centered system and the planetary configurations it produces.",
-      "deployedUrl": "https://OpenPhysics.github.io/SolarSystemModels",
-      "physicsTopics": ["astronomy", "geocentrism", "heliocentrism", "epicycles", "planetary configurations"],
-      "screens": ["Ptolemaic System", "Planetary Configurations"],
+      "deployedUrl": "https://openphysics.github.io/SolarSystemModels",
+      "physicsTopics": [
+        "astronomy",
+        "geocentrism",
+        "heliocentrism",
+        "epicycles",
+        "planetary configurations"
+      ],
+      "screens": [
+        "Ptolemaic System",
+        "Planetary Configurations"
+      ],
       "status": "active"
     },
     {
       "name": "SternGerlach",
+      "displayName": "Stern–Gerlach",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Interactive Stern–Gerlach experiment: assemble analyzers, magnets, and counters; fire spin-½ / spin-1 atoms; compare Monte Carlo counts with analytic quantum predictions.",
-      "deployedUrl": "https://OpenPhysics.github.io/SternGerlach",
-      "physicsTopics": ["quantum mechanics", "spin", "Stern-Gerlach", "measurement", "superposition"],
-      "screens": ["Stern Gerlach"],
+      "deployedUrl": "https://openphysics.github.io/SternGerlach",
+      "physicsTopics": [
+        "quantum mechanics",
+        "spin",
+        "Stern-Gerlach",
+        "measurement",
+        "superposition"
+      ],
+      "screens": [
+        "Stern Gerlach"
+      ],
       "status": "active"
     },
     {
       "name": "SceneryStackTemplate",
+      "displayName": "SceneryStack Template",
       "type": "template",
       "isSimulation": false,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "GitHub template for OpenPhysics SceneryStack sims — Use this template or Baton create-sim.sh; rename + scaffold-screens for one or N screens.",
       "deployedUrl": null,
@@ -414,136 +724,222 @@
     },
     {
       "name": "TheRamp",
+      "displayName": "The Ramp",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": true,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "phet",
+      "upstream": {
+        "org": "phet",
+        "name": "The Ramp",
+        "url": "https://phet.colorado.edu/en/simulations/the-ramp"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET Java 'The Ramp' simulation. Explore forces on an inclined plane with friction, energy conservation, and applied forces. Features record/playback, force charts, and comparison objects.",
-      "deployedUrl": "https://OpenPhysics.github.io/TheRamp",
-      "physicsTopics": ["forces", "inclined plane", "friction", "energy", "Newton's laws", "kinematics"],
-      "screens": ["Introduction", "More Features"],
+      "deployedUrl": "https://openphysics.github.io/TheRamp",
+      "physicsTopics": [
+        "forces",
+        "inclined plane",
+        "friction",
+        "energy",
+        "Newton's laws",
+        "kinematics"
+      ],
+      "screens": [
+        "Introduction",
+        "More Features"
+      ],
       "status": "active"
     },
     {
       "name": "TrackLab",
+      "displayName": "Track Lab",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Browser-based video motion-analysis tool. Load a video, calibrate real-world distances, and auto-track objects across frames using computer vision.",
-      "deployedUrl": "https://OpenPhysics.github.io/TrackLab",
-      "physicsTopics": ["kinematics", "measurement", "data analysis"],
-      "screens": null,
+      "deployedUrl": "https://openphysics.github.io/TrackLab",
+      "physicsTopics": [
+        "kinematics",
+        "measurement",
+        "data analysis"
+      ],
+      "screens": [
+        "Track Lab"
+      ],
       "status": "active"
     },
     {
       "name": "VariableStarPhotometry",
+      "displayName": "Variable Star Photometry",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": true,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": "naap",
+      "upstream": {
+        "org": "naap",
+        "name": "Variable Star Photometry",
+        "url": "https://astro.unl.edu/naap/vsp/vsp.html"
+      },
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Variable Star Photometry' lab. Register CCD star-field images, blink-compare epochs, perform aperture photometry, and find periods from a differential-magnitude light curve.",
-      "deployedUrl": "https://OpenPhysics.github.io/VariableStarPhotometry",
-      "physicsTopics": ["astronomy", "photometry", "variable stars", "CCD imaging", "light curves", "period finding"],
-      "screens": ["Registration", "Blink Comparator", "Photometry", "Analyzer"],
+      "deployedUrl": "https://openphysics.github.io/VariableStarPhotometry",
+      "physicsTopics": [
+        "astronomy",
+        "photometry",
+        "variable stars",
+        "CCD imaging",
+        "light curves",
+        "period finding"
+      ],
+      "screens": [
+        "Registration",
+        "Blink Comparator",
+        "Photometry",
+        "Analyzer"
+      ],
       "status": "active"
     },
     {
       "name": "WaveComposer",
+      "displayName": "Wave Composer",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "Three-screen VoceVista-style real-time voice-analysis simulation. Analyzes microphone input for waveform, spectrum, and composition.",
-      "deployedUrl": "https://OpenPhysics.github.io/WaveComposer",
-      "physicsTopics": ["waves", "acoustics", "Fourier analysis", "sound"],
-      "screens": ["Compose", "Analyzer", "Voice & Vowels"],
+      "deployedUrl": "https://openphysics.github.io/WaveComposer",
+      "physicsTopics": [
+        "waves",
+        "acoustics",
+        "Fourier analysis",
+        "sound"
+      ],
+      "screens": [
+        "Compose",
+        "Analyzer",
+        "Voice & Vowels"
+      ],
       "status": "active"
     },
     {
       "name": "Zenith",
+      "displayName": "Zenith",
       "type": "simulation",
       "isSimulation": true,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": true,
-      "language": ["TypeScript"],
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": "SceneryStack",
       "description": "SceneryStack planetarium renderer. Project the night sky for an observer on Earth from latitude, longitude, and local sidereal time.",
-      "deployedUrl": "https://OpenPhysics.github.io/Zenith",
-      "physicsTopics": ["astronomy", "planetarium", "celestial sphere", "sidereal time", "horizon coordinates"],
-      "screens": ["Planetarium"],
+      "deployedUrl": "https://openphysics.github.io/Zenith",
+      "physicsTopics": [
+        "astronomy",
+        "planetarium",
+        "celestial sphere",
+        "sidereal time",
+        "horizon coordinates"
+      ],
+      "screens": [
+        "Planetarium"
+      ],
       "status": "active"
     },
     {
       "name": "jscd48",
+      "displayName": "jscd48",
       "type": "hardware-interface",
       "isSimulation": false,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["JavaScript"],
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "JavaScript"
+      ],
       "framework": null,
       "description": "JavaScript library for controlling the CD48 Coincidence Counter via the Web Serial API. Published to npm.",
       "deployedUrl": "https://openphysics.github.io/jscd48/",
-      "physicsTopics": ["nuclear physics", "coincidence counting", "particle detection"],
+      "physicsTopics": [
+        "nuclear physics",
+        "coincidence counting",
+        "particle detection"
+      ],
       "screens": null,
       "status": "active"
     },
     {
       "name": "tscd48",
+      "displayName": "tscd48",
       "type": "hardware-interface",
       "isSimulation": false,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["TypeScript"],
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
       "framework": null,
       "description": "TypeScript library for controlling the CD48 Coincidence Counter via the Web Serial API. Published to npm.",
       "deployedUrl": "https://openphysics.github.io/tscd48/",
-      "physicsTopics": ["nuclear physics", "coincidence counting", "particle detection"],
+      "physicsTopics": [
+        "nuclear physics",
+        "coincidence counting",
+        "particle detection"
+      ],
       "screens": null,
       "status": "active"
     },
     {
       "name": "pycd48",
+      "displayName": "pycd48",
       "type": "hardware-interface",
       "isSimulation": false,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["Python"],
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "Python"
+      ],
       "framework": null,
       "description": "Python library for controlling the CD48 Coincidence Counter via USB serial. Supports Linux, macOS, and Windows.",
       "deployedUrl": null,
-      "physicsTopics": ["nuclear physics", "coincidence counting", "particle detection"],
+      "physicsTopics": [
+        "nuclear physics",
+        "coincidence counting",
+        "particle detection"
+      ],
       "screens": null,
       "status": "active"
     },
     {
       "name": "pyro",
+      "displayName": "pyro",
       "type": "tool",
       "isSimulation": false,
-      "isPhETPort": false,
-      "isNAAPPort": false,
-      "isNewSimulation": false,
-      "language": ["JavaScript"],
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "JavaScript"
+      ],
       "framework": "GlowScript",
       "description": "Browser-based VPython editor using CodeMirror 6 and GlowScript VPython 3.2. Write and run VPython code in the browser with live 3D visualization.",
-      "deployedUrl": "https://OpenPhysics.github.io/pyro",
-      "physicsTopics": ["3D visualization", "computational physics"],
+      "deployedUrl": "https://openphysics.github.io/pyro",
+      "physicsTopics": [
+        "3D visualization",
+        "computational physics"
+      ],
       "screens": null,
       "status": "active"
     }

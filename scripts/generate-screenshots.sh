@@ -54,15 +54,15 @@ done
 # Resolve the simulation list. Prefer the canonical parser; fall back to jq, then
 # python3, so this still works on a WSL checkout where the .sh helpers carry CRLF
 # endings or where jq is not installed.
-sims="$("$SCRIPT_DIR/parse-repos.sh" names --simulation 2>/dev/null || true)"
+sims="$("$SCRIPT_DIR/parse-repos.sh" names --simulation --status active 2>/dev/null || true)"
 if [[ -z "$sims" ]] && command -v jq >/dev/null 2>&1; then
-  sims="$(jq -r '.repos[] | select(.isSimulation==true and .framework=="SceneryStack") | .name' "$CATALOG")"
+  sims="$(jq -r '.repos[] | select(.isSimulation==true and .framework=="SceneryStack" and (.status=="active" or .status=="draft" or .status=="wip")) | .name' "$CATALOG")"
 fi
 if [[ -z "$sims" ]] && command -v python3 >/dev/null 2>&1; then
   sims="$(python3 -c 'import json,sys
 d=json.load(open(sys.argv[1]))
 for r in d["repos"]:
-    if r.get("isSimulation") and r.get("framework")=="SceneryStack": print(r["name"])' "$CATALOG")"
+    if r.get("isSimulation") and r.get("framework")=="SceneryStack" and r.get("status") in ("active","draft","wip"): print(r["name"])' "$CATALOG")"
 fi
 if [[ -z "$sims" ]]; then
   echo "error: could not enumerate sims (need parse-repos.sh, jq, or python3)" >&2

@@ -24,10 +24,11 @@ Pages simulation landing page.
 | [`.github/workflows/fleet-exec.yml`](.github/workflows/fleet-exec.yml) | Fan a command across many repos and open one PR each (manual dispatch) |
 | [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) | Weekly lint / type-check / build / test of every simulation, reported as a table |
 | [`.github/workflows/sync-dependabot.yml`](.github/workflows/sync-dependabot.yml) | Validate the Dependabot templates |
-| [`.github/workflows/baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml) | Validate Baton's own invariants (skills collection + index, Node-version sync, script syntax) |
+| [`.github/workflows/baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml) | Validate Baton's own invariants (skills, catalog schema, Node-version sync, script syntax) |
 | [`scripts/`](scripts/) | Repo catalog tools, compliance checks, Dependabot/metadata sync, screenshots |
 | [`config/`](config/) | Canonical Dependabot + Claude-settings templates synced to member repos |
 | [`structure/repos.json`](structure/repos.json) | Machine-readable catalog of org repositories |
+| [`structure/repos.schema.json`](structure/repos.schema.json) | JSON Schema for the catalog (`schemaVersion` 1.1.0) |
 | [`CONVENTIONS.md`](CONVENTIONS.md) | Shared codebase structure every SceneryStack sim must follow |
 | [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | Shared accessibility pattern for SceneryStack sims |
 | [`skills/`](skills/) | SceneryStack development reference docs for AI assistants |
@@ -143,12 +144,17 @@ scripts/check-repo-compliance.sh /path/to/sim-repo
 
 ## Repository catalog
 
-[`structure/repos.json`](structure/repos.json) lists all OpenPhysics repositories with metadata (simulation
-type, framework, deployed URL, physics topics, etc.). The compliance workflow, Pages landing page, and the
-catalog scripts consume this file. See [`scripts/README.md`](scripts/README.md) for the tooling:
+[`structure/repos.json`](structure/repos.json) lists all OpenPhysics repositories with metadata
+(`displayName`, `lineage`, `upstream`, framework, deployed URL, physics topics, `status`, etc.).
+Schema: [`structure/repos.schema.json`](structure/repos.schema.json) (validated by
+[`scripts/check-repos-catalog.sh`](scripts/check-repos-catalog.sh)). The compliance workflow,
+Pages landing page, and the catalog scripts consume this file. See
+[`scripts/README.md`](scripts/README.md) for the tooling:
 
 ```bash
+scripts/check-repos-catalog.sh
 scripts/parse-repos.sh names --simulation
+scripts/parse-repos.sh names --lineage phet
 scripts/list-repos.sh --json
 scripts/sync-github-metadata.sh --dry-run
 ```

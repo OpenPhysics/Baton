@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openphysics.github.io/Baton/structure/repos.schema.json",
+  "title": "OpenPhysics repository catalog",
+  "description": "Machine-readable catalog of OpenPhysics organization repositories. Consumed by bootstrap, fleet scripts, Pages, and compliance tooling.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "organization", "repos"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional pointer to this schema file (relative or absolute)."
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Catalog schema semver. Bump when field semantics change."
+    },
+    "organization": {
+      "type": "string",
+      "const": "OpenPhysics"
+    },
+    "repos": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/repo" }
+    }
+  },
+  "$defs": {
+    "repo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "displayName",
+        "type",
+        "isSimulation",
+        "lineage",
+        "upstream",
+        "language",
+        "framework",
+        "description",
+        "deployedUrl",
+        "physicsTopics",
+        "screens",
+        "status"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "GitHub repository name (and sibling workspace folder)."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable title for landing-page cards and docs."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["simulation", "template", "tool", "config", "hardware-interface"]
+        },
+        "isSimulation": {
+          "type": "boolean",
+          "description": "Convenience filter; must equal (type == \"simulation\")."
+        },
+        "lineage": {
+          "description": "Landing-page bucket for simulations; null for non-simulations.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "string",
+              "enum": ["original", "phet", "naap"]
+            }
+          ]
+        },
+        "upstream": {
+          "description": "Provenance for ports; null when lineage is original or the repo is not a simulation.",
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/upstream" }
+          ]
+        },
+        "language": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "framework": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "string",
+              "enum": ["SceneryStack", "VitePress", "GlowScript"]
+            }
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deployedUrl": {
+          "description": "Canonical GitHub Pages URL (lowercase host). Null when not deployed.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "string",
+              "pattern": "^https://openphysics\\.github\\.io/"
+            }
+          ]
+        },
+        "physicsTopics": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "screens": {
+          "description": "Human-readable screen titles for simulations; null otherwise.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "template", "draft", "wip", "archived"],
+          "description": "active = Pages + fleet-health; draft/wip = in catalog but not shipped; archived = retained history; template = seed repo."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "simulation" } } },
+          "then": {
+            "properties": {
+              "isSimulation": { "const": true },
+              "lineage": { "type": "string", "enum": ["original", "phet", "naap"] },
+              "screens": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "isSimulation": { "const": false },
+              "lineage": { "type": "null" },
+              "upstream": { "type": "null" },
+              "screens": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "lineage": { "enum": ["phet", "naap"] } }
+          },
+          "then": {
+            "properties": {
+              "upstream": { "$ref": "#/$defs/upstream" }
+            }
+          },
+          "else": {
+            "properties": {
+              "upstream": { "type": "null" }
+            }
+          }
+        }
+      ]
+    },
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["org", "name", "url"],
+      "properties": {
+        "org": {
+          "type": "string",
+          "enum": ["phet", "naap"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Upstream simulation / lab title."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Canonical upstream page URL."
+        }
+      }
+    }
+  }
+}

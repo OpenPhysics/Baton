@@ -60,7 +60,7 @@ jobs:
         id: list
         run: |
           set -euo pipefail
-          matrix=$(jq -c '[.repos[] | select(.isSimulation == true) | .name]' structure/repos.json)
+          matrix=$(jq -c '[.repos[] | select(.isSimulation == true and (.status == "active" or .status == "draft" or .status == "wip")) | .name]' structure/repos.json)
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   audit:

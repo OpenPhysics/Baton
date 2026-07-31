@@ -10,6 +10,7 @@ OPENPHYSICS_WORKSPACE="${OPENPHYSICS_WORKSPACE:-$(cd "$REPOS_SCRIPT_DIR/../.." &
 FILTER_TYPE=""
 FILTER_STATUS=""
 FILTER_SIMULATION=""
+FILTER_LINEAGE=""
 FILTER_NAME=""
 REQUIRE_LOCAL=0
 
@@ -36,6 +37,7 @@ repos_reset_filters() {
   FILTER_TYPE=""
   FILTER_STATUS=""
   FILTER_SIMULATION=""
+  FILTER_LINEAGE=""
   FILTER_NAME=""
   REQUIRE_LOCAL=0
 }
@@ -54,6 +56,9 @@ repos_jq_select_expr() {
   fi
   if [[ -n "$FILTER_SIMULATION" ]]; then
     parts+=(".isSimulation == $FILTER_SIMULATION")
+  fi
+  if [[ -n "$FILTER_LINEAGE" ]]; then
+    parts+=(".lineage == \"$FILTER_LINEAGE\"")
   fi
 
   if [[ ${#parts[@]} -eq 0 ]]; then
@@ -181,18 +186,22 @@ repos_for_each() {
   fi
 
   while IFS= read -r repo; do
-    local name homepage description repo_type status local_path local_exists
+    local name homepage description repo_type status lineage display_name local_path local_exists
     name="$(jq -r '.name' <<<"$repo")"
     homepage="$(jq -r '.githubHomepage // ""' <<<"$repo")"
     description="$(jq -r '.description // ""' <<<"$repo")"
     repo_type="$(jq -r '.type // ""' <<<"$repo")"
     status="$(jq -r '.status // ""' <<<"$repo")"
+    lineage="$(jq -r '.lineage // ""' <<<"$repo")"
+    display_name="$(jq -r '.displayName // .name' <<<"$repo")"
     local_path="$(jq -r '.localPath' <<<"$repo")"
     local_exists="$(jq -r '.localExists' <<<"$repo")"
 
     REPO_NAME="$name" \
+    REPO_DISPLAY_NAME="$display_name" \
     REPO_TYPE="$repo_type" \
     REPO_STATUS="$status" \
+    REPO_LINEAGE="$lineage" \
     REPO_DESCRIPTION="$description" \
     REPO_HOMEPAGE="$homepage" \
     REPO_PATH="$local_path" \

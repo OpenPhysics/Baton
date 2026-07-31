@@ -1,9 +1,10 @@
 name: Baton self-check
 
 # Validates Baton's own invariants — the skills collection is well-formed and its
-# README index is in sync, the fleet Node version agrees across workflows, and the
-# helper scripts are syntactically valid. These guard against the kind of drift that
-# otherwise rots silently as the repo grows.
+# README index is in sync, the fleet Node version agrees across workflows, the
+# repository catalog matches its JSON Schema, and the helper scripts are
+# syntactically valid. These guard against the kind of drift that otherwise rots
+# silently as the repo grows.
 
 on:
   workflow_dispatch:
@@ -13,6 +14,7 @@ on:
       - "skills/**"
       - ".claude-plugin/**"
       - "scripts/**"
+      - "structure/**"
       - ".github/workflows/**"
       - ".github/actions/**"
   pull_request:
@@ -20,6 +22,7 @@ on:
       - "skills/**"
       - ".claude-plugin/**"
       - "scripts/**"
+      - "structure/**"
       - ".github/workflows/**"
       - ".github/actions/**"
 
@@ -34,6 +37,11 @@ jobs:
 
       - name: Validate the skills collection
         run: scripts/check-skills.sh
+
+      - name: Validate the repository catalog
+        run: |
+          pip install --quiet jsonschema
+          scripts/check-repos-catalog.sh
 
       - name: Check fleet Node version is in sync
         run: scripts/check-node-version.sh

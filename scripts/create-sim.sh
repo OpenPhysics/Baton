@@ -471,16 +471,17 @@ npm run check
 CATALOG_PATH="$(repos_catalog_path)"
 entry="$(jq -n \
   --arg name "$REPO" \
+  --arg display "$SIM_NAME" \
   --arg desc "$DESCRIPTION" \
-  --arg url "https://OpenPhysics.github.io/${REPO}" \
+  --arg url "https://openphysics.github.io/${REPO}" \
   --argjson screens "$catalog_screens_json" \
   '{
     name: $name,
+    displayName: $display,
     type: "simulation",
     isSimulation: true,
-    isPhETPort: false,
-    isNAAPPort: false,
-    isNewSimulation: true,
+    lineage: "original",
+    upstream: null,
     language: ["TypeScript"],
     framework: "SceneryStack",
     description: $desc,

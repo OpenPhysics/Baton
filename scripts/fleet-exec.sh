@@ -50,7 +50,8 @@ Filters (from structure/repos.json):
   --simulation        Only repositories with isSimulation=true
   --no-simulation     Only repositories with isSimulation=false
   --type TYPE         Filter by type field
-  --status STATUS     Filter by status field
+  --status STATUS     Filter by status (active|template|draft|wip|archived)
+  --lineage LINEAGE   Filter by lineage (original|phet|naap)
   --only NAME         Target a single repo by name (one-PR runs, smoke tests)
   --catalog PATH      Override path to repos.json
 
@@ -81,6 +82,7 @@ while [[ $# -gt 0 ]]; do
     --no-simulation) FILTER_SIMULATION=false; shift ;;
     --type) FILTER_TYPE="${2:?Missing value for --type}"; shift 2 ;;
     --status) FILTER_STATUS="${2:?Missing value for --status}"; shift 2 ;;
+    --lineage) FILTER_LINEAGE="${2:?Missing value for --lineage}"; shift 2 ;;
     --only) FILTER_NAME="${2:?Missing value for --only}"; shift 2 ;;
     --catalog) REPOS_JSON="${2:?Missing value for --catalog}"; shift 2 ;;
     --branch) BRANCH="${2:?Missing value for --branch}"; shift 2 ;;

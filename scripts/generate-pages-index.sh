@@ -31,20 +31,16 @@ else
   echo "sharp not installed; skipping thumbnail regeneration (using committed docs/assets/*.webp). Run 'npm install' to refresh." >&2
 fi
 
-# Each line: name|url|hue|topics(comma-separated)@description
+# Each line: name|displayName|url|hue|topics(comma-separated)@description
 jq_program='
   .repos[]
   | select(.isSimulation == true and .status == "active")
   | select(.name | test("cd48"; "i") | not)
-  | select(
-      ($category == "naap" and .isNAAPPort == true)
-      or ($category == "phet" and .isPhETPort == true)
-      or ($category == "new" and .isPhETPort == false and .isNAAPPort == false)
-    )
-  | "\(.name)|\(.deployedUrl // ("https://openphysics.github.io/" + .name))|\((.name | explode | add) % 360)|\(.physicsTopics | join(","))@\(.description)"
+  | select(.lineage == $category)
+  | "\(.name)|\(.displayName // .name)|\(.deployedUrl // ("https://openphysics.github.io/" + .name))|\((.name | explode | add) % 360)|\(.physicsTopics | join(","))@\(.description)"
 '
 
-new_sims="$(jq -r --arg category new "$jq_program" "$REPOS_JSON" | sort)"
+new_sims="$(jq -r --arg category original "$jq_program" "$REPOS_JSON" | sort)"
 phet_sims="$(jq -r --arg category phet "$jq_program" "$REPOS_JSON" | sort)"
 naap_sims="$(jq -r --arg category naap "$jq_program" "$REPOS_JSON" | sort)"
 
@@ -54,15 +50,17 @@ html_escape() {
 
 card_html() {
   local line="$1"
-  local meta desc name url hue topics
+  local meta desc name title url hue topics
   meta="${line%%@*}"
   desc="${line#*@}"
-  IFS='|' read -r name url hue topics <<<"$meta"
+  IFS='|' read -r name title url hue topics <<<"$meta"
   url="$(printf '%s' "$url" | sed 's|OpenPhysics|openphysics|g' | sed 's|/$||')"
 
-  local title monogram
-  title="$(printf '%s' "$name" | sed 's/\([A-Z]\)/ \1/g' | sed 's/^ //')"
+  local monogram
   monogram="$(printf '%s' "$name" | grep -o '[A-Z]' | head -2 | tr -d '\n')"
+  if [[ -z "$monogram" ]]; then
+    monogram="$(printf '%s' "$name" | head -c 2 | tr '[:lower:]' '[:upper:]')"
+  fi
 
   local tags_html=""
   if [[ -n "$topics" ]]; then

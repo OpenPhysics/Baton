@@ -27,7 +27,8 @@ Filters (same as parse-repos.sh):
   --simulation        Only simulation repositories
   --no-simulation     Only non-simulation repositories
   --type TYPE         Filter by repos.json type field
-  --status STATUS     Filter by status field
+  --status STATUS     Filter by status (active|template|draft|wip|archived)
+  --lineage LINEAGE   Filter by lineage (original|phet|naap)
   --catalog PATH      Override path to repos.json
   -h, --help          Show this help
 
@@ -56,7 +57,7 @@ while [[ $# -gt 0 ]]; do
       FILTER_ARGS+=("$1")
       shift
       ;;
-    --type|--status|--catalog)
+    --type|--status|--lineage|--catalog)
       if [[ $# -lt 2 ]]; then
         echo "Missing value for $1" >&2
         usage >&2

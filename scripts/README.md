@@ -16,6 +16,7 @@ the monorepo checkout.
 |---|---|
 | [`parse-repos.sh`](parse-repos.sh) | Core parser/CLI for `repos.json` |
 | [`list-repos.sh`](list-repos.sh) | Human-friendly listing wrapper |
+| [`check-repos-catalog.sh`](check-repos-catalog.sh) | Validate `repos.json` against `structure/repos.schema.json` + fleet invariants |
 | [`clone-fleet.sh`](clone-fleet.sh) | Clone/update every catalog repo into the workspace as a sibling |
 | [`fleet`](fleet) | Run a git command across every local checkout (`fleet push`, `fleet status -s`, …) |
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
@@ -58,9 +59,9 @@ scripts/parse-repos.sh get DopplerEffect
 # Local checkout paths for sims that exist on disk
 scripts/parse-repos.sh paths --simulation --require-local
 
-# Run a command per repo (env: REPO_NAME, REPO_HOMEPAGE, REPO_PATH, ...)
+# Run a command per repo (env: REPO_NAME, REPO_DISPLAY_NAME, REPO_LINEAGE, REPO_HOMEPAGE, REPO_PATH, ...)
 scripts/parse-repos.sh for-each --simulation -- \
-  echo "$REPO_NAME -> $REPO_HOMEPAGE"
+  echo "$REPO_NAME ($REPO_LINEAGE) -> $REPO_HOMEPAGE"
 
 # Catalog summary
 scripts/parse-repos.sh summary
@@ -69,7 +70,8 @@ scripts/parse-repos.sh summary
 Filters:
 
 - `--type simulation|template|config|hardware-interface|tool`
-- `--status active|template`
+- `--status active|template|draft|wip|archived`
+- `--lineage original|phet|naap`
 - `--simulation` / `--no-simulation`
 
 ## clone-fleet.sh
@@ -95,7 +97,8 @@ scripts/clone-fleet.sh --dry-run --https
 ```
 
 Reuses the same catalog filters as `parse-repos.sh` (`--simulation`, `--type`, `--status`,
-`--only NAME`, `--skip NAME`). Clones over SSH by default; `--https` for token/anonymous use.
+`--lineage`, `--only NAME`, `--skip NAME`). Clones over SSH by default; `--https` for
+token/anonymous use.
 
 ## fleet
 

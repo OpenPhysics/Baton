@@ -28,7 +28,8 @@ Commands:
 
 Options:
   --type TYPE        Filter by repos.json type field
-  --status STATUS    Filter by status field
+  --status STATUS    Filter by status field (active|template|draft|wip|archived)
+  --lineage LINEAGE  Filter by lineage (original|phet|naap)
   --simulation       Only repositories with isSimulation=true
   --no-simulation    Only repositories with isSimulation=false
   --catalog PATH     Override path to repos.json
@@ -57,6 +58,9 @@ consume_filter_arg() {
     --status)
       FILTER_STATUS="${2:?Missing value for --status}"
       ;;
+    --lineage)
+      FILTER_LINEAGE="${2:?Missing value for --lineage}"
+      ;;
     --simulation)
       FILTER_SIMULATION="true"
       ;;
@@ -78,7 +82,7 @@ consume_filter_arg() {
 
 shift_parsed_filter_arg() {
   case "$1" in
-    --type|--status|--catalog)
+    --type|--status|--lineage|--catalog)
       echo 2
       ;;
     *)
@@ -141,7 +145,7 @@ parse_global_args() {
         FIELDS="${2:?Missing value for --fields}"
         shift 2
         ;;
-      --type|--status|--simulation|--no-simulation|--catalog|--require-local)
+      --type|--status|--lineage|--simulation|--no-simulation|--catalog|--require-local)
         consume_filter_arg "$@" || {
           echo "Unknown option: $1" >&2
           exit 2

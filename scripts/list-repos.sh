@@ -12,7 +12,8 @@ Options:
   --simulation       Only simulation repositories
   --no-simulation    Only non-simulation repositories
   --type TYPE        Filter by repos.json type field
-  --status STATUS    Filter by status field
+  --status STATUS    Filter by status (active|template|draft|wip|archived)
+  --lineage LINEAGE  Filter by lineage (original|phet|naap)
   --json             Output JSON
   --names            Output names only (one per line)
   --paths            Output local workspace paths
@@ -37,7 +38,7 @@ while [[ $# -gt 0 ]]; do
       ARGS+=("$1")
       shift
       ;;
-    --type|--status)
+    --type|--status|--lineage)
       ARGS+=("$1" "${2:?Missing value for $1}")
       shift 2
       ;;

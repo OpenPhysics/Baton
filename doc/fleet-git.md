@@ -38,6 +38,7 @@ Same catalog filters as the rest of the tooling:
 
 ```bash
 fleet --simulation status -s          # simulations only
+fleet --lineage naap status -s        # NAAP ports only
 fleet --type tool branch -vv          # tools only
 fleet --no-simulation fetch --all     # everything that isn't a sim
 ```
