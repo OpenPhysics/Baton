@@ -2,7 +2,8 @@
 # Sync canonical Dependabot configs from Baton/config/ to OpenPhysics repositories.
 #
 # Targets are read from structure/repos.json (not a hardcoded list):
-#   - Baton itself          → config/dependabot-actions.yml
+#   - Baton itself          → config/dependabot-npm.yml (Baton ships a package.json with devDeps)
+#   - .github (org profile) → config/dependabot-actions.yml (actions-only; no package.json)
 #   - npm member repos      → config/dependabot-npm.yml
 #       • framework == "SceneryStack" (all sims + SceneryStackTemplate)
 #       • jscd48, tscd48, pyro, Almanach (other npm packages in the org)
@@ -78,7 +79,10 @@ echo "Catalog: $CATALOG"
 echo "Workspace: $WORKSPACE"
 [ "$DRY_RUN" -eq 1 ] && echo "(dry-run — no files written)"
 
-sync_file "$CONFIG_DIR/dependabot-actions.yml" "$REPO_ROOT/.github/dependabot.yml"
+sync_file "$CONFIG_DIR/dependabot-npm.yml" "$REPO_ROOT/.github/dependabot.yml"
+
+# The .github org-profile repo is actions-only (no package.json).
+sync_file "$CONFIG_DIR/dependabot-actions.yml" "$WORKSPACE/.github/.github/dependabot.yml"
 
 npm_synced=0
 npm_skipped=0
