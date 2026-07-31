@@ -14,6 +14,7 @@ Pages simulation landing page.
 | Path | Purpose |
 |---|---|
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Reusable CI workflow (audit, lint, type-check, test, build) |
+| [`.github/actions/security-audit/action.yml`](.github/actions/security-audit/action.yml) | Composite action used by `ci.yml`: `npm audit` summary, blocks only on high/critical in direct deps |
 | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | Reusable GitHub Pages deploy workflow |
 | [`.github/workflows/shared-codeql.yml`](.github/workflows/shared-codeql.yml) | Reusable CodeQL analysis |
 | [`.github/workflows/shared-dependency-review.yml`](.github/workflows/shared-dependency-review.yml) | Reusable dependency review |
@@ -37,7 +38,6 @@ Pages simulation landing page.
 | [`doc/add-simulation.md`](doc/add-simulation.md) | Checklist for adding a sim to the catalog and landing page |
 | [`doc/fleet-git.md`](doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
 | [`doc/fleet-auth.md`](doc/fleet-auth.md) | Setting up the `FLEET_PAT` / GitHub App that lets `fleet-exec` open PRs |
-| [`doc/fleet-parity-audit.md`](doc/fleet-parity-audit.md) | Dated snapshot of fleet-wide structure / toolchain / a11y health |
 
 ## Claude Code plugin
 

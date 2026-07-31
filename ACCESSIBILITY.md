@@ -17,8 +17,9 @@ default.
 > web UI `tscd48` and the Python apps are out of scope and keep their own a11y docs.
 >
 > **Fleet status:** structural Layer 1–2 coverage and Layer-3 keyboard drag for play-area
-> objects are expected on every active sim; see [`doc/fleet-parity-audit.md`](doc/fleet-parity-audit.md)
-> for the latest fleet-wide pass. Layer-3 keyboard drag is required for **play-area objects and
+> objects are expected on every active sim (verified weekly by the
+> [`fleet-health`](.github/workflows/fleet-health.yml) workflow). Layer-3 keyboard drag is
+> required for **play-area objects and
 > primary secondary controls** (`RichDragListener` / `KeyboardDragListener` /
 > `KeyboardListener`). Pointer-only **chrome** (palette drag previews, axis-resize handles,
 > video scrubbers, decorative hit-targets) may stay mouse/touch-only when an equivalent

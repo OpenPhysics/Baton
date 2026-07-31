@@ -268,14 +268,6 @@ The org **profile README** is what visitors see on github.com/OpenPhysics — it
 the Baton landing page and from the workspace bootstrapper README. All three can drift
 independently.
 
-### Audit snapshots — update on the next audit pass, not every sim
-
-[`doc/fleet-parity-audit.md`](fleet-parity-audit.md) is a dated fleet report (last refresh
-2026-07-27 → 27 sims). Treat counts inside it as a snapshot unless you are refreshing the
-audit. When you add a sim you do **not** have to rewrite it immediately; do bump
-CONVENTIONS/ACCESSIBILITY scope lines and the org profile if you want public tallies to stay
-accurate.
-
 ---
 
 ## Minimal PR checklist
