@@ -148,7 +148,9 @@ scripts/check-repo-compliance.sh /path/to/sim-repo
 (`displayName`, `lineage`, `upstream`, framework, deployed URL, physics topics, `status`, etc.).
 Schema: [`structure/repos.schema.json`](structure/repos.schema.json) (validated by
 [`scripts/check-repos-catalog.sh`](scripts/check-repos-catalog.sh)). The compliance workflow,
-Pages landing page, and the catalog scripts consume this file. See
+Pages landing page, and the catalog scripts consume this file. Ground-truth upstream references
+for sims live in the sibling [`Baseline`](https://github.com/OpenPhysics/Baseline) repo (also
+listed here as `type: tool`). See
 [`scripts/README.md`](scripts/README.md) for the tooling:
 
 ```bash
