@@ -62,9 +62,19 @@ new MazeGameScreen({
 });
 ```
 
+## Drag listeners bind keys outside HotkeyData
+
+`KeyboardDragListener` and `RichDragListener` claim the arrow keys **without** a `HotkeyData` entry. That breaks the one-source guarantee in both directions, so watch for it when editing drag code:
+
+- Replacing a `HotkeyData`-driven `KeyboardListener` with a drag listener leaves its help row rendering a shortcut that no listener implements any more.
+- Adding a drag listener *alongside* an existing `HotkeyData` listener double-binds the arrows — the row still looks right, but two handlers now fire per press.
+
+Before swapping a `KeyboardListener` for a drag listener, grep for the `HotkeyData` entry it used and decide deliberately: either keep the `KeyboardListener` (and make the drag listener pointer-only), or delete the now-unbound `HotkeyData` and its row. See scenerystack-drag-listener.
+
 ## Rules
 
 - Build rows with `KeyboardHelpSectionRow.fromHotkeyData(hotkeyData, ...)` so icons match the real bindings — never hand-type key names that could fall out of sync.
+- A `HotkeyData` entry with no listener behind it is a silent lie. When you remove or re-home a listener, follow its `HotkeyData` to every help row that renders it.
 - All labels are `StringProperty`s from `StringManager` (see scenerystack-strings); supply a `pdomLabelStringProperty` so screen-reader users get a spoken description.
 - Group with `TwoColumnKeyboardHelpContent`; include `BasicActionsKeyboardHelpSection` for the universal Tab/Esc shortcuts, and `SliderControlsKeyboardHelpSection` when the sim has sliders.
 - One `createKeyboardHelpNode` per screen; multi-screen sims can return different content per screen.
