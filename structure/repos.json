@@ -39,6 +39,25 @@
       "status": "active"
     },
     {
+      "name": "Baseline",
+      "displayName": "Baseline",
+      "type": "tool",
+      "isSimulation": false,
+      "lineage": null,
+      "upstream": null,
+      "language": [
+        "Shell",
+        "JSON",
+        "Markdown"
+      ],
+      "framework": null,
+      "description": "Immutable upstream baselines / ground truth for OpenPhysics sims: pinned git clones (via fetch-baselines.sh) and committed non-git snapshots (NAAP dumps, SPINS, etc.).",
+      "deployedUrl": null,
+      "physicsTopics": [],
+      "screens": null,
+      "status": "active"
+    },
+    {
       "name": "Baton",
       "displayName": "Baton",
       "type": "tool",
