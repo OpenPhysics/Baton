@@ -323,7 +323,9 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
       # Presence is required (fail above); content is expected to be filled, not a
       # stub. Heuristic: count substantive lines (non-blank, non-heading, no TODO/
       # placeholder marker). A real doc has several; a copied-template stub has ~none.
-      body_lines=$(grep -vE '^\s*$|^\s*#|TODO|TBD|FIXME|placeholder|fill in|\.\.\.$' "$d" | wc -l)
+      # `|| true` because a pure stub filters down to nothing, making grep exit 1;
+      # under `set -euo pipefail` that would abort the run instead of warning.
+      body_lines=$(grep -vcE '^\s*$|^\s*#|TODO|TBD|FIXME|placeholder|fill in|\.\.\.$' "$d" || true)
       if [ "$body_lines" -lt 5 ]; then
         warn "$d looks like a stub (only $body_lines substantive lines) — fill in the physics/architecture"
       else

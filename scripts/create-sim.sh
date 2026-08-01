@@ -256,6 +256,14 @@ EOF
   fi
 }
 
+# ── Executable section ────────────────────────────────────────────────────────
+# Everything above is definitions only, so tests can source this file to exercise
+# the helpers (pascal_to_kebab, insert_catalog_entry, …) without bootstrapping a
+# simulation. Running the script normally falls straight through.
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+  return 0
+fi
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --repo)

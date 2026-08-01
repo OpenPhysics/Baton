@@ -1,0 +1,425 @@
+#!/usr/bin/env bats
+#
+# Behavioural tests for scripts/check-repo-compliance.sh.
+#
+# The failure mode this guards against is a compliance rule that quietly stops
+# firing: the audit still exits 0, so the fleet reads as green while the rule is
+# dead. Every test below starts from a fixture that passes cleanly, breaks
+# exactly one rule, and asserts the audit fails with that rule's message.
+
+setup() {
+  load 'helpers/common'
+  stub_gh
+  SIM="$BATS_TEST_TMPDIR/sim"
+  make_compliant_sim "$SIM"
+}
+
+# ── Baseline ──────────────────────────────────────────────────────────────────
+
+@test "compliant fixture passes" {
+  run_compliance "$SIM"
+  assert_success
+  refute_output --partial "FAIL:"
+  assert_output --partial "Compliance check passed"
+}
+
+@test "compliant fixture warns only about the stubbed gh, not about content" {
+  # Guards against fixture rot: a fixture that quietly starts warning would mask
+  # the warn-level rules asserted further down.
+  run_compliance "$SIM"
+  assert_success
+  local warnings
+  warnings="$(printf '%s\n' "$output" | grep -c '^WARN:' || true)"
+  [ "$warnings" -eq 1 ]
+  assert_output --partial "WARN: gh not available"
+}
+
+# ── Legal / README ────────────────────────────────────────────────────────────
+
+@test "root CONTRIBUTING.md fails" {
+  touch "$SIM/CONTRIBUTING.md"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "FAIL: CONTRIBUTING.md must not exist"
+}
+
+@test "root LICENSE fails" {
+  touch "$SIM/LICENSE"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "FAIL: LICENSE must not exist"
+}
+
+@test "missing README.md fails" {
+  rm "$SIM/README.md"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "FAIL: README.md is missing"
+}
+
+@test "README missing a required section fails" {
+  sed -i 's/^## Tech Stack$/## Stack/' "$SIM/README.md"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "FAIL: README.md missing '## Tech Stack' section"
+}
+
+@test "README with sections out of order fails" {
+  # Swap Features and Quick Start.
+  sed -i '0,/^## Features$/s//## PLACEHOLDER/' "$SIM/README.md"
+  sed -i '0,/^## Quick Start$/s//## Features/' "$SIM/README.md"
+  sed -i '0,/^## PLACEHOLDER$/s//## Quick Start/' "$SIM/README.md"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "FAIL: README.md section order wrong"
+}
+
+@test "README with an extra section fails" {
+  printf '\n## Acknowledgements\n\nThanks.\n' >>"$SIM/README.md"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "unexpected section '## Acknowledgements'"
+}
+
+@test "README using '## Screens' instead of '## Features' fails with the targeted hint" {
+  sed -i 's/^## Features$/## Screens/' "$SIM/README.md"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "must use '## Features' instead of '## Screens'"
+}
+
+# ── CI wiring ─────────────────────────────────────────────────────────────────
+
+@test "missing ci.yml fails" {
+  rm "$SIM/.github/workflows/ci.yml"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "FAIL: .github/workflows/ci.yml is missing"
+}
+
+@test "ci.yml not calling the shared reusable workflow fails" {
+  sed -i 's|OpenPhysics/Baton/.github/workflows/ci.yml@main|some/other/workflow.yml@main|' "$SIM/.github/workflows/ci.yml"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "ci.yml must call OpenPhysics/Baton reusable workflow"
+}
+
+@test "ci.yml without the shared dependency-review workflow fails" {
+  sed -i '/shared-dependency-review/d' "$SIM/.github/workflows/ci.yml"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "ci.yml must call shared dependency-review workflow"
+}
+
+@test "ci.yml without the shared CodeQL workflow fails" {
+  sed -i '/shared-codeql/d' "$SIM/.github/workflows/ci.yml"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "ci.yml must call shared CodeQL workflow"
+}
+
+@test "missing dependabot.yml fails for an npm repo" {
+  rm "$SIM/.github/dependabot.yml"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "dependabot.yml is missing for npm repository"
+}
+
+# ── Node pins ─────────────────────────────────────────────────────────────────
+
+@test "missing engines.node fails" {
+  local major
+  major="$(fleet_node_major)"
+  sed -i "/\"engines\"/d" "$SIM/package.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "engines.node is missing (expected >=${major})"
+}
+
+@test "engines.node below the fleet major fails" {
+  sed -i 's/">=[0-9]*"/">=18"/' "$SIM/package.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "engines.node must be >="
+}
+
+@test "missing @types/node fails" {
+  sed -i '/@types\/node/d' "$SIM/package.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "@types/node is missing"
+}
+
+@test "@types/node on the wrong major fails" {
+  sed -i 's|"@types/node": "^[0-9]*|"@types/node": "^18|' "$SIM/package.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "@types/node major must be"
+}
+
+@test ".nvmrc disagreeing with the fleet major fails" {
+  echo "18.20.0" >"$SIM/.nvmrc"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial ".nvmrc pins Node 18"
+}
+
+@test ".nvmrc agreeing with the fleet major passes" {
+  fleet_node_major >"$SIM/.nvmrc"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial ".nvmrc matches fleet Node"
+}
+
+# ── SceneryStack bootstrap chain ──────────────────────────────────────────────
+
+@test "missing bootstrap file fails" {
+  rm "$SIM/src/splash.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "src/splash.ts is missing"
+}
+
+@test "main.ts not importing ./brand first fails" {
+  printf 'import "./init.js";\nimport "./brand.js";\n' >"$SIM/src/main.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial 'first import must be "./brand.js"'
+}
+
+@test "missing root Namespace.ts fails" {
+  rm "$SIM/src/FixtureSimNamespace.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "no <Prefix>Namespace.ts at src/ root"
+}
+
+@test "nested Namespace.ts fails even when a root one exists" {
+  echo "export default {};" >"$SIM/src/intro/IntroNamespace.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "must be at src/ root, found nested"
+}
+
+@test "missing Colors.ts fails" {
+  rm "$SIM/src/FixtureSimColors.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "no <Prefix>Colors.ts at src/ root"
+}
+
+@test "no Constants.ts anywhere fails" {
+  rm "$SIM/src/FixtureSimConstants.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "no *Constants.ts anywhere under src/"
+}
+
+@test "nested Constants.ts warns without a CLAUDE.md carve-out" {
+  rm "$SIM/src/FixtureSimConstants.ts"
+  echo "export default {};" >"$SIM/src/intro/IntroConstants.ts"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "WARN: no root <Prefix>Constants.ts"
+}
+
+@test "nested Constants.ts passes with a documented carve-out" {
+  rm "$SIM/src/FixtureSimConstants.ts"
+  echo "export default {};" >"$SIM/src/intro/IntroConstants.ts"
+  printf '# CLAUDE\n\n## Compliance carve-outs\n\nUses nested constants per screen.\n' >"$SIM/CLAUDE.md"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "nested *Constants.ts layout documented"
+}
+
+# ── Plugin wiring ─────────────────────────────────────────────────────────────
+
+@test "missing .claude/settings.json fails" {
+  rm "$SIM/.claude/settings.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial ".claude/settings.json is missing"
+}
+
+@test ".claude/settings.json without the scenerystack plugin fails" {
+  echo '{"enabledPlugins": {}}' >"$SIM/.claude/settings.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "does not enable the scenerystack@openphysics plugin"
+}
+
+# ── Colors ────────────────────────────────────────────────────────────────────
+
+@test "hardcoded color outside Colors.ts warns" {
+  echo 'const c = "#ff0000";' >"$SIM/src/intro/view/IntroNode.ts"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "WARN: possible hardcoded colors"
+}
+
+@test "hardcoded color passes with a documented carve-out" {
+  echo 'const c = "#ff0000";' >"$SIM/src/intro/view/IntroNode.ts"
+  printf '# CLAUDE\n\n## Compliance carve-outs\n\nHardcoded colors in the brand icon.\n' >"$SIM/CLAUDE.md"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "hardcoded color carve-outs documented"
+}
+
+@test "transparent rgba hit-area is not treated as a hardcoded color" {
+  echo 'const hit = "rgba(0,0,0,0)";' >"$SIM/src/intro/view/IntroNode.ts"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "no hardcoded colors outside"
+}
+
+# ── Accessibility ─────────────────────────────────────────────────────────────
+
+@test "no screen summary content warns" {
+  rm "$SIM/src/intro/view/IntroScreenSummaryContent.ts"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "a11y screen summaries appear unwired"
+}
+
+@test "inline createScreenSummaryContent satisfies the screen summary rule" {
+  rm "$SIM/src/intro/view/IntroScreenSummaryContent.ts"
+  echo 'export function createScreenSummaryContent() {}' >"$SIM/src/intro/view/IntroScreenView.ts"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "screen summary content present"
+}
+
+@test "missing KeyboardHelpContent fails" {
+  rm "$SIM/src/FixtureSimKeyboardHelpContent.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "no *KeyboardHelpContent.ts under src/"
+}
+
+# ── Preferences / i18n ────────────────────────────────────────────────────────
+
+@test "missing preferences directory fails" {
+  rm -r "$SIM/src/preferences"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "src/preferences/ is missing"
+}
+
+@test "missing PreferencesModel fails" {
+  rm "$SIM/src/preferences/FixtureSimPreferencesModel.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "<Prefix>PreferencesModel.ts is missing"
+}
+
+@test "missing QueryParameters fails" {
+  rm "$SIM/src/preferences/fixtureSimQueryParameters.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "QueryParameters.ts is missing"
+}
+
+@test "missing StringManager fails" {
+  rm "$SIM/src/i18n/StringManager.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "src/i18n/StringManager.ts is missing"
+}
+
+@test "missing locale file fails" {
+  rm "$SIM/src/i18n/strings_fr.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "missing locale file(s): strings_fr.json"
+}
+
+# ── Tests / hooks ─────────────────────────────────────────────────────────────
+
+@test "test co-located under src/ fails" {
+  echo "// test" >"$SIM/src/intro/model/IntroModel.test.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "tests must live under tests/"
+}
+
+@test "__tests__ directory under src/ fails" {
+  mkdir -p "$SIM/src/intro/__tests__"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "tests must live under tests/"
+}
+
+@test "missing memory-leak suite fails" {
+  rm "$SIM/tests/memory-leak.test.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "tests/memory-leak.test.ts is missing"
+}
+
+@test "vitest.config.ts without --expose-gc fails" {
+  echo "export default {};" >"$SIM/vitest.config.ts"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial 'must set execArgv: ["--expose-gc"]'
+}
+
+@test "missing pre-push hook fails" {
+  rm "$SIM/.githooks/pre-push"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial ".githooks/pre-push is missing"
+}
+
+@test "prepare script not setting core.hooksPath fails" {
+  sed -i 's|"prepare": "git config core.hooksPath .githooks"|"prepare": "echo noop"|' "$SIM/package.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "prepare script must set core.hooksPath"
+}
+
+# ── Docs / tooling ────────────────────────────────────────────────────────────
+
+@test "missing doc/model.md fails" {
+  rm "$SIM/doc/model.md"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "doc/model.md is missing"
+}
+
+@test "stub doc warns" {
+  printf '# Model\n\nTODO\n' >"$SIM/doc/model.md"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "doc/model.md looks like a stub"
+}
+
+@test "biome.json \$schema drifting from the pinned CLI fails" {
+  sed -i 's|schemas/2.3.14/|schemas/2.2.0/|' "$SIM/biome.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "must match @biomejs/biome"
+}
+
+@test "unversioned biome.json \$schema fails" {
+  echo '{"$schema": "https://biomejs.dev/schemas/schema.json"}' >"$SIM/biome.json"
+  run_compliance "$SIM"
+  assert_failure
+  assert_output --partial "must be a versioned biomejs.dev/schemas"
+}
+
+@test "src/model at the src root warns" {
+  mkdir -p "$SIM/src/model"
+  run_compliance "$SIM"
+  assert_success
+  assert_output --partial "src/model exists at src/ root"
+}
+
+# ── Non-simulation repos ──────────────────────────────────────────────────────
+
+@test "npm repo without src/main.ts skips the simulation structure rules" {
+  rm -r "$SIM/src" "$SIM/tests" "$SIM/.githooks" "$SIM/doc" "$SIM/.claude"
+  run_compliance "$SIM"
+  assert_success
+  refute_output --partial "bootstrap chain"
+  refute_output --partial "src/preferences/ is missing"
+}

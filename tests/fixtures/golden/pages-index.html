@@ -1,129 +1,3 @@
-#!/usr/bin/env bash
-# Generate docs/index.html for the OpenPhysics GitHub Pages landing page.
-set -euo pipefail
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-# Inputs and outputs are overridable so the generator can be exercised against a
-# fixture catalog without touching the committed page (see tests/pages-index.bats).
-# OPENPHYSICS_CATALOG is the same override check-repos-catalog.sh accepts.
-REPOS_JSON="${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}"
-DOCS_DIR="${OPENPHYSICS_DOCS_DIR:-$REPO_ROOT/docs}"
-ASSETS_DIR="$DOCS_DIR/assets"
-OUTPUT="$DOCS_DIR/index.html"
-# Full-size ground-truth screenshots committed in this repo. The lightweight
-# WebP thumbnails served by the page are derived from these.
-SCREENSHOTS_DIR="${OPENPHYSICS_SCREENSHOTS_DIR:-$REPO_ROOT/screenshots}"
-
-if ! command -v jq >/dev/null 2>&1; then
-  echo "jq is required" >&2
-  exit 1
-fi
-
-mkdir -p "$ASSETS_DIR" "$SCREENSHOTS_DIR"
-
-# Build the card thumbnails with sharp (scripts/make-thumbnails.mjs). The committed
-# full-size PNGs in screenshots/ are the ground truth; when this runs from a full
-# workspace checkout they are first refreshed from the sibling sim repos, then each
-# is downscaled to a small WebP under docs/assets/. Sharp is a dev dependency, so if
-# node_modules is absent (e.g. a docs-only edit) we keep the already committed
-# thumbnails rather than failing the whole page build — run `npm install` to refresh.
-# make-thumbnails.mjs always writes to the repo's own screenshots/ + docs/assets/,
-# so it only applies when this run targets that tree; an overridden output tree
-# renders from whatever assets it was given.
-if [[ "$DOCS_DIR" != "$REPO_ROOT/docs" ]]; then
-  : # custom output tree — leave its assets/ as-is
-elif [[ -f "$REPO_ROOT/node_modules/sharp/package.json" ]]; then
-  node "$SCRIPT_DIR/make-thumbnails.mjs" || echo "warning: thumbnail regeneration failed; using committed docs/assets/*.webp" >&2
-else
-  echo "sharp not installed; skipping thumbnail regeneration (using committed docs/assets/*.webp). Run 'npm install' to refresh." >&2
-fi
-
-# Each line: name|displayName|url|hue|topics(comma-separated)@description
-jq_program='
-  .repos[]
-  | select(.isSimulation == true and .status == "active")
-  | select(.name | test("cd48"; "i") | not)
-  | select(.lineage == $category)
-  | "\(.name)|\(.displayName // .name)|\(.deployedUrl // ("https://openphysics.github.io/" + .name))|\((.name | explode | add) % 360)|\(.physicsTopics | join(","))@\(.description)"
-'
-
-new_sims="$(jq -r --arg category original "$jq_program" "$REPOS_JSON" | sort)"
-phet_sims="$(jq -r --arg category phet "$jq_program" "$REPOS_JSON" | sort)"
-naap_sims="$(jq -r --arg category naap "$jq_program" "$REPOS_JSON" | sort)"
-
-html_escape() {
-  printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
-}
-
-card_html() {
-  local line="$1"
-  local meta desc name title url hue topics
-  meta="${line%%@*}"
-  desc="${line#*@}"
-  IFS='|' read -r name title url hue topics <<<"$meta"
-  url="$(printf '%s' "$url" | sed 's|OpenPhysics|openphysics|g' | sed 's|/$||')"
-
-  local monogram
-  # `|| true` because an all-lowercase name makes grep exit 1, and under
-  # `set -euo pipefail` that would abort the whole run before the fallback below.
-  monogram="$(printf '%s' "$name" | grep -o '[A-Z]' | head -2 | tr -d '\n' || true)"
-  if [[ -z "$monogram" ]]; then
-    monogram="$(printf '%s' "$name" | head -c 2 | tr '[:lower:]' '[:upper:]')"
-  fi
-
-  local tags_html=""
-  if [[ -n "$topics" ]]; then
-    local topic
-    local count=0
-    IFS=',' read -ra topic_arr <<<"$topics"
-    for topic in "${topic_arr[@]}"; do
-      [[ $count -ge 3 ]] && break
-      tags_html+="<span class=\"tag\">$(html_escape "$topic")</span>"
-      count=$((count + 1))
-    done
-  fi
-
-  local title_esc thumb_html img=""
-  title_esc="$(html_escape "$title")"
-  if [[ -f "$ASSETS_DIR/${name}.webp" ]]; then
-    img="assets/${name}.webp"
-  elif [[ -f "$ASSETS_DIR/${name}.png" ]]; then
-    img="assets/${name}.png"
-  fi
-  if [[ -n "$img" ]]; then
-    thumb_html="<div class=\"thumb\"><img src=\"${img}\" alt=\"${title_esc} simulation screenshot\" loading=\"lazy\" decoding=\"async\" width=\"1154\" height=\"753\"><span class=\"badge\">${monogram}</span></div>"
-  else
-    thumb_html="<div class=\"thumb placeholder\"><span>${monogram}</span></div>"
-  fi
-
-  cat <<CARD
-        <a class="card" href="${url}/" style="--hue: ${hue};">
-          ${thumb_html}
-          <div class="card-body">
-            <div class="card-head">
-              <h3>${title_esc}</h3>
-              <span class="card-arrow" aria-hidden="true">&rarr;</span>
-            </div>
-            <p>$(html_escape "$desc")</p>
-            <div class="tags">${tags_html}</div>
-          </div>
-        </a>
-CARD
-}
-
-count_lines() {
-  [[ -z "$1" ]] && { echo 0; return; }
-  printf '%s\n' "$1" | grep -c .
-}
-
-new_count="$(count_lines "$new_sims")"
-phet_count="$(count_lines "$phet_sims")"
-naap_count="$(count_lines "$naap_sims")"
-total_count="$((new_count + phet_count + naap_count))"
-
-{
-  cat <<'HEADER'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -406,66 +280,93 @@ total_count="$((new_count + phet_count + naap_count))"
     </header>
 
     <main id="simulations">
-HEADER
-
-  cat <<SECTION
     <section>
       <div class="section-head">
         <h2>Core Simulations</h2>
-        <span class="count">${new_count}</span>
+        <span class="count">3</span>
       </div>
       <div class="grid">
-SECTION
-
-  while IFS= read -r line; do
-    [[ -n "$line" ]] && card_html "$line"
-  done <<<"$new_sims"
-
-  cat <<SECTION
+        <a class="card" href="https://openphysics.github.io/AlphaSim/" style="--hue: 63;">
+          <div class="thumb placeholder"><span>AS</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Alpha Sim</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>Fields, waves &amp; &lt;particles&gt; in one place.</p>
+            <div class="tags"><span class="tag">alpha</span><span class="tag">beta</span><span class="tag">gamma</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/betaWave/" style="--hue: 95;">
+          <div class="thumb"><img src="assets/betaWave.webp" alt="Beta Wave simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">W</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Beta Wave</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>A wave.</p>
+            <div class="tags"><span class="tag">waves</span></div>
+          </div>
+        </a>
+        <a class="card" href="https://openphysics.github.io/omegasim/" style="--hue: 130;">
+          <div class="thumb placeholder"><span>OM</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>omegasim</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>No display name, no uppercase letters.</p>
+            <div class="tags"></div>
+          </div>
+        </a>
       </div>
     </section>
 
     <section>
       <div class="section-head">
         <h2>Classic &amp; PhET Ports</h2>
-        <span class="count">${phet_count}</span>
+        <span class="count">1</span>
       </div>
       <div class="grid">
-SECTION
-
-  while IFS= read -r line; do
-    [[ -n "$line" ]] && card_html "$line"
-  done <<<"$phet_sims"
-
-  cat <<SECTION
+        <a class="card" href="https://openphysics.github.io/GammaRay/" style="--hue: 63;">
+          <div class="thumb"><img src="assets/GammaRay.webp" alt="Gamma Ray simulation screenshot" loading="lazy" decoding="async" width="1154" height="753"><span class="badge">GR</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Gamma Ray</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>A port.</p>
+            <div class="tags"><span class="tag">radiation</span></div>
+          </div>
+        </a>
       </div>
     </section>
 
     <section>
       <div class="section-head">
         <h2>NAAP Astronomy Labs</h2>
-        <span class="count">${naap_count}</span>
+        <span class="count">1</span>
       </div>
       <div class="grid">
-SECTION
-
-  while IFS= read -r line; do
-    [[ -n "$line" ]] && card_html "$line"
-  done <<<"$naap_sims"
-
-  cat <<FOOTER
+        <a class="card" href="https://openphysics.github.io/DeltaSky/" style="--hue: 81;">
+          <div class="thumb placeholder"><span>DS</span></div>
+          <div class="card-body">
+            <div class="card-head">
+              <h3>Delta Sky</h3>
+              <span class="card-arrow" aria-hidden="true">&rarr;</span>
+            </div>
+            <p>An astronomy lab.</p>
+            <div class="tags"><span class="tag">astronomy</span></div>
+          </div>
+        </a>
       </div>
     </section>
     </main>
 
     <footer>
-      <p>${total_count} live simulations &middot; Built with <a href="https://scenerystack.org/">SceneryStack</a> &middot; GNU Affero GPL v3 &middot;
+      <p>5 live simulations &middot; Built with <a href="https://scenerystack.org/">SceneryStack</a> &middot; GNU Affero GPL v3 &middot;
       <a href="https://github.com/OpenPhysics/Baton">OpenPhysics/Baton</a></p>
     </footer>
   </div>
 </body>
 </html>
-FOOTER
-} >"$OUTPUT"
-
-echo "Wrote $OUTPUT"

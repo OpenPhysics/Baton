@@ -10,6 +10,9 @@
     "pages": "bash scripts/generate-pages-index.sh"
   },
   "devDependencies": {
+    "bats": "^1.13.0",
+    "bats-assert": "^2.2.4",
+    "bats-support": "^0.3.0",
     "playwright": "^1.62.0",
     "sharp": "^0.35.3"
   }
