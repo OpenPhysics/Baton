@@ -174,6 +174,11 @@ Pushing `screenshots/**` to `main` also triggers
 ## 5. Sync GitHub metadata and fleet config
 
 ```bash
+# Repository feature flags + security baseline (wiki/projects off, Dependabot,
+# secret scanning, private vulnerability reporting, Pages = GitHub Actions).
+# Source of truth: config/github-repo-baseline.json — see doc/github-repo-settings.md
+scripts/sync-github-settings.sh --apply --repo MyNewSim
+
 # Description + Website on the GitHub repo page
 scripts/sync-github-metadata.sh --repo MyNewSim
 
@@ -285,6 +290,7 @@ independently.
 - [ ] `screenshots/<Sim>.png` committed
 - [ ] `docs/assets/<Sim>.webp` committed (or produced by optimize-assets / refresh-screenshots)
 - [ ] `docs/index.html` regenerated (`npm run pages`) and committed if it changed
+- [ ] `scripts/sync-github-settings.sh --apply --repo <Sim>` applied
 - [ ] `scripts/sync-github-metadata.sh --repo <Sim>` applied
 
 **OpenPhysics** (hand-edited — separate PR)

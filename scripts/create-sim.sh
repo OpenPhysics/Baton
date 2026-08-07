@@ -535,9 +535,10 @@ else
   echo "Next steps (see Baton/doc/add-simulation.md):"
   echo "  1. Review: cd $TARGET_PATH && git status && git diff --stat"
   echo "  2. Commit bootstrap changes and push (unless --local-only / --no-push)."
+  echo "  3. Apply GitHub settings baseline: (cd \"$BATON_ROOT\" && scripts/sync-github-settings.sh --apply --repo $REPO && scripts/sync-github-metadata.sh --repo $REPO)"
   if [[ "$CATALOG" -eq 0 ]]; then
-    echo "  3. Re-run with --onboard (or --catalog) to finish fleet landing-page assets."
+    echo "  4. Re-run with --onboard (or --catalog) to finish fleet landing-page assets."
   else
-    echo "  3. Re-run with --onboard to capture screenshot/WebP/Pages + README."
+    echo "  4. Re-run with --onboard to capture screenshot/WebP/Pages + README."
   fi
 fi

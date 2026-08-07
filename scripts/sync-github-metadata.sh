@@ -96,6 +96,13 @@ while IFS= read -r repo; do
 
   cmd=(gh repo edit "$ORG/$name")
   if [[ -n "$description" ]]; then
+    # GitHub caps repository descriptions at 350 characters.
+    if [[ ${#description} -gt 350 ]]; then
+      truncated="${description:0:347}"
+      truncated="${truncated% *}..."
+      echo "  warning: description is ${#description} chars; truncating to ${#truncated} for GitHub" >&2
+      description="$truncated"
+    fi
     cmd+=(--description "$description")
   fi
   if [[ -n "$homepage" ]]; then

@@ -174,7 +174,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Explore crystal structure across five screens: the five 2D Bravais lattices, the cubic unit cells and their packing factors, hexagonal against cubic close packing, Miller indices for planes and directions, and finally aperiodic order — Penrose tilings and the hat monotile, whose diffraction patterns are as sharp as a crystal's with a symmetry no crystal can have.",
+      "description": "Explore crystal structure across five screens: the five 2D Bravais lattices, cubic unit cells and packing factors, hexagonal vs cubic close packing, Miller indices, and aperiodic order — Penrose tilings and the hat monotile, with diffraction as sharp as a crystal's but a symmetry no crystal can have.",
       "deployedUrl": "https://openphysics.github.io/CrystalLattice",
       "physicsTopics": [
         "crystallography",

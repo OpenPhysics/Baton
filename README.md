@@ -27,7 +27,7 @@ Pages simulation landing page.
 | [`.github/workflows/sync-dependabot.yml`](.github/workflows/sync-dependabot.yml) | Validate the Dependabot templates |
 | [`.github/workflows/baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml) | Validate Baton's own invariants (skills, catalog schema, Node-version sync, script syntax) |
 | [`scripts/`](scripts/) | Repo catalog tools, compliance checks, Dependabot/metadata sync, screenshots |
-| [`config/`](config/) | Canonical Dependabot + Claude-settings templates synced to member repos |
+| [`config/`](config/) | Canonical Dependabot, Claude-settings, and GitHub-repo-settings baselines |
 | [`structure/repos.json`](structure/repos.json) | Machine-readable catalog of org repositories |
 | [`structure/repos.schema.json`](structure/repos.schema.json) | JSON Schema for the catalog (`schemaVersion` 1.1.0) |
 | [`CONVENTIONS.md`](CONVENTIONS.md) | Shared codebase structure every SceneryStack sim must follow |
@@ -36,6 +36,7 @@ Pages simulation landing page.
 | [`.claude-plugin/`](.claude-plugin/) | Marketplace + plugin manifests that package `skills/` as the `scenerystack@openphysics` Claude Code plugin |
 | [`docs/`](docs/) | Generated landing page ([openphysics.github.io/Baton](https://openphysics.github.io/Baton/)) |
 | [`doc/add-simulation.md`](doc/add-simulation.md) | Checklist for adding a sim to the catalog and landing page |
+| [`doc/github-repo-settings.md`](doc/github-repo-settings.md) | GitHub settings/security baseline for sims + apply/check script |
 | [`doc/fleet-git.md`](doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
 | [`doc/fleet-auth.md`](doc/fleet-auth.md) | Setting up the `FLEET_PAT` / GitHub App that lets `fleet-exec` open PRs |
 
@@ -130,7 +131,10 @@ unless marked *(warn)*):
 - **Docs & tooling** — `doc/model.md` + `doc/implementation-notes.md` present and filled
   *(warn if stub)*; `biome.json` `$schema` version matches the pinned `@biomejs/biome`.
 - **GitHub security** (when `gh` is authenticated) — Dependabot vulnerability alerts + security
-  updates, and secret scanning on public repos.
+  updates, and secret scanning on public repos. Fleet-wide feature flags and security settings are
+  defined in [`config/github-repo-baseline.json`](config/github-repo-baseline.json); check/apply with
+  [`scripts/sync-github-settings.sh`](scripts/sync-github-settings.sh) (see
+  [`doc/github-repo-settings.md`](doc/github-repo-settings.md)).
 
 Simulation READMEs use the fixed six-section outline above. Items marked *(warn)* — plus hardcoded
 colors and nested constants — surface as **warnings**, not failures: document each as a carve-out
@@ -159,6 +163,7 @@ scripts/parse-repos.sh names --simulation
 scripts/parse-repos.sh names --lineage phet
 scripts/list-repos.sh --json
 scripts/sync-github-metadata.sh --dry-run
+scripts/sync-github-settings.sh --check
 ```
 
 **Adding a new simulation** (create from template, catalog, screenshot, WebP, Pages,

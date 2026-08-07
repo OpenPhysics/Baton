@@ -22,6 +22,8 @@ the monorepo checkout.
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
 | [`../doc/fleet-git.md`](../doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
+| [`sync-github-settings.sh`](sync-github-settings.sh) | Check/apply GitHub repo settings baseline (security + feature flags) |
+| [`../doc/github-repo-settings.md`](../doc/github-repo-settings.md) | Documented GitHub settings baseline for sims |
 | [`create-sim.sh`](create-sim.sh) | Bootstrap a new sim from SceneryStackTemplate (rename + N screens; `--onboard` / `--pr` / `--shared-model`) |
 | [`sync-claude-settings.sh`](sync-claude-settings.sh) | Roll the `scenerystack` Claude Code plugin out to sim repos' `.claude/settings.json` |
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
@@ -150,6 +152,25 @@ scripts/sync-github-metadata.sh --repo SceneryStackTemplate
 ```
 
 Note: GitHub does not expose API toggles for **Deployments** / **Packages** in the About sidebar.
+Descriptions longer than 350 characters are truncated with a warning (GitHub’s API limit).
+
+## sync-github-settings.sh
+
+Check or apply the canonical GitHub **repository settings** baseline
+([`config/github-repo-baseline.json`](../config/github-repo-baseline.json)): wiki/Projects off,
+Dependabot alerts + security updates, secret scanning + push protection, private vulnerability
+reporting, and Pages `build_type=workflow`. Full write-up:
+[`../doc/github-repo-settings.md`](../doc/github-repo-settings.md).
+
+```bash
+scripts/sync-github-settings.sh --check                 # sims + template; exit 1 on drift
+scripts/sync-github-settings.sh --apply --repo MyNewSim # fix one repo
+scripts/sync-github-settings.sh --apply --all           # every catalog repo
+scripts/sync-github-settings.sh --apply --dry-run       # show planned fixes
+```
+
+Use this after creating a new sim (GitHub defaults diverge from the fleet) instead of
+inspecting a mature sim by hand.
 
 ## sync-claude-settings.sh
 
