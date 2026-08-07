@@ -277,6 +277,26 @@
       "status": "active"
     },
     {
+      "name": "FluidDynamics",
+      "displayName": "Fluid Dynamics",
+      "type": "simulation",
+      "isSimulation": true,
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
+      "framework": "SceneryStack",
+      "description": "Explore fluid flow concepts — Intro and Lab screens for interactive fluid dynamics.",
+      "deployedUrl": "https://openphysics.github.io/FluidDynamics",
+      "physicsTopics": [],
+      "screens": [
+        "Intro",
+        "Lab"
+      ],
+      "status": "active"
+    },
+    {
       "name": "HabitableZones",
       "displayName": "Habitable Zones",
       "type": "simulation",
@@ -594,17 +614,21 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive map of the Earth's tectonic plates drawn entirely from real data — PB2002 plate boundaries, USGS earthquakes, Holocene volcanoes and NOAA relief — plus cross-sections through a subduction zone, a spreading ridge and a transform fault, and a reconstruction clock running 50 Myr either side of the present.",
+      "description": "Interactive map of the Earth's tectonic plates drawn entirely from real data — PB2002 plate boundaries, USGS earthquakes, Holocene volcanoes and NOAA relief — plus cross-sections through a subduction zone, a spreading ridge and a transform fault, and a reconstruction clock running 50 Myr either side of the present. Two further screens port the tabs of PhET's Java simulation: crustal isostasy, and the evolution of a convergent or divergent plate boundary.",
       "deployedUrl": "https://openphysics.github.io/PlateTectonics",
       "physicsTopics": [
         "plate tectonics",
         "seismology",
         "volcanism",
         "geophysics",
-        "plate reconstruction"
+        "plate reconstruction",
+        "isostasy",
+        "subduction"
       ],
       "screens": [
-        "Plate Tectonics"
+        "Plate Tectonics",
+        "Crust",
+        "Plate Motion"
       ],
       "status": "active"
     },
