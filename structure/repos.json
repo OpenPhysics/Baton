@@ -164,6 +164,38 @@
       "status": "active"
     },
     {
+      "name": "CrystalLattice",
+      "displayName": "Crystal Lattice",
+      "type": "simulation",
+      "isSimulation": true,
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
+      "framework": "SceneryStack",
+      "description": "Explore crystal structure across five screens: the five 2D Bravais lattices, the cubic unit cells and their packing factors, hexagonal against cubic close packing, Miller indices for planes and directions, and finally aperiodic order — Penrose tilings and the hat monotile, whose diffraction patterns are as sharp as a crystal's with a symmetry no crystal can have.",
+      "deployedUrl": "https://openphysics.github.io/CrystalLattice",
+      "physicsTopics": [
+        "crystallography",
+        "Bravais lattices",
+        "unit cells",
+        "close packing",
+        "Miller indices",
+        "diffraction",
+        "quasicrystals",
+        "aperiodic tilings"
+      ],
+      "screens": [
+        "2D Lattices",
+        "Cubic Systems",
+        "Close-Packing",
+        "Miller Indices",
+        "Aperiodic Order"
+      ],
+      "status": "active"
+    },
+    {
       "name": "DopplerEffect",
       "displayName": "Doppler Effect",
       "type": "simulation",
