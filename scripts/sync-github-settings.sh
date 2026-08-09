@@ -183,15 +183,12 @@ def st(sec, key):
     return (sec.get(key) or {}).get("status", "?")
 
 
-drift_count = 0
-ok_count = 0
-
-for name in names:
+def evaluate(name):
+    """Return (issues, private, wants_pages) for one repo. Empty issues == compliant."""
     code, out, err = gh_api("GET", f"repos/{ORG}/{name}")
     if code != 0:
-        print(f"{name}: ERROR fetch ({err[:100] or out[:100]})")
-        drift_count += 1
-        continue
+        # Fetch failure: report as a single opaque drift item so it shows up.
+        return ([f"fetch failed ({(err or out)[:80]})"], False, False), False
 
     data = json.loads(out)
     private = bool(data.get("private"))
@@ -249,24 +246,11 @@ for name in names:
         if dep not in ("enabled", "?"):
             issues.append(f"dependabot_security_updates={dep} (want enabled)")
 
-    if not issues:
-        print(f"{name}: ok")
-        ok_count += 1
-        continue
+    return (issues, private, wants_pages), True
 
-    drift_count += 1
-    print(f"{name}: DRIFT")
-    for item in issues:
-        print(f"  - {item}")
 
-    if MODE != "apply":
-        continue
-
-    if DRY_RUN:
-        print("  dry-run: would apply baseline")
-        continue
-
-    # Apply repository feature flags + security_and_analysis (public)
+def apply_baseline(name, private, wants_pages):
+    """Enable every baseline setting the GitHub API exposes for this repo."""
     patch = {k: repo_want[k] for k in REPO_KEYS if k in repo_want}
     if not private:
         patch["security_and_analysis"] = {
@@ -297,12 +281,56 @@ for name in names:
             code, _, err = gh_api("PUT", f"repos/{ORG}/{name}/pages", {"build_type": pages_want})
             print(f"  pages update: {'ok' if code == 0 else 'FAIL: ' + err[:80]}")
 
+
+drift_count = 0
+ok_count = 0
+applied_count = 0
+
+for name in names:
+    (issues, private, wants_pages), fetch_ok = evaluate(name)
+
+    if not issues:
+        print(f"{name}: ok")
+        ok_count += 1
+        continue
+
+    drift_count += 1
+    print(f"{name}: DRIFT")
+    for item in issues:
+        print(f"  - {item}")
+
+    if MODE != "apply":
+        continue
+
+    if DRY_RUN:
+        print("  dry-run: would apply baseline")
+        continue
+
+    if not fetch_ok:
+        print("  skipped: cannot apply — repo fetch failed")
+        continue
+
+    apply_baseline(name, private, wants_pages)
+    applied_count += 1
+
+    # Re-evaluate so the summary reflects post-apply state, not the pre-apply
+    # drift we just fixed. The earlier versions printed a misleading "drift=N"
+    # after a successful apply.
+    (after, _, _), _ = evaluate(name)
+    if after:
+        print("  still drifting after apply:")
+        for item in after:
+            print(f"  - {item}")
+    else:
+        print("  now: ok")
+        ok_count += 1
+        drift_count -= 1
+
 print()
-print(f"ok={ok_count} drift={drift_count} total={len(names)} mode={MODE}")
+if MODE == "apply" and not DRY_RUN:
+    print(f"ok={ok_count} drift={drift_count} applied={applied_count} total={len(names)} mode={MODE}")
+else:
+    print(f"ok={ok_count} drift={drift_count} total={len(names)} mode={MODE}")
 if MODE == "check" and drift_count:
     sys.exit(1)
-if MODE == "apply" and drift_count and not DRY_RUN:
-    # Re-check quickly would be expensive; exit 0 if we attempted apply.
-    # Callers can re-run --check.
-    pass
 PY

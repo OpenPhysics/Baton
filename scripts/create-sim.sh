@@ -33,6 +33,7 @@ CATALOG=0
 ONBOARD=0
 OPEN_PR=0
 SHARED_MODEL=0
+EXISTING=0
 DESCRIPTION=""
 
 usage() {
@@ -56,7 +57,11 @@ Options:
   --no-push            Do not git push the sim (default: no auto-push unless --pr)
   --catalog            Insert a repos.json entry in Baton (no commit)
   --onboard            Full fleet onboarding: catalog + screenshot + WebP + Pages
-                       index + OpenPhysics README Layout row (implies --catalog)
+                       index + GitHub baseline + OpenPhysics README Layout row
+                       (implies --catalog)
+  --existing           Adopt a repo already on GitHub (cloned if absent locally)
+                       instead of creating it from the template. Skip rename /
+                       scaffold / install. Requires --catalog or --onboard.
   --pr                 After --onboard, commit/push and open PRs in Baton and
                        OpenPhysics (and push the sim bootstrap if not --local-only)
   -h, --help           Show this help
@@ -139,6 +144,26 @@ run_onboard_assets() {
   echo "  assets: screenshot + WebP + docs/index.html ready"
 }
 
+run_onboard_github() {
+  # The GitHub-side baseline: repo feature flags + security, description +
+  # homepage, Dependabot config, and the Claude Code plugin settings. Without
+  # this step a freshly "onboarded" sim still carries GitHub's defaults (wiki
+  # and Projects on, no secret scanning, no Dependabot) — the exact drift the
+  # settings baseline exists to prevent. Live API calls + files in the sim tree.
+  echo ""
+  echo "Applying GitHub baseline (settings + metadata + dependabot + claude)..."
+  "$SCRIPT_DIR/sync-github-settings.sh" --apply --repo "$REPO" \
+    || echo "  warning: settings sync reported failures (see above)" >&2
+  "$SCRIPT_DIR/sync-github-metadata.sh" --repo "$REPO" \
+    || echo "  warning: metadata sync failed" >&2
+  # dependabot + claude write into the sim checkout; they become part of the
+  # bootstrap commit when --pr runs.
+  "$SCRIPT_DIR/sync-dependabot.sh" "$REPO" \
+    || echo "  warning: dependabot sync failed" >&2
+  "$SCRIPT_DIR/sync-claude-settings.sh" "$REPO" \
+    || echo "  warning: claude settings sync failed" >&2
+}
+
 open_onboard_prs() {
   local branch="add/${REPO}"
   local baton_pr=""
@@ -154,12 +179,21 @@ open_onboard_prs() {
       if git diff --cached --quiet; then
         echo "  sim: nothing to commit"
       else
-        git commit -m "$(cat <<EOF
+        if [[ "$EXISTING" -eq 1 ]]; then
+          git commit -m "$(cat <<EOF
+chore: add fleet onboarding files
+
+Dependabot config and Claude Code plugin settings from the canonical templates.
+EOF
+)"
+        else
+          git commit -m "$(cat <<EOF
 chore: bootstrap from SceneryStackTemplate
 
 Rename, scaffold screens, and capture the landing-page screenshot.
 EOF
 )"
+        fi
       fi
       if [[ "$NO_PUSH" -eq 0 ]]; then
         git push -u origin HEAD
@@ -315,6 +349,10 @@ while [[ $# -gt 0 ]]; do
       SHARED_MODEL=1
       shift
       ;;
+    --existing)
+      EXISTING=1
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -338,6 +376,11 @@ if [[ "$OPEN_PR" -eq 1 && "$ONBOARD" -eq 0 ]]; then
   exit 2
 fi
 
+if [[ "$EXISTING" -eq 1 && "$CATALOG" -eq 0 ]]; then
+  echo "error: --existing needs --catalog or --onboard (nothing to adopt otherwise)" >&2
+  exit 2
+fi
+
 if [[ -z "$SIM_ID" ]]; then
   SIM_ID="$(pascal_to_kebab "$REPO")"
 fi
@@ -346,7 +389,7 @@ if [[ -z "$TARGET_PATH" ]]; then
   TARGET_PATH="$WORKSPACE/$REPO"
 fi
 
-if [[ -e "$TARGET_PATH" ]]; then
+if [[ "$EXISTING" -eq 0 && -e "$TARGET_PATH" ]]; then
   echo "error: path already exists: $TARGET_PATH" >&2
   exit 1
 fi
@@ -404,12 +447,29 @@ echo "  path:     $TARGET_PATH"
 echo "  screens:  ${SCREENS:-"(default: $SIM_NAME)"}"
 echo "  shared:   $([[ "$SHARED_MODEL" -eq 1 ]] && echo yes || echo no)"
 echo "  onboard:  $([[ "$ONBOARD" -eq 1 ]] && echo yes || echo no)"
+echo "  existing: $([[ "$EXISTING" -eq 1 ]] && echo "yes (adopt already-on-GitHub repo)" || echo "no (create from template)")"
 echo "  template: $TEMPLATE_REPO"
 echo ""
 
 PARENT="$(dirname "$TARGET_PATH")"
 mkdir -p "$PARENT"
 
+if [[ "$EXISTING" -eq 1 ]]; then
+  # Adopt a repo that already lives on GitHub (created outside this script).
+  # Skip the template / rename / scaffold / install dance — just make sure it is
+  # checked out, then fall through to catalog + assets + GitHub baseline.
+  if [[ ! -d "$TARGET_PATH/.git" ]]; then
+    if [[ "$LOCAL_ONLY" -eq 1 ]]; then
+      echo "error: --existing --local-only needs the checkout to already exist at $TARGET_PATH" >&2
+      exit 1
+    fi
+    echo "Cloning existing repo $ORG/$REPO → $TARGET_PATH..."
+    git clone "git@github.com:${ORG}/${REPO}.git" "$TARGET_PATH" 2>/dev/null \
+      || git clone "https://github.com/${ORG}/${REPO}.git" "$TARGET_PATH"
+  else
+    echo "Adopting existing checkout: $TARGET_PATH"
+  fi
+else
 if [[ "$LOCAL_ONLY" -eq 1 ]]; then
   SRC_TEMPLATE="$WORKSPACE/SceneryStackTemplate"
   if [[ ! -d "$SRC_TEMPLATE" ]]; then
@@ -475,6 +535,7 @@ npm run fix
 echo ""
 echo "npm run check..."
 npm run check
+fi  # end of the create-from-template branch (--existing skips it)
 
 CATALOG_PATH="$(repos_catalog_path)"
 entry="$(jq -n \
@@ -510,6 +571,7 @@ if [[ "$ONBOARD" -eq 1 ]]; then
   echo ""
   echo "Workspace README..."
   update_workspace_readme
+  run_onboard_github
 fi
 
 if [[ "$OPEN_PR" -eq 1 ]]; then
@@ -525,6 +587,7 @@ if [[ "$ONBOARD" -eq 1 ]]; then
   echo "  - ${REPO}/assets/screenshot.png"
   echo "  - Baton screenshots/${REPO}.png + docs/assets/${REPO}.webp"
   echo "  - Baton docs/index.html"
+  echo "  - GitHub settings + metadata + Dependabot + Claude plugin applied"
   echo "  - OpenPhysics README Layout row"
   if [[ "$OPEN_PR" -eq 1 ]]; then
     echo "  - follow-up PRs opened (see above)"
@@ -536,7 +599,9 @@ else
   echo "  1. Review: cd $TARGET_PATH && git status && git diff --stat"
   echo "  2. Commit bootstrap changes and push (unless --local-only / --no-push)."
   echo "  3. Apply GitHub settings baseline: (cd \"$BATON_ROOT\" && scripts/sync-github-settings.sh --apply --repo $REPO && scripts/sync-github-metadata.sh --repo $REPO)"
-  if [[ "$CATALOG" -eq 0 ]]; then
+  if [[ "$EXISTING" -eq 1 ]]; then
+    echo "  (Adopted an existing repo — --onboard would also capture screenshot + Pages + README.)"
+  elif [[ "$CATALOG" -eq 0 ]]; then
     echo "  4. Re-run with --onboard (or --catalog) to finish fleet landing-page assets."
   else
     echo "  4. Re-run with --onboard to capture screenshot/WebP/Pages + README."

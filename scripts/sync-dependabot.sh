@@ -44,6 +44,17 @@ wants() {
   return 1
 }
 
+# Like wants(), but for Baton's own file and the .github org profile. When a
+# caller names specific repos, a scoped run must never silently dirty Baton or
+# .github as a side effect — only touch them when they are explicitly named or
+# no filter was given (the whole-fleet case).
+self_wants() {
+  [ "${#FILTER[@]}" -eq 0 ] && return 0
+  local self="$1"
+  for f in "${FILTER[@]}"; do [ "$f" = "$self" ] && return 0; done
+  return 1
+}
+
 sync_file() {
   local template="$1"
   local target="$2"
@@ -79,10 +90,12 @@ echo "Catalog: $CATALOG"
 echo "Workspace: $WORKSPACE"
 [ "$DRY_RUN" -eq 1 ] && echo "(dry-run — no files written)"
 
-sync_file "$CONFIG_DIR/dependabot-npm.yml" "$REPO_ROOT/.github/dependabot.yml"
+# Baton itself ships a package.json with devDeps → npm config. Gated so a
+# scoped run (specific repos named) doesn't dirty Baton's working tree.
+self_wants "Baton" && sync_file "$CONFIG_DIR/dependabot-npm.yml" "$REPO_ROOT/.github/dependabot.yml"
 
 # The .github org-profile repo is actions-only (no package.json).
-sync_file "$CONFIG_DIR/dependabot-actions.yml" "$WORKSPACE/.github/.github/dependabot.yml"
+self_wants ".github" && sync_file "$CONFIG_DIR/dependabot-actions.yml" "$WORKSPACE/.github/.github/dependabot.yml"
 
 npm_synced=0
 npm_skipped=0

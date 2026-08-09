@@ -17,6 +17,7 @@ the monorepo checkout.
 | [`parse-repos.sh`](parse-repos.sh) | Core parser/CLI for `repos.json` |
 | [`list-repos.sh`](list-repos.sh) | Human-friendly listing wrapper |
 | [`check-repos-catalog.sh`](check-repos-catalog.sh) | Validate `repos.json` against `structure/repos.schema.json` + fleet invariants |
+| [`check-uncataloged.sh`](check-uncataloged.sh) | Detect org repos on GitHub that are missing from `repos.json` (catches un-onboarded repos) |
 | [`clone-fleet.sh`](clone-fleet.sh) | Clone/update every catalog repo into the workspace as a sibling |
 | [`fleet`](fleet) | Run a git command across every local checkout (`fleet push`, `fleet status -s`, …) |
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
@@ -24,7 +25,7 @@ the monorepo checkout.
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
 | [`sync-github-settings.sh`](sync-github-settings.sh) | Check/apply GitHub repo settings baseline (security + feature flags) |
 | [`../doc/github-repo-settings.md`](../doc/github-repo-settings.md) | Documented GitHub settings baseline for sims |
-| [`create-sim.sh`](create-sim.sh) | Bootstrap a new sim from SceneryStackTemplate (rename + N screens; `--onboard` / `--pr` / `--shared-model`) |
+| [`create-sim.sh`](create-sim.sh) | Bootstrap a new sim from SceneryStackTemplate (rename + N screens; `--onboard` applies the full baseline incl. GitHub settings; `--existing` adopts a repo already on GitHub; `--pr` / `--shared-model`) |
 | [`sync-claude-settings.sh`](sync-claude-settings.sh) | Roll the `scenerystack` Claude Code plugin out to sim repos' `.claude/settings.json` |
 | [`lib/repos.sh`](lib/repos.sh) | Bash helper functions for other scripts |
 | [`check-repo-compliance.sh`](check-repo-compliance.sh) | README/CI/structure compliance (bootstrap, i18n, memory-leak suite, KeyboardHelp, githooks, …) |
@@ -203,6 +204,36 @@ scripts/check-node-version.sh   # all setup-node workflows declare the same Node
 
 End-to-end checklist (create repo → `repos.json` → screenshot → WebP → regenerate
 `docs/index.html`): [`../doc/add-simulation.md`](../doc/add-simulation.md).
+
+`create-sim.sh --onboard` does the whole thing in one shot — catalog row, screenshot +
+WebP + Pages index, **and** the GitHub settings/metadata/Dependabot/Claude baseline.
+
+### Adopting a repo that already exists on GitHub
+
+If the repo was created some other way and just needs fleet onboarding, pass `--existing`
+(skip the template/rename/scaffold dance):
+
+```bash
+scripts/create-sim.sh --existing --repo HeatTransfer --name "Heat Transfer" --onboard
+```
+
+### Catching un-onboarded repos
+
+A repo can exist on GitHub but never make it into `repos.json`, which makes it invisible to
+every fleet tool. This check diffs the live org against the catalog (run by `baton-selfcheck`
+on PRs touching `scripts/`/`structure/`):
+
+```bash
+scripts/check-uncataloged.sh
+```
+
+## check-uncataloged.sh
+
+Lists repos under the GitHub org that are missing from `structure/repos.json`, so a
+forgotten onboarding can't stay hidden. Intentional non-members (the superproject itself,
+the textbook bundle) are kept in an in-script allowlist, extendable via `UNCATALOGED_ALLOWLIST`
+or `structure/uncataloged-allowlist.txt`. Requires `gh` (authed) and `jq`; exits 1 if any
+uncataloged repo is found.
 
 ## generate-screenshots.sh
 

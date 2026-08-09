@@ -46,6 +46,14 @@ jobs:
       - name: Check fleet Node version is in sync
         run: scripts/check-node-version.sh
 
+      - name: Detect uncataloged repos
+        # Compare the live GitHub org against structure/repos.json so a repo that
+        # was created on GitHub but never onboarded can't stay invisible to the
+        # fleet tooling. Read-only; the default token can list public org repos.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/check-uncataloged.sh
+
       - name: Lint shell scripts (syntax)
         run: |
           set -euo pipefail

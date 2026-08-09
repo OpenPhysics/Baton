@@ -52,6 +52,7 @@ const sims = catalog.repos
   .filter((name) => only.length === 0 || only.includes(name));
 
 let made = 0;
+const skipped = [];
 for (const sim of sims) {
   const original = join(SCREENSHOTS_DIR, `${sim}.png`);
   const sibling = join(WORKSPACE, sim, "assets", "screenshot.png");
@@ -59,6 +60,7 @@ for (const sim of sims) {
     copyFileSync(sibling, original);
   }
   if (!existsSync(original)) {
+    skipped.push(sim);
     continue;
   }
   await sharp(original)
@@ -70,3 +72,10 @@ for (const sim of sims) {
 }
 
 console.log(`Generated ${made} WebP thumbnail(s) at ${width}px wide.`);
+if (skipped.length > 0) {
+  console.warn(
+    `No screenshot for ${skipped.length} active sim(s) — the Pages card renders a placeholder monogram for these:`,
+  );
+  for (const sim of skipped) console.warn(`  - ${sim}`);
+  console.warn(`Capture them with: npm run screenshots -- ${skipped.join(" ")}`);
+}
