@@ -24,6 +24,7 @@ Pages simulation landing page.
 | [`.github/workflows/refresh-screenshots.yml`](.github/workflows/refresh-screenshots.yml) | Weekly/manual refresh of card screenshots from live Pages → WebP thumbnails + `docs/index.html` (opens a PR) |
 | [`.github/workflows/fleet-exec.yml`](.github/workflows/fleet-exec.yml) | Fan a command across many repos and open one PR each (manual dispatch) |
 | [`.github/workflows/fleet-health.yml`](.github/workflows/fleet-health.yml) | Weekly lint / type-check / build / test of every simulation, reported as a table |
+| [`.github/workflows/gitlab-mirror.yml`](.github/workflows/gitlab-mirror.yml) | Daily push of every repo's git history to the GitLab backup group |
 | [`.github/workflows/sync-dependabot.yml`](.github/workflows/sync-dependabot.yml) | Validate the Dependabot templates |
 | [`.github/workflows/baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml) | Validate Baton's own invariants (skills, catalog schema, Node-version sync, script syntax) |
 | [`scripts/`](scripts/) | Repo catalog tools, compliance checks, Dependabot/metadata sync, screenshots |
@@ -39,6 +40,7 @@ Pages simulation landing page.
 | [`doc/github-repo-settings.md`](doc/github-repo-settings.md) | GitHub settings/security baseline for sims + apply/check script |
 | [`doc/fleet-git.md`](doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
 | [`doc/fleet-auth.md`](doc/fleet-auth.md) | Setting up the `FLEET_PAT` / GitHub App that lets `fleet-exec` open PRs |
+| [`doc/gitlab-mirror.md`](doc/gitlab-mirror.md) | GitLab backup mirror: setup, initial import, periodic sync, restore |
 
 ## Claude Code plugin
 
@@ -197,6 +199,12 @@ Cross-repo automation, all driven from the catalog:
   git across your local checkouts (`pull all`, `push all`, `status all`), built on
   `parse-repos.sh paths`. Use it for ad-hoc local work; use `fleet-exec.sh` to land the same
   change as PRs.
+- **Off-GitHub backup** — [`scripts/sync-gitlab-mirror.sh`](scripts/sync-gitlab-mirror.sh) pushes
+  every catalog repo's git history (branches, tags, commits — no issues, PRs, CI, or Pages) into a
+  GitLab group. The same command does the first import and each later sync;
+  [`gitlab-mirror.yml`](.github/workflows/gitlab-mirror.yml) runs it daily once a `GITLAB_TOKEN`
+  secret exists, and `--check` verifies the backup is current. Setup and restore procedure:
+  [`doc/gitlab-mirror.md`](doc/gitlab-mirror.md).
 - **Add a simulation** — [`scripts/create-sim.sh`](scripts/create-sim.sh) bootstraps from
   SceneryStackTemplate; [`doc/add-simulation.md`](doc/add-simulation.md) covers catalog entry,
   screenshot capture, WebP thumbnails, and regenerating the Pages index.

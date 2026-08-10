@@ -22,6 +22,8 @@ the monorepo checkout.
 | [`fleet`](fleet) | Run a git command across every local checkout (`fleet push`, `fleet status -s`, …) |
 | [`fleet-exec.sh`](fleet-exec.sh) | Run a command across many repos and open one PR each |
 | [`../doc/fleet-git.md`](../doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
+| [`sync-gitlab-mirror.sh`](sync-gitlab-mirror.sh) | Mirror every catalog repo's git history to a GitLab group (off-GitHub backup) |
+| [`../doc/gitlab-mirror.md`](../doc/gitlab-mirror.md) | GitLab backup: setup, initial import, periodic sync, restore |
 | [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
 | [`sync-github-settings.sh`](sync-github-settings.sh) | Check/apply GitHub repo settings baseline (security + feature flags) |
 | [`../doc/github-repo-settings.md`](../doc/github-repo-settings.md) | Documented GitHub settings baseline for sims |
@@ -141,6 +143,31 @@ Pushing and opening PRs needs a token with **write access to the target repos** 
 `gh auth`, or an org PAT / GitHub App token as `GH_TOKEN`. The default `GITHUB_TOKEN` only
 reaches the repo running a workflow, so the [`fleet-exec.yml`](../.github/workflows/fleet-exec.yml)
 dispatch wrapper reads a `FLEET_PAT` secret for `apply=true`.
+
+## sync-gitlab-mirror.sh
+
+Keep an off-GitHub backup of the fleet: push every catalog repo's **git data** — branches,
+tags, commits — into a GitLab group. Issues, merge requests, CI, and Pages are not copied,
+and are disabled on the projects this script creates. Same command for the first import and
+for every later sync; a bare mirror cached per repo makes repeat runs incremental.
+
+```bash
+export GITLAB_TOKEN=glpat-…            # api + write_repository scopes
+
+scripts/sync-gitlab-mirror.sh --dry-run    # show the plan, change nothing
+scripts/sync-gitlab-mirror.sh              # initial import of the whole fleet
+scripts/sync-gitlab-mirror.sh --simulation # later syncs, sims only
+scripts/sync-gitlab-mirror.sh --check      # is the backup current? (read-only)
+```
+
+Key options: `--group`/`--host` (default `OpenPhysics` on `https://gitlab.com`),
+`--visibility private|internal|public` (default private), `--work-dir`, `--fresh`,
+`--no-prune`, plus the usual catalog filters. `.github` is mirrored as `dot-github`
+(GitLab paths cannot start with a dot).
+
+Runs daily from [`gitlab-mirror.yml`](../.github/workflows/gitlab-mirror.yml) once a
+`GITLAB_TOKEN` secret exists on Baton. Setup, verification, and the restore procedure:
+[`../doc/gitlab-mirror.md`](../doc/gitlab-mirror.md).
 
 ## sync-github-metadata.sh
 
