@@ -7,7 +7,8 @@
   "scripts": {
     "screenshots": "bash scripts/generate-screenshots.sh",
     "thumbnails": "node scripts/make-thumbnails.mjs",
-    "pages": "bash scripts/generate-pages-index.sh"
+    "pages": "bash scripts/generate-pages-index.sh",
+    "refresh": "bash scripts/refresh-screenshots.sh"
   },
   "devDependencies": {
     "bats": "^1.13.0",

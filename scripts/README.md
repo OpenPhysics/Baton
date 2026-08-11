@@ -37,6 +37,7 @@ the monorepo checkout.
 | [`generate-pages-index.sh`](generate-pages-index.sh) | Build `docs/index.html` simulation landing page |
 | [`make-thumbnails.mjs`](make-thumbnails.mjs) | Downscale `screenshots/*.png` to `docs/assets/*.webp` with sharp |
 | [`generate-screenshots.sh`](generate-screenshots.sh) | Capture each sim's screen to `<sim>/assets/screenshot.png` |
+| [`refresh-screenshots.sh`](refresh-screenshots.sh) | **One-command full refresh** — chains capture → thumbnails → index (keep the Pages landing page in sync) |
 | [`screenshot.mjs`](screenshot.mjs) | Playwright driver behind `generate-screenshots.sh` |
 | [`../.github/workflows/refresh-screenshots.yml`](../.github/workflows/refresh-screenshots.yml) | Weekly/manual Pages thumbnail refresh → PR |
 
@@ -298,6 +299,34 @@ node scripts/screenshot.mjs --dist ../DopplerEffect/dist --out /tmp/shot.png --s
 
 It discovers a usable Chromium automatically (Playwright's bundled build, the newest cached
 build, or a system Chromium); override with `PLAYWRIGHT_CHROMIUM_EXECUTABLE`.
+
+## refresh-screenshots.sh
+
+One-command, end-to-end refresh of every screenshot and the landing page. It chains the three
+pipeline scripts so the step that copies captures into Baton (`make-thumbnails.mjs`) can't be
+forgotten — which is otherwise the easy way to leave `https://openphysics.github.io/Baton/` stale:
+
+1. [`generate-screenshots.sh`](generate-screenshots.sh) — capture `<sim>/assets/screenshot.png`
+2. [`make-thumbnails.mjs`](make-thumbnails.mjs) — copy sibling shots → `screenshots/<sim>.png` + `docs/assets/<sim>.webp`
+3. [`generate-pages-index.sh`](generate-pages-index.sh) — regenerate `docs/index.html`
+
+```bash
+npm run refresh                       # every active sim, screen 1
+# or directly:
+scripts/refresh-screenshots.sh
+scripts/refresh-screenshots.sh --build            # force a rebuild first
+scripts/refresh-screenshots.sh Resonance OscillationsAndChaos   # just these sims
+```
+
+It accepts the same capture options/positional sims as `generate-screenshots.sh` (`--build`,
+`--screen`, `--width`, `--height`) and forwards sim names to both the capture and thumbnail
+steps. At the end it prints the exact `git` commands to commit — `assets/screenshot.png` in each
+changed sim repo, and `screenshots/` + `docs/` in Baton. Pushing those to `main` auto-deploys:
+`screenshots/**` runs [`optimize-assets.yml`](../.github/workflows/optimize-assets.yml) and
+`docs/**` runs [`pages.yml`](../.github/workflows/pages.yml).
+
+For a no-human-involved safety net, [`refresh-screenshots.yml`](../.github/workflows/refresh-screenshots.yml)
+still runs weekly against live Pages and opens a PR.
 
 ## Bash helpers
 
