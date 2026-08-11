@@ -516,6 +516,20 @@ function main() {
     }
   }
 
+  // Under fleet-exec (REPO_NAME set), drop local githooks so commit/push are not
+  // blocked by per-sim pre-push lint+check — CI on the PR is the gate.
+  if (process.env.REPO_NAME) {
+    try {
+      execFileSync("git", ["config", "--unset-all", "core.hooksPath"], {
+        cwd: ROOT,
+        stdio: "ignore",
+      });
+      log("disabled core.hooksPath for fleet commit/push");
+    } catch {
+      // already unset
+    }
+  }
+
   log("done");
 }
 
