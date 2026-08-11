@@ -31,7 +31,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "AC phasor simulation exploring resistors, inductors, and capacitors across four screens \u2014 Intro (single element), Series RLC, Resonance, and Power.",
+      "description": "AC phasor simulation exploring resistors, inductors, and capacitors across four screens — Intro (single element), Series RLC, Resonance, and Power.",
       "deployedUrl": "https://openphysics.github.io/ACPhasor",
       "physicsTopics": [
         "AC circuits",
@@ -146,7 +146,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Explore the Carnot cycle across three screens: a piston-cylinder tied to a live PV diagram, a quantitative efficiency lab with a T\u2013S view, and the same cycle reversed as a refrigerator or heat pump.",
+      "description": "Explore the Carnot cycle across three screens: a piston-cylinder tied to a live PV diagram, a quantitative efficiency lab with a T–S view, and the same cycle reversed as a refrigerator or heat pump.",
       "deployedUrl": "https://openphysics.github.io/CarnotHeatEngine",
       "physicsTopics": [
         "thermodynamics",
@@ -174,7 +174,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Explore crystal structure across five screens: the five 2D Bravais lattices, cubic unit cells and packing factors, hexagonal vs cubic close packing, Miller indices, and aperiodic order \u2014 Penrose tilings and the hat monotile, with diffraction as sharp as a crystal's but a symmetry no crystal can have.",
+      "description": "Explore crystal structure across five screens: the five 2D Bravais lattices, cubic unit cells and packing factors, hexagonal vs cubic close packing, Miller indices, and aperiodic order — Penrose tilings and the hat monotile, with diffraction as sharp as a crystal's but a symmetry no crystal can have.",
       "deployedUrl": "https://openphysics.github.io/CrystalLattice",
       "physicsTopics": [
         "crystallography",
@@ -206,7 +206,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive simulation of the Doppler Effect \u2014 visualizes how the frequency of sound waves shifts with relative motion between source and observer.",
+      "description": "Interactive simulation of the Doppler Effect — visualizes how the frequency of sound waves shifts with relative motion between source and observer.",
       "deployedUrl": "https://openphysics.github.io/DopplerEffect",
       "physicsTopics": [
         "waves",
@@ -261,7 +261,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive simulation of two exoplanet-detection methods \u2014 radial velocity (Doppler wobble) and transit (light-curve dip).",
+      "description": "Interactive simulation of two exoplanet-detection methods — radial velocity (Doppler wobble) and transit (light-curve dip).",
       "deployedUrl": "https://openphysics.github.io/ExtrasolarPlanets",
       "physicsTopics": [
         "astronomy",
@@ -277,30 +277,6 @@
       "status": "active"
     },
     {
-      "name": "FieldBoundary",
-      "displayName": "Field Boundary",
-      "type": "simulation",
-      "isSimulation": true,
-      "lineage": "original",
-      "upstream": null,
-      "language": [
-        "TypeScript"
-      ],
-      "framework": "SceneryStack",
-      "description": "Explore Maxwell boundary conditions for E/D and B/H at a planar interface between two media.",
-      "deployedUrl": "https://openphysics.github.io/FieldBoundary",
-      "physicsTopics": [
-        "electromagnetism",
-        "boundary-conditions",
-        "dielectrics"
-      ],
-      "screens": [
-        "Intro",
-        "Magnetics"
-      ],
-      "status": "active"
-    },
-    {
       "name": "FluidDynamics",
       "displayName": "Fluid Dynamics",
       "type": "simulation",
@@ -311,7 +287,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Explore fluid flow concepts \u2014 Intro and Lab screens for interactive fluid dynamics.",
+      "description": "Explore fluid flow concepts — Intro and Lab screens for interactive fluid dynamics.",
       "deployedUrl": "https://openphysics.github.io/FluidDynamics",
       "physicsTopics": [],
       "screens": [
@@ -361,7 +337,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Heat as a field on a WebGPU engine \u2014 temperature, conduction, convection, transport balance, and materials across five screens, with GPU-native compute shaders and a CPU reference backend.",
+      "description": "Heat as a field on a WebGPU engine — temperature, conduction, convection, transport balance, and materials across five screens, with GPU-native compute shaders and a CPU reference backend.",
       "deployedUrl": "https://openphysics.github.io/HeatTransfer",
       "physicsTopics": [
         "heat transfer",
@@ -465,7 +441,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive simulation of how light propagates through polarizers and wave plates \u2014 Intro, Polarization, Wave Plates, and Lab screens.",
+      "description": "Interactive simulation of how light propagates through polarizers and wave plates — Intro, Polarization, Wave Plates, and Lab screens.",
       "deployedUrl": "https://openphysics.github.io/LightPropagation",
       "physicsTopics": [
         "optics",
@@ -693,7 +669,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive map of the Earth's tectonic plates drawn entirely from real data \u2014 PB2002 plate boundaries, USGS earthquakes, Holocene volcanoes and NOAA relief \u2014 plus cross-sections through a subduction zone, a spreading ridge and a transform fault, and a reconstruction clock running 50 Myr either side of the present. Two further screens port the tabs of PhET's Java simulation: crustal isostasy, and the evolution of a convergent or divergent plate boundary.",
+      "description": "Interactive map of the Earth's tectonic plates drawn entirely from real data — PB2002 plate boundaries, USGS earthquakes, Holocene volcanoes and NOAA relief — plus cross-sections through a subduction zone, a spreading ridge and a transform fault, and a reconstruction clock running 50 Myr either side of the present. Two further screens port the tabs of PhET's Java simulation: crustal isostasy, and the evolution of a convergent or divergent plate boundary.",
       "deployedUrl": "https://openphysics.github.io/PlateTectonics",
       "physicsTopics": [
         "plate tectonics",
@@ -902,7 +878,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "GitHub template for OpenPhysics SceneryStack sims \u2014 Use this template or Baton create-sim.sh; rename + scaffold-screens for one or N screens.",
+      "description": "GitHub template for OpenPhysics SceneryStack sims — Use this template or Baton create-sim.sh; rename + scaffold-screens for one or N screens.",
       "deployedUrl": null,
       "physicsTopics": [],
       "screens": null,
@@ -971,7 +947,7 @@
     },
     {
       "name": "SternGerlach",
-      "displayName": "Stern\u2013Gerlach",
+      "displayName": "Stern–Gerlach",
       "type": "simulation",
       "isSimulation": true,
       "lineage": "original",
@@ -980,7 +956,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive Stern\u2013Gerlach experiment: assemble analyzers, magnets, and counters; fire spin-\u00bd / spin-1 atoms; compare Monte Carlo counts with analytic quantum predictions.",
+      "description": "Interactive Stern–Gerlach experiment: assemble analyzers, magnets, and counters; fire spin-½ / spin-1 atoms; compare Monte Carlo counts with analytic quantum predictions.",
       "deployedUrl": "https://openphysics.github.io/SternGerlach",
       "physicsTopics": [
         "quantum mechanics",
