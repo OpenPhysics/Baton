@@ -295,8 +295,8 @@
         "dielectrics"
       ],
       "screens": [
-        "Intro",
-        "Magnetics"
+        "Electric",
+        "Magnetic"
       ],
       "status": "active"
     },
