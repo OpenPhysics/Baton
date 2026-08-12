@@ -1,6 +1,6 @@
 ---
 name: scenerystack-testing
-description: Use when adding or changing unit tests for a simulation — writing vitest specs for model/physics code, setting up the test harness, or adding fuzz/Playwright specs. Covers the standardized tests/ layout, vitest config, memory-leak suites, what is worth testing, and optional Playwright fuzz.
+description: Use when adding or changing unit tests for a simulation — writing vitest specs for model/physics code, setting up the test harness, or adding fuzz/Playwright specs. Covers the standardized tests/ layout, vitest config, memory-leak suites (forceGC early-exit), what is worth testing, optional Playwright fuzz, and WebGPU launch flags for GPU sims.
 ---
 
 # SceneryStack Testing
@@ -72,7 +72,10 @@ Ship `tests/memory-leak.test.ts` modeled on SceneryStackTemplate / QubitSketch:
 
 - Require `execArgv: ["--expose-gc"]` in `vitest.config.ts`.
 - Allocate inside a **function** boundary, call `dispose()`, hold a `WeakRef`, then
-  `forceGC` until the ref is cleared.
+  call `forceGC(ref)` (or `forceGC(refs)`) until the ref is cleared.
+- **Always pass the `WeakRef`(s) into `forceGC`.** The template helper early-exits once
+  every ref is collected. Calling `forceGC()` with no args runs all GC passes and can
+  exceed Vitest's `testTimeout` on a slow `gc()`.
 - Prefer disposing a real model (`TimeModel`, screen model, or a known disposable helper
   like Resonance `ListenerTracker`). When the sim has no disposable model yet, dispose a
   `NumberProperty` to keep the harness green and document the gap.
@@ -93,6 +96,31 @@ with `npm run test:fuzz` / `test:fuzz:quick`. Fuzz uses joist's `?fuzz` query pa
 fails on console/`pageerror`. Use it for pre-release / CRC stress; it is not required in
 the default CI path.
 
+## WebGPU / GPU sims in Playwright
+
+Headless Chromium often returns `null` from `navigator.gpu.requestAdapter()` unless
+launched with WebGPU enabled. For engine / screenshot suites (e.g. FluidDynamics
+`tests/fuzz/engine.spec.ts`):
+
+```typescript
+chromium.launch({
+  args: ["--enable-unsafe-webgpu", "--enable-features=Vulkan"],
+});
+```
+
+To exercise a no-WebGPU fallback path deliberately:
+
+```typescript
+chromium.launch({
+  args: ["--disable-features=WebGPU,WebGPUService"],
+});
+```
+
+Absence of `vulkaninfo` on the host is **not** evidence that WebGPU is unavailable —
+verify with a real browser launch. GPU engine suites may be slow on software rasterizers;
+keep them out of the default `npm test` path and document skip conditions in the sim's
+`CLAUDE.md`.
+
 ## Rules
 
 - Put tests only under root `tests/`, mirroring the source tree; setup file is
@@ -111,6 +139,8 @@ the default CI path.
 - Asserting floating-point physics with `toBe`/`toEqual` instead of `toBeCloseTo`.
 - Skipping the `reset()` test — the single highest-value model test.
 - Memory-leak helpers that allocate in a block scope (not a function) — V8 won't collect.
+- Calling `forceGC()` with no `WeakRef` args → suite times out instead of early-exiting.
+- Assuming WebGPU works in Playwright without the launch flags above → adapter is `null`.
 
 Related skills: scenerystack-model, scenerystack-code-review, scenerystack-disposal,
 scenerystack-numerics.

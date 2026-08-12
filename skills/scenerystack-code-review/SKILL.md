@@ -8,9 +8,10 @@ description: Use to run a pre-release Code Review (CRC) on an OpenPhysics Scener
 A Code Review is the pre-release audit of an OpenPhysics sim against project standards. Our sims are
 **Vite + TypeScript + Biome** projects forked from `SceneryStackTemplate` (`npm run rename`), so
 this checklist is tailored to that layout (`src/`, `doc/`, `public/`, `biome.json`) — **not** the classic
-PhET `js/`/grunt layout. Related skills: scenerystack-accessibility, scenerystack-i18n,
-scenerystack-color-profiles, scenerystack-constants, scenerystack-query-parameters,
-scenerystack-preferences.
+PhET `js/`/grunt layout. Related skills: scenerystack-new-sim, scenerystack-accessibility,
+scenerystack-i18n, scenerystack-color-profiles, scenerystack-constants,
+scenerystack-query-parameters, scenerystack-preferences, scenerystack-keyboard-help-dialog,
+scenerystack-testing.
 
 ## How to run a review
 
@@ -65,6 +66,8 @@ These standard issues should exist and be complete. If any are missing, pause th
 
 - [ ] `tests/memory-leak.test.ts` exists and passes under `npm test` (WeakRef +
   `execArgv: ["--expose-gc"]` in `vitest.config.ts` — see scenerystack-testing / CONVENTIONS §5).
+  Confirm `forceGC` is called **with** the `WeakRef`(s) so the helper early-exits (bare
+  `forceGC()` can hit Vitest's timeout).
 - [ ] A Chrome DevTools heap comparison shows no leak. Build with mangling disabled for readable names
   (e.g. `vite build --minify false`). Compare against the responsible dev's results: {{ISSUE}}.
 - [ ] Every SceneryStack component that registers internal observers/listeners is `dispose()`d where
@@ -86,6 +89,8 @@ These standard issues should exist and be complete. If any are missing, pause th
 
 - [ ] Play through the sim; note any obvious issues (animation slowing with object count, GC hitches).
 - [ ] If WebGL is used, there is a Canvas/SVG fallback that performs acceptably (`?webgl=false`).
+- [ ] If WebGPU is used, the no-adapter path is deliberate (message / degraded UI) and any
+  Playwright engine suite documents the required Chromium launch flags (see scenerystack-testing).
 
 ### Usability
 
@@ -170,8 +175,13 @@ Compare against `SceneryStackTemplate`. Source lives in `src/`, not `js/`; tooli
       view/SimKeyboardHelpContent.ts
   ```
 
-- [ ] After `npm run rename`, the `Sim` prefix has been replaced consistently — no stray `Sim*`
-  filenames, class names, or namespace strings remain.
+- [ ] After `npm run rename` / `scaffold-screens` (or `create-sim.sh`), the `Sim` prefix has
+  been replaced consistently — no stray `Sim*` **filenames, class names, or exported type
+  aliases** remain (`grep -rn '\bSim[A-Z_]' src`). `tsc` and Biome will not flag leftover
+  `SimA11yStrings` / `SimPreferenceStrings` / `SimPanelOptions` — see scenerystack-new-sim.
+- [ ] Each screen's `*KeyboardHelpContent.ts` is **not** the template stub (only
+  `BasicActionsKeyboardHelpSection`). Sliders / playback / sim-specific shortcuts are
+  documented — compliance only checks the file exists (see scenerystack-keyboard-help-dialog).
 - [ ] Filenames use a single consistent prefix matching the sim (full name or an all-uppercase
   abbreviation unique across repos, e.g. `TheRampConstants.ts` or `TRConstants.ts` — never mixed
   forms like `TheRampConstants` and `TRColors` in one repo).
@@ -180,11 +190,14 @@ Compare against `SceneryStackTemplate`. Source lives in `src/`, not `js/`; tooli
 - [ ] Sim-specific query parameters are declared once in `src/preferences/{prefix}QueryParameters.ts`
   (see scenerystack-query-parameters), with public-facing ones marked `public: true`.
 - [ ] Colors live in `SimColors.ts` using `ProfileColorProperty` for theme-able values (see
-  scenerystack-color-profiles).
+  scenerystack-color-profiles). Canvas painters / `addColorStop` / `fillStyle` for **theme
+  chrome** also go through `*Colors.ts` — raw hex in a view fails projector / dark profile.
 - [ ] Sim-specific preferences are `Property` instances in `SimPreferencesModel.ts`, initialized from
   the query-parameter schema (see scenerystack-preferences).
 - [ ] Primary constants live in `src/{Prefix}Constants.ts`; any nested topical constants files
   are documented in `CLAUDE.md` (see scenerystack-constants).
+- [ ] If the sim has GPU-only field state, the solver lives under a documented `src/common/gpu/`
+  (or equivalent) carve-out and parameters stay in `model/` (see scenerystack-model).
 - [ ] `package.json` has no unused dependencies.
 - [ ] `package.json`, `tsconfig*.json`, `vite.config.ts`, `vitest.config.ts`, and `biome.json` contain
   no dev-only relaxations that should be removed before release (disabled lint rules, loosened
@@ -239,7 +252,10 @@ Compare against `SceneryStackTemplate`. Source lives in `src/`, not `js/`; tooli
   worth contributing upstream.
 - [ ] Dependent Properties are `DerivedProperty`, not hand-synced plain `Property`s.
 - [ ] All time-stepping runs through the sim's `step(dt)` chain — no `window.setTimeout` /
-  `setInterval` for model time.
+  `setInterval` for model time. Real-time / DOM / Web-Audio teardown timers are fine when
+  documented; prefer `stepTimer.setTimeout` for sim-clock-aligned delays.
+- [ ] Broadband / multi-wavelength colour sums use linear light (CIE XYZ), not averaged
+  `VisibleColor` / sRGB (see scenerystack-custom-drawing).
 
 ### Accessibility
 
@@ -257,6 +273,7 @@ scenerystack-accessibility and the repo's `SimScreenSummaryContent.ts` / `SimKey
   `pdomControlAreaNode.pdomOrder`.
 - [ ] `KeyboardListener` keys are defined with `HotkeyData`, shared between the listener and the
   keyboard-help dialog so each binding lives in one place.
+- [ ] Keyboard-help content documents the controls users actually have (not the template stub).
 - [ ] No sim shortcuts collide with global SceneryStack shortcuts.
 
 **Interactive Description**

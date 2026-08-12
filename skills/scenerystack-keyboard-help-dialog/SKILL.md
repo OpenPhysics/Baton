@@ -34,22 +34,38 @@ export default class MazeGameKeyboardHelpSection extends KeyboardHelpSection {
 
 ## Assembling the dialog content
 
-Lay sections out in two columns with `TwoColumnKeyboardHelpContent`. Reuse the prebuilt sections for common controls — `BasicActionsKeyboardHelpSection` (Tab/Esc/space) and `SliderControlsKeyboardHelpSection` (arrows/page-up-down) — alongside your sim-specific sections:
+Lay sections out in two columns with `TwoColumnKeyboardHelpContent`. Reuse the prebuilt sections for common controls — `BasicActionsKeyboardHelpSection` (Tab/Esc/space), `SliderControlsKeyboardHelpSection` (arrows/page-up-down), and `TimeControlsKeyboardHelpSection` when the screen has playback — alongside your sim-specific sections:
 
 ```typescript
-import { TwoColumnKeyboardHelpContent, BasicActionsKeyboardHelpSection } from "scenerystack/scenery-phet";
+import {
+  TwoColumnKeyboardHelpContent,
+  BasicActionsKeyboardHelpSection,
+  SliderControlsKeyboardHelpSection,
+  TimeControlsKeyboardHelpSection,
+} from "scenerystack/scenery-phet";
 
 class MazeGameKeyboardHelpContent extends TwoColumnKeyboardHelpContent {
   public constructor() {
     const moveSection = new MazeGameKeyboardHelpSection(strings);
     const basicActions = new BasicActionsKeyboardHelpSection();
+    const sliderControls = new SliderControlsKeyboardHelpSection();
+    const timeControls = new TimeControlsKeyboardHelpSection();
     super(
-      [moveSection],     // left column
-      [basicActions],    // right column
+      [moveSection, sliderControls], // left column
+      [timeControls, basicActions],  // right column
     );
   }
 }
 ```
+
+### Do not ship the template stub
+
+`SceneryStackTemplate` ships `*KeyboardHelpContent.ts` with only
+`BasicActionsKeyboardHelpSection` and a commented-out right column. The compliance gate
+only checks that the file **exists**, so a fresh fork can pass structure checks while
+documenting none of its sliders or time controls. Before release (and ideally right after
+scaffold), replace the stub with the real sections for every screen — see
+scenerystack-new-sim.
 
 ## Wiring it to the screen
 
@@ -76,14 +92,17 @@ Before swapping a `KeyboardListener` for a drag listener, grep for the `HotkeyDa
 - Build rows with `KeyboardHelpSectionRow.fromHotkeyData(hotkeyData, ...)` so icons match the real bindings — never hand-type key names that could fall out of sync.
 - A `HotkeyData` entry with no listener behind it is a silent lie. When you remove or re-home a listener, follow its `HotkeyData` to every help row that renders it.
 - All labels are `StringProperty`s from `StringManager` (see scenerystack-strings); supply a `pdomLabelStringProperty` so screen-reader users get a spoken description.
-- Group with `TwoColumnKeyboardHelpContent`; include `BasicActionsKeyboardHelpSection` for the universal Tab/Esc shortcuts, and `SliderControlsKeyboardHelpSection` when the sim has sliders.
+- Group with `TwoColumnKeyboardHelpContent`; include `BasicActionsKeyboardHelpSection` for the universal Tab/Esc shortcuts, `SliderControlsKeyboardHelpSection` when the sim has sliders, and `TimeControlsKeyboardHelpSection` when it has playback controls.
 - One `createKeyboardHelpNode` per screen; multi-screen sims can return different content per screen.
 - If you add or change a `HotkeyData` binding, the help dialog updates for free — keep both deriving from the same source.
+- Never leave the template keyboard-help stub as the shipped dialog — compliance will not catch it.
 
 ## Common mistakes
 
 - Typing literal key icons/labels instead of `fromHotkeyData` → the dialog lies once a binding changes.
 - Hardcoded English in a row label → use a localized `StringProperty`.
 - Documenting a shortcut in the dialog that no listener implements (or vice versa) → both must come from one `HotkeyData`.
+- Shipping only `BasicActionsKeyboardHelpSection` from the template → sliders/playback undocumented.
 
-Related skills: scenerystack-accessibility, scenerystack-strings, scenerystack-drag-listener.
+Related skills: scenerystack-accessibility, scenerystack-strings, scenerystack-drag-listener,
+scenerystack-new-sim.

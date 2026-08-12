@@ -14,7 +14,8 @@ These complement, not replace, the broader docs:
 - [`../ACCESSIBILITY.md`](../ACCESSIBILITY.md) — the shared accessibility pattern.
 
 The skills go one level deeper than `CLAUDE.md`: API specifics, idioms, and pitfalls for a
-single subsystem.
+single subsystem. When a skill is not specific enough, grep
+`Almanach/docs/public/llms.txt` (or `llms-full.txt`) in the local Almanach checkout.
 
 New skills follow [`TEMPLATE.md`](TEMPLATE.md) and must be added to the index below;
 [`../scripts/check-skills.sh`](../scripts/check-skills.sh) (run in CI by
@@ -28,14 +29,14 @@ folder is well-formed and listed here.
 | Skill | Use when |
 |---|---|
 | [`scenerystack-coding-conventions`](scenerystack-coding-conventions/SKILL.md) | Writing/reviewing TypeScript — naming, constructor signatures, optionize, access modifiers, type inference, assertions, read-vs-write Property APIs. |
-| [`scenerystack-code-review`](scenerystack-code-review/SKILL.md) | Running a pre-release Code Review (CRC) on a sim — build/fuzz, memory leaks, performance, i18n, structure conformance, accessibility. |
-| [`scenerystack-testing`](scenerystack-testing/SKILL.md) | Adding/changing unit tests — `vitest` specs for model/physics code, the fleet-standard `tests/` layout + memory-leak suite, and optional Playwright fuzz. |
+| [`scenerystack-code-review`](scenerystack-code-review/SKILL.md) | Running a pre-release Code Review (CRC) on a sim — build/fuzz, memory leaks, performance, i18n, structure conformance, rename residue, keyboard-help stubs, accessibility. |
+| [`scenerystack-testing`](scenerystack-testing/SKILL.md) | Adding/changing unit tests — `vitest` specs for model/physics code, the fleet-standard `tests/` layout + memory-leak suite (`forceGC` early-exit), optional Playwright fuzz, WebGPU launch flags. |
 
 ### Model & math
 
 | Skill | Use when |
 |---|---|
-| [`scenerystack-model`](scenerystack-model/SKILL.md) | Creating/changing a model — state, physics, the `step(dt)`/`reset()` loop, reactive Properties, the `TModel` contract, model/view separation. |
+| [`scenerystack-model`](scenerystack-model/SKILL.md) | Creating/changing a model — state, physics, the `step(dt)`/`reset()` loop, reactive Properties, the `TModel` contract, model/view separation, GPU-only `common/gpu/` carve-outs. |
 | [`scenerystack-model-view-transform`](scenerystack-model-view-transform/SKILL.md) | Converting between model and view coordinates or scaling physical quantities to pixels — `ModelViewTransform2`. |
 | [`scenerystack-constants`](scenerystack-constants/SKILL.md) | A number, size, or physical parameter appears in code — define it in root `*Constants.ts` (plus documented nested extras) instead of inlining a magic value. |
 | [`scenerystack-numerics`](scenerystack-numerics/SKILL.md) | Writing a model's numerical core — integrating motion over `dt`, stable time steps, Euler vs. higher-order integration, `Utils`/`LinearFunction`/`dotRandom`, `toFixed` (never `Number.toFixed`), determinism. |
@@ -50,7 +51,7 @@ folder is well-formed and listed here.
 | [`scenerystack-drag-listener`](scenerystack-drag-listener/SKILL.md) | Making a node draggable by mouse, touch, or keyboard — `DragListener`, `KeyboardDragListener`, `RichDragListener`, drag bounds. |
 | [`scenerystack-optionize`](scenerystack-optionize/SKILL.md) | A constructor takes configurable options — `optionize<>()`, `SelfOptions`/`Options`, `EmptySelfOptions`, `combineOptions`. |
 | [`scenerystack-ui-controls`](scenerystack-ui-controls/SKILL.md) | Adding standard controls — sliders, spinners, checkboxes, radio buttons, combo boxes, buttons, Reset All, themed `<Prefix>Panel`/`Dialog` — from `sun`/`scenery-phet`, wired to model Properties. |
-| [`scenerystack-custom-drawing`](scenerystack-custom-drawing/SKILL.md) | Rendering custom graphics the standard nodes don't cover — curves, filled regions, arrows, dynamic paths — `Path` + kite `Shape`, primitive nodes, renderer hints. |
+| [`scenerystack-custom-drawing`](scenerystack-custom-drawing/SKILL.md) | Rendering custom graphics the standard nodes don't cover — curves, filled regions, arrows, dynamic paths, dense fields via `CanvasNode`/WebGL/WebGPU, spectral CIE XYZ colour. |
 | [`scenerystack-animation`](scenerystack-animation/SKILL.md) | Something must move or change smoothly over time, independent of the physics step — the twixt `Animation` class, `Easing`, chaining/looping, animate vs. integrate. |
 
 ### Text & localization
@@ -64,6 +65,7 @@ folder is well-formed and listed here.
 
 | Skill | Use when |
 |---|---|
+| [`scenerystack-new-sim`](scenerystack-new-sim/SKILL.md) | Creating a new sim from `SceneryStackTemplate` — `create-sim.sh` or rename + scaffold-screens, post-rename `Sim*` residue, keyboard-help stubs, bootstrap gotchas. |
 | [`scenerystack-screen-view`](scenerystack-screen-view/SKILL.md) | Wiring a sim's entry point — the `scenerystack/sim` `Sim`/`Screen`/`ScreenView` trio, multi-screen `*ScreenIcons.ts`, the model factory, screen icons/background, the per-frame `step` hand-off. |
 | [`scenerystack-disposal`](scenerystack-disposal/SKILL.md) | Creating nodes/listeners/Properties that don't live for the whole sim — `dispose()`, `disposeEmitter`, unlinking, tearing down `DerivedProperty`/`Multilink`, avoiding leaks. |
 
@@ -73,6 +75,6 @@ folder is well-formed and listed here.
 |---|---|
 | [`scenerystack-preferences`](scenerystack-preferences/SKILL.md) | Configuring the Preferences dialog — projector mode, dynamic locale, sound, interactive highlights, custom controls. |
 | [`scenerystack-query-parameters`](scenerystack-query-parameters/SKILL.md) | Adding a URL-configurable startup option or debug flag — a typed `QueryStringMachine` schema. |
-| [`scenerystack-keyboard-help-dialog`](scenerystack-keyboard-help-dialog/SKILL.md) | Documenting keyboard controls in the `?` dialog — `KeyboardHelpSection`, `TwoColumnKeyboardHelpContent`, `createKeyboardHelpNode`. |
+| [`scenerystack-keyboard-help-dialog`](scenerystack-keyboard-help-dialog/SKILL.md) | Documenting keyboard controls in the `?` dialog — `KeyboardHelpSection`, `TwoColumnKeyboardHelpContent`, `createKeyboardHelpNode`; do not ship the template stub. |
 | [`scenerystack-accessibility`](scenerystack-accessibility/SKILL.md) | Making a sim usable with a keyboard and screen reader — `accessibleName`, help text, dynamic announcements, keyboard listeners, interactive highlights. |
 | [`scenerystack-sound`](scenerystack-sound/SKILL.md) | Adding sound — UI feedback, sonification of a changing quantity, or an audio Preferences tab — `tambo`, `soundManager`, `SoundClip`, gating on the sound-enabled Property. |

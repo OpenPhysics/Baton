@@ -1,6 +1,6 @@
 ---
 name: scenerystack-model
-description: Use when creating or changing a simulation's model — state, physics, the step(dt)/reset() loop, and reactive Properties. Covers the TModel contract, the model/view separation, and how view code observes model state. Trigger on anything in a model/ folder.
+description: Use when creating or changing a simulation's model — state, physics, the step(dt)/reset() loop, and reactive Properties. Covers the TModel contract, the model/view separation, GPU-only state carve-outs (common/gpu/), and how view code observes model state. Trigger on anything in a model/ folder.
 ---
 
 # SceneryStack Model
@@ -60,7 +60,25 @@ Expose read-only state to the view as `TReadOnlyProperty<T>` so the view can obs
 
 ## The frame loop
 
-`step(dt)` is called every animation frame with elapsed **seconds**. Keep physics here, integrate with `dt`, and gate on `isRunningProperty`. Some sims run a fixed-timestep loop (`model.step(FIXED_DT)`) inside the screen's step for numerical stability — follow the sim's existing pattern.
+`step(dt)` is called every animation frame with elapsed **seconds**. Keep physics here, integrate with `dt`, and gate on `isRunningProperty`. Some sims run a fixed-timestep loop (`model.step(FIXED_DT)`) inside the screen's step for numerical stability — follow the sim's existing pattern (see scenerystack-numerics).
+
+## GPU-only state (documented carve-out)
+
+Fleet convention: physics lives under `src/**/model/` and the view never integrates it.
+Some sims have **no CPU-side field to model** — velocity / pressure / dye exist only as
+GPU textures, and nothing advances without a `GPUDevice`. In that case:
+
+- Keep **parameters** and derived scalars (Reynolds number, regime, …) in a normal
+  `*Model` under `model/` — no scenery, no GPU imports, unit-tested.
+- Put the solver under `src/common/gpu/` (WGSL, bind layouts, engine), not
+  `src/common/model/`.
+- One bridge node (e.g. `FluidFieldNode`) is allowed to touch both worlds.
+- Document the carve-out in the sim's `CLAUDE.md` so compliance reviewers do not
+  "fix" it back into `model/`.
+
+References: FluidDynamics (WebGPU Stable Fluids), Resonance `WebGLParticleRenderer`.
+For Playwright WebGPU flags see scenerystack-testing; for choosing CanvasNode vs GPU
+see scenerystack-custom-drawing.
 
 ## Rules
 
@@ -69,6 +87,8 @@ Expose read-only state to the view as `TReadOnlyProperty<T>` so the view can obs
 - Compute, don't cache: prefer `DerivedProperty` over manually updating a plain field in `step`.
 - Keep physical constants in a `*Constants.ts` module in SI units (see scenerystack-constants); the model imports them.
 - `step(dt)` works in real seconds; apply any "time speed" / slow-motion scaling explicitly, don't bake it into constants.
+- Import `TModel` from `scenerystack/joist`, not `scenerystack/sim`.
+- If state exists only on the GPU, use the `common/gpu/` carve-out above and document it — do not invent a fake CPU twin just to satisfy folder layout.
 
 ## Common mistakes
 
@@ -76,5 +96,8 @@ Expose read-only state to the view as `TReadOnlyProperty<T>` so the view can obs
 - New `Property` added but not reset in `reset()` → Reset All leaves stale state.
 - Doing layout math (pixels, `ModelViewTransform2`) in the model → coordinates are the view's job; the model is unit-only.
 - Mutating a `DerivedProperty` by hand → it's computed; change its dependencies instead.
+- Importing `TModel` from `scenerystack/sim` → wrong module; use `scenerystack/joist`.
+- Stuffing WGSL/engine code into `model/` "because physics" when there is no CPU state → fight the architecture; use `common/gpu/` and document it.
 
-Related skills: scenerystack-constants, scenerystack-model-view-transform.
+Related skills: scenerystack-constants, scenerystack-model-view-transform, scenerystack-numerics,
+scenerystack-custom-drawing, scenerystack-testing.
