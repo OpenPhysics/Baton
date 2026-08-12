@@ -78,6 +78,35 @@ assert_jq "simulations have lineage + non-empty screens" '
   )
 '
 
+assert_jq "simulations have non-empty physicsTopics" '
+  all(.repos[] | select(.isSimulation);
+    (.physicsTopics | type == "array" and length > 0)
+  )
+'
+
+assert_jq "simulation screens are {id, title} with unique ids" '
+  all(.repos[] | select(.isSimulation);
+    (.screens | length) as $n
+    | all(.screens[];
+        (.id | type == "string" and length > 0)
+        and (.title | type == "string" and length > 0)
+      )
+    and ((.screens | map(.id) | unique | length) == $n)
+  )
+'
+
+assert_jq "shortDescription is at most 350 chars when set" '
+  all(.repos[] | select(has("shortDescription"));
+    (.shortDescription | type == "string" and length > 0 and length <= 350)
+  )
+'
+
+assert_jq "githubTopics are kebab-case when set" '
+  all(.repos[] | select(has("githubTopics"));
+    all(.githubTopics[]; test("^[a-z0-9]+(-[a-z0-9]+)*$"))
+  )
+'
+
 assert_jq "ports have matching upstream.org" '
   all(.repos[] | select(.lineage == "phet" or .lineage == "naap");
     (.upstream != null) and (.upstream.org == .lineage)

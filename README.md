@@ -30,7 +30,7 @@ Pages simulation landing page.
 | [`scripts/`](scripts/) | Repo catalog tools, compliance checks, Dependabot/metadata sync, screenshots |
 | [`config/`](config/) | Canonical Dependabot, Claude-settings, and GitHub-repo-settings baselines |
 | [`structure/repos.json`](structure/repos.json) | Machine-readable catalog of org repositories |
-| [`structure/repos.schema.json`](structure/repos.schema.json) | JSON Schema for the catalog (`schemaVersion` 1.1.0) |
+| [`structure/repos.schema.json`](structure/repos.schema.json) | JSON Schema for the catalog (`schemaVersion` 1.2.0) |
 | [`CONVENTIONS.md`](CONVENTIONS.md) | Shared codebase structure every SceneryStack sim must follow |
 | [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | Shared accessibility pattern for SceneryStack sims |
 | [`skills/`](skills/) | SceneryStack development reference docs for AI assistants |
@@ -151,7 +151,8 @@ scripts/check-repo-compliance.sh /path/to/sim-repo
 ## Repository catalog
 
 [`structure/repos.json`](structure/repos.json) lists all OpenPhysics repositories with metadata
-(`displayName`, `lineage`, `upstream`, framework, deployed URL, physics topics, `status`, etc.).
+(`displayName`, `lineage`, `upstream`, framework, deployed URL, physics topics,
+structured `screens`, optional `githubTopics` / `shortDescription`, `status`, etc.).
 Schema: [`structure/repos.schema.json`](structure/repos.schema.json) (validated by
 [`scripts/check-repos-catalog.sh`](scripts/check-repos-catalog.sh)). The compliance workflow,
 Pages landing page, and the catalog scripts consume this file. Ground-truth upstream references

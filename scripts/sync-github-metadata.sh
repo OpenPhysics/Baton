@@ -20,8 +20,13 @@ structure/repos.json.
 Catalog rows with `"type": "template"` also get `gh repo edit --template` so
 "Use this template" stays enabled.
 
+Description:
+  Prefer shortDescription when set; otherwise description. GitHub caps at 350
+  characters (truncate with a warning if needed).
+
 Topics (simulations + template only):
   - Simulations: physics, scenerystack, simulation + kebab-case physicsTopics
+    + optional githubTopics extras
   - Template:    physics, scenerystack, simulation, template
   Topics are replaced (catalog is source of truth). Non-sim / non-template
   repos leave topics untouched. GitHub caps topics at 20.
@@ -81,7 +86,7 @@ FILTER_NAME=""
 # Build GitHub topic names for a catalog row. Prints nothing to skip.
 topics_json_for_repo() {
   local repo="$1"
-  # Apostrophe stripped via \\u0027 so this jq program stays single-quote-safe in bash.
+  # Apostrophe stripped via \u0027 so this jq program stays single-quote-safe in bash.
   jq -c '
     def slug:
       ascii_downcase
@@ -98,9 +103,19 @@ topics_json_for_repo() {
       (
         ["physics", "scenerystack", "simulation"]
         + [(.physicsTopics // [])[] | slug | select(length > 0)]
+        + [(.githubTopics // [])[]]
       ) | uniq | .[0:20]
     else
       empty
+    end
+  ' <<<"$repo"
+}
+
+github_description_for_repo() {
+  local repo="$1"
+  jq -r '
+    if ((.shortDescription // "") | length) > 0 then .shortDescription
+    else .description // ""
     end
   ' <<<"$repo"
 }
@@ -116,7 +131,7 @@ put_topics() {
 count=0
 while IFS= read -r repo; do
   name="$(jq -r '.name' <<<"$repo")"
-  description="$(jq -r '.description // ""' <<<"$repo")"
+  description="$(github_description_for_repo "$repo")"
   homepage="$(jq -r '.githubHomepage // ""' <<<"$repo")"
   repo_type="$(jq -r '.type // ""' <<<"$repo")"
   topics_json="$(topics_json_for_repo "$repo" || true)"

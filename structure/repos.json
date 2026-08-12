@@ -1,6 +1,6 @@
 {
   "$schema": "./repos.schema.json",
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "organization": "OpenPhysics",
   "repos": [
     {
@@ -31,7 +31,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "AC phasor simulation exploring resistors, inductors, and capacitors across four screens \u2014 Intro (single element), Series RLC, Resonance, and Power.",
+      "description": "AC phasor simulation exploring resistors, inductors, and capacitors across four screens — Intro (single element), Series RLC, Resonance, and Power.",
       "deployedUrl": "https://openphysics.github.io/ACPhasor",
       "physicsTopics": [
         "AC circuits",
@@ -41,10 +41,22 @@
         "resonance"
       ],
       "screens": [
-        "Intro",
-        "Series RLC",
-        "Resonance",
-        "Power"
+        {
+          "id": "intro",
+          "title": "Intro"
+        },
+        {
+          "id": "series-rlc",
+          "title": "Series RLC"
+        },
+        {
+          "id": "resonance",
+          "title": "Resonance"
+        },
+        {
+          "id": "power",
+          "title": "Power"
+        }
       ],
       "status": "active"
     },
@@ -111,9 +123,18 @@
         "longitude"
       ],
       "screens": [
-        "Terrestrial Coordinates",
-        "Celestial Coordinates",
-        "Seasons"
+        {
+          "id": "terrestrial",
+          "title": "Terrestrial Coordinates"
+        },
+        {
+          "id": "celestial",
+          "title": "Celestial Coordinates"
+        },
+        {
+          "id": "seasons",
+          "title": "Seasons"
+        }
       ],
       "status": "active"
     },
@@ -146,7 +167,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Explore the Carnot cycle across three screens: a piston-cylinder tied to a live PV diagram, a quantitative efficiency lab with a T\u2013S view, and the same cycle reversed as a refrigerator or heat pump.",
+      "description": "Explore the Carnot cycle across three screens: a piston-cylinder tied to a live PV diagram, a quantitative efficiency lab with a T–S view, and the same cycle reversed as a refrigerator or heat pump.",
       "deployedUrl": "https://openphysics.github.io/CarnotHeatEngine",
       "physicsTopics": [
         "thermodynamics",
@@ -157,9 +178,18 @@
         "refrigeration"
       ],
       "screens": [
-        "Intro",
-        "Efficiency Lab",
-        "Reversed Cycle"
+        {
+          "id": "intro",
+          "title": "Intro"
+        },
+        {
+          "id": "efficiency-lab",
+          "title": "Efficiency Lab"
+        },
+        {
+          "id": "reversed-cycle",
+          "title": "Reversed Cycle"
+        }
       ],
       "status": "active"
     },
@@ -174,7 +204,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Explore crystal structure across five screens: the five 2D Bravais lattices, cubic unit cells and packing factors, hexagonal vs cubic close packing, Miller indices, and aperiodic order \u2014 Penrose tilings and the hat monotile, with diffraction as sharp as a crystal's but a symmetry no crystal can have.",
+      "description": "Explore crystal structure across five screens: the five 2D Bravais lattices, cubic unit cells and packing factors, hexagonal vs cubic close packing, Miller indices, and aperiodic order — Penrose tilings and the hat monotile, with diffraction as sharp as a crystal's but a symmetry no crystal can have.",
       "deployedUrl": "https://openphysics.github.io/CrystalLattice",
       "physicsTopics": [
         "crystallography",
@@ -187,11 +217,26 @@
         "aperiodic tilings"
       ],
       "screens": [
-        "2D Lattices",
-        "Cubic Systems",
-        "Close-Packing",
-        "Miller Indices",
-        "Aperiodic Order"
+        {
+          "id": "lattices-2d",
+          "title": "2D Lattices"
+        },
+        {
+          "id": "cubic-systems",
+          "title": "Cubic Systems"
+        },
+        {
+          "id": "close-packing",
+          "title": "Close-Packing"
+        },
+        {
+          "id": "miller-indices",
+          "title": "Miller Indices"
+        },
+        {
+          "id": "aperiodic-order",
+          "title": "Aperiodic Order"
+        }
       ],
       "status": "active"
     },
@@ -206,7 +251,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive simulation of the Doppler Effect \u2014 visualizes how the frequency of sound waves shifts with relative motion between source and observer.",
+      "description": "Interactive simulation of the Doppler Effect — visualizes how the frequency of sound waves shifts with relative motion between source and observer.",
       "deployedUrl": "https://openphysics.github.io/DopplerEffect",
       "physicsTopics": [
         "waves",
@@ -214,8 +259,14 @@
         "frequency",
         "motion"
       ],
+      "githubTopics": [
+        "doppler"
+      ],
       "screens": [
-        "Doppler Effect"
+        {
+          "id": "doppler-effect",
+          "title": "Doppler Effect"
+        }
       ],
       "status": "active"
     },
@@ -241,8 +292,15 @@
         "electric fields",
         "Coulomb's law"
       ],
+      "githubTopics": [
+        "electric-field",
+        "electromagnetism"
+      ],
       "screens": [
-        "Electric Field of Dreams"
+        {
+          "id": "electric-field-of-dreams",
+          "title": "Electric Field of Dreams"
+        }
       ],
       "status": "active"
     },
@@ -261,7 +319,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive simulation of two exoplanet-detection methods \u2014 radial velocity (Doppler wobble) and transit (light-curve dip).",
+      "description": "Interactive simulation of two exoplanet-detection methods — radial velocity (Doppler wobble) and transit (light-curve dip).",
       "deployedUrl": "https://openphysics.github.io/ExtrasolarPlanets",
       "physicsTopics": [
         "astronomy",
@@ -271,8 +329,14 @@
         "orbits"
       ],
       "screens": [
-        "Radial Velocity",
-        "Transit"
+        {
+          "id": "radial-velocity",
+          "title": "Radial Velocity"
+        },
+        {
+          "id": "transit",
+          "title": "Transit"
+        }
       ],
       "status": "active"
     },
@@ -295,8 +359,14 @@
         "dielectrics"
       ],
       "screens": [
-        "Electric",
-        "Magnetic"
+        {
+          "id": "electric",
+          "title": "Electric"
+        },
+        {
+          "id": "magnetic",
+          "title": "Magnetic"
+        }
       ],
       "status": "active"
     },
@@ -311,7 +381,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Flow past an obstacle, from laminar streamlines to a K\u00e1rm\u00e1n vortex street to a turbulent wake \u2014 real-time GPU fluid simulation across Intro and Lab screens.",
+      "description": "Flow past an obstacle, from laminar streamlines to a Kármán vortex street to a turbulent wake — real-time GPU fluid simulation across Intro and Lab screens.",
       "deployedUrl": "https://openphysics.github.io/FluidDynamics",
       "physicsTopics": [
         "fluid dynamics",
@@ -322,8 +392,14 @@
         "viscosity"
       ],
       "screens": [
-        "Intro",
-        "Lab"
+        {
+          "id": "intro",
+          "title": "Intro"
+        },
+        {
+          "id": "lab",
+          "title": "Lab"
+        }
       ],
       "status": "active"
     },
@@ -352,8 +428,14 @@
         "stellar luminosity"
       ],
       "screens": [
-        "Circumstellar",
-        "Galactic"
+        {
+          "id": "circumstellar",
+          "title": "Circumstellar"
+        },
+        {
+          "id": "galactic",
+          "title": "Galactic"
+        }
       ],
       "status": "active"
     },
@@ -368,7 +450,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Heat as a field on a WebGPU engine \u2014 temperature, conduction, convection, transport balance, and materials across five screens, with GPU-native compute shaders and a CPU reference backend.",
+      "description": "Heat as a field on a WebGPU engine — temperature, conduction, convection, transport balance, and materials across five screens, with GPU-native compute shaders and a CPU reference backend.",
       "deployedUrl": "https://openphysics.github.io/HeatTransfer",
       "physicsTopics": [
         "heat transfer",
@@ -377,11 +459,26 @@
         "thermodynamics"
       ],
       "screens": [
-        "Temperature",
-        "Conduction",
-        "Convection",
-        "Heat Transfer",
-        "Materials"
+        {
+          "id": "temperature",
+          "title": "Temperature"
+        },
+        {
+          "id": "conduction",
+          "title": "Conduction"
+        },
+        {
+          "id": "convection",
+          "title": "Convection"
+        },
+        {
+          "id": "combined",
+          "title": "Heat Transfer"
+        },
+        {
+          "id": "materials",
+          "title": "Materials"
+        }
       ],
       "status": "active"
     },
@@ -406,9 +503,18 @@
         "wave optics"
       ],
       "screens": [
-        "Michelson",
-        "Mach-Zehnder",
-        "Fabry-Perot"
+        {
+          "id": "michelson",
+          "title": "Michelson"
+        },
+        {
+          "id": "mach-zehnder",
+          "title": "Mach-Zehnder"
+        },
+        {
+          "id": "fabry-perot",
+          "title": "Fabry-Perot"
+        }
       ],
       "status": "active"
     },
@@ -456,8 +562,14 @@
         "rotation",
         "vectors"
       ],
+      "githubTopics": [
+        "motion"
+      ],
       "screens": [
-        "Lady Bug"
+        {
+          "id": "lady-bug",
+          "title": "Lady Bug"
+        }
       ],
       "status": "active"
     },
@@ -472,7 +584,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive simulation of how light propagates through polarizers and wave plates \u2014 Intro, Polarization, Wave Plates, and Lab screens.",
+      "description": "Interactive simulation of how light propagates through polarizers and wave plates — Intro, Polarization, Wave Plates, and Lab screens.",
       "deployedUrl": "https://openphysics.github.io/LightPropagation",
       "physicsTopics": [
         "optics",
@@ -481,10 +593,22 @@
         "wave plates"
       ],
       "screens": [
-        "Intro",
-        "Polarization",
-        "Wave Plates",
-        "Lab"
+        {
+          "id": "intro",
+          "title": "Intro"
+        },
+        {
+          "id": "polarization",
+          "title": "Polarization"
+        },
+        {
+          "id": "wave-plates",
+          "title": "Wave Plates"
+        },
+        {
+          "id": "lab",
+          "title": "Lab"
+        }
       ],
       "status": "active"
     },
@@ -511,8 +635,15 @@
         "kinematics",
         "energy"
       ],
+      "githubTopics": [
+        "game",
+        "mechanics"
+      ],
       "screens": [
-        "Lunar Lander"
+        {
+          "id": "lunar-lander",
+          "title": "Lunar Lander"
+        }
       ],
       "status": "active"
     },
@@ -539,8 +670,14 @@
         "motion",
         "acceleration"
       ],
+      "githubTopics": [
+        "game"
+      ],
       "screens": [
-        "Maze Game"
+        {
+          "id": "maze-game",
+          "title": "Maze Game"
+        }
       ],
       "status": "active"
     },
@@ -569,10 +706,22 @@
         "zodiac",
         "ecliptic"
       ],
+      "githubTopics": [
+        "sun"
+      ],
       "screens": [
-        "Sun Paths",
-        "Sidereal and Solar Time",
-        "Zodiac"
+        {
+          "id": "sun-paths",
+          "title": "Sun Paths"
+        },
+        {
+          "id": "sidereal-solar-time",
+          "title": "Sidereal and Solar Time"
+        },
+        {
+          "id": "zodiac",
+          "title": "Zodiac"
+        }
       ],
       "status": "active"
     },
@@ -600,9 +749,18 @@
         "velocity",
         "acceleration"
       ],
+      "githubTopics": [
+        "motion"
+      ],
       "screens": [
-        "Introduction",
-        "Charts"
+        {
+          "id": "intro",
+          "title": "Introduction"
+        },
+        {
+          "id": "charts",
+          "title": "Charts"
+        }
       ],
       "status": "active"
     },
@@ -627,10 +785,22 @@
         "lenses"
       ],
       "screens": [
-        "Intro",
-        "Lab",
-        "Presets",
-        "Diffraction"
+        {
+          "id": "intro",
+          "title": "Intro"
+        },
+        {
+          "id": "lab",
+          "title": "Lab"
+        },
+        {
+          "id": "presets",
+          "title": "Presets"
+        },
+        {
+          "id": "diffraction",
+          "title": "Diffraction"
+        }
       ],
       "status": "active"
     },
@@ -655,11 +825,26 @@
         "energy",
         "phase space"
       ],
+      "githubTopics": [
+        "mechanics"
+      ],
       "screens": [
-        "Single Spring",
-        "Double Spring",
-        "Pendulum",
-        "Double Pendulum"
+        {
+          "id": "single-spring",
+          "title": "Single Spring"
+        },
+        {
+          "id": "double-spring",
+          "title": "Double Spring"
+        },
+        {
+          "id": "pendulum",
+          "title": "Pendulum"
+        },
+        {
+          "id": "double-pendulum",
+          "title": "Double Pendulum"
+        }
       ],
       "status": "active"
     },
@@ -685,7 +870,10 @@
         "FFT"
       ],
       "screens": [
-        "Oscilloscope"
+        {
+          "id": "oscilloscope-screen",
+          "title": "Oscilloscope"
+        }
       ],
       "status": "active"
     },
@@ -700,7 +888,8 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive map of the Earth's tectonic plates drawn entirely from real data \u2014 PB2002 plate boundaries, USGS earthquakes, Holocene volcanoes and NOAA relief \u2014 plus cross-sections through a subduction zone, a spreading ridge and a transform fault, and a reconstruction clock running 50 Myr either side of the present. Two further screens port the tabs of PhET's Java simulation: crustal isostasy, and the evolution of a convergent or divergent plate boundary.",
+      "description": "Interactive map of the Earth's tectonic plates drawn entirely from real data — PB2002 plate boundaries, USGS earthquakes, Holocene volcanoes and NOAA relief — plus cross-sections through a subduction zone, a spreading ridge and a transform fault, and a reconstruction clock running 50 Myr either side of the present. Two further screens port the tabs of PhET's Java simulation: crustal isostasy, and the evolution of a convergent or divergent plate boundary.",
+      "shortDescription": "Interactive map of Earth's tectonic plates from real data — boundaries, earthquakes, volcanoes, cross-sections, and a 50 Myr reconstruction clock — plus PhET-style crust and plate-motion screens.",
       "deployedUrl": "https://openphysics.github.io/PlateTectonics",
       "physicsTopics": [
         "plate tectonics",
@@ -712,9 +901,18 @@
         "subduction"
       ],
       "screens": [
-        "Plate Tectonics",
-        "Crust",
-        "Plate Motion"
+        {
+          "id": "plate-tectonics",
+          "title": "Plate Tectonics"
+        },
+        {
+          "id": "crust",
+          "title": "Crust"
+        },
+        {
+          "id": "plate-motion",
+          "title": "Plate Motion"
+        }
       ],
       "status": "active"
     },
@@ -740,9 +938,18 @@
         "torque"
       ],
       "screens": [
-        "Steady Precession",
-        "Nutation",
-        "Torque-Free Tumbling"
+        {
+          "id": "steady-precession-screen",
+          "title": "Steady Precession"
+        },
+        {
+          "id": "nutation-screen",
+          "title": "Nutation"
+        },
+        {
+          "id": "torque-free-screen",
+          "title": "Torque-Free Tumbling"
+        }
       ],
       "status": "active"
     },
@@ -806,8 +1013,15 @@
         "qubits",
         "quantum gates"
       ],
+      "githubTopics": [
+        "quantum",
+        "quantum-computing"
+      ],
       "screens": [
-        "Circuit"
+        {
+          "id": "circuit-screen",
+          "title": "Circuit"
+        }
       ],
       "status": "active"
     },
@@ -835,7 +1049,10 @@
         "antennas"
       ],
       "screens": [
-        "Radio Waves"
+        {
+          "id": "radio-waves",
+          "title": "Radio Waves"
+        }
       ],
       "status": "active"
     },
@@ -860,10 +1077,22 @@
         "damping"
       ],
       "screens": [
-        "Single Oscillator",
-        "Multiple Oscillators",
-        "Phase Analysis",
-        "Chladni Patterns"
+        {
+          "id": "single-oscillator",
+          "title": "Single Oscillator"
+        },
+        {
+          "id": "multiple-oscillators",
+          "title": "Multiple Oscillators"
+        },
+        {
+          "id": "phase-analysis",
+          "title": "Phase Analysis"
+        },
+        {
+          "id": "chladni-patterns",
+          "title": "Chladni Patterns"
+        }
       ],
       "status": "active"
     },
@@ -892,9 +1121,18 @@
         "Earth rotation"
       ],
       "screens": [
-        "Horizon System",
-        "Celestial Sphere",
-        "Explorer"
+        {
+          "id": "horizon-system",
+          "title": "Horizon System"
+        },
+        {
+          "id": "celestial-sphere",
+          "title": "Celestial Sphere"
+        },
+        {
+          "id": "explorer",
+          "title": "Explorer"
+        }
       ],
       "status": "active"
     },
@@ -909,7 +1147,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "GitHub template for OpenPhysics SceneryStack sims \u2014 Use this template or Baton create-sim.sh; rename + scaffold-screens for one or N screens.",
+      "description": "GitHub template for OpenPhysics SceneryStack sims — Use this template or Baton create-sim.sh; rename + scaffold-screens for one or N screens.",
       "deployedUrl": null,
       "physicsTopics": [],
       "screens": null,
@@ -939,9 +1177,18 @@
         "epicycles",
         "planetary configurations"
       ],
+      "githubTopics": [
+        "solar-system"
+      ],
       "screens": [
-        "Ptolemaic System",
-        "Planetary Configurations"
+        {
+          "id": "ptolemaic",
+          "title": "Ptolemaic System"
+        },
+        {
+          "id": "configurations",
+          "title": "Planetary Configurations"
+        }
       ],
       "status": "active"
     },
@@ -970,11 +1217,26 @@
         "relativistic Doppler effect"
       ],
       "screens": [
-        "Light Clock",
-        "Spacetime Diagram",
-        "Length Contraction",
-        "Twin Paradox",
-        "Relativistic Doppler"
+        {
+          "id": "light-clock",
+          "title": "Light Clock"
+        },
+        {
+          "id": "spacetime",
+          "title": "Spacetime Diagram"
+        },
+        {
+          "id": "length-contraction",
+          "title": "Length Contraction"
+        },
+        {
+          "id": "twin-paradox",
+          "title": "Twin Paradox"
+        },
+        {
+          "id": "relativistic-doppler",
+          "title": "Relativistic Doppler"
+        }
       ],
       "status": "active"
     },
@@ -998,16 +1260,28 @@
         "harmonics"
       ],
       "screens": [
-        "Reflection",
-        "Phase",
-        "Standing Waves",
-        "Instruments"
+        {
+          "id": "reflection",
+          "title": "Reflection"
+        },
+        {
+          "id": "phase-relationships",
+          "title": "Phase"
+        },
+        {
+          "id": "standing-waves",
+          "title": "Standing Waves"
+        },
+        {
+          "id": "instruments",
+          "title": "Instruments"
+        }
       ],
       "status": "active"
     },
     {
       "name": "SternGerlach",
-      "displayName": "Stern\u2013Gerlach",
+      "displayName": "Stern–Gerlach",
       "type": "simulation",
       "isSimulation": true,
       "lineage": "original",
@@ -1016,7 +1290,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Interactive Stern\u2013Gerlach experiment: assemble analyzers, magnets, and counters; fire spin-\u00bd / spin-1 atoms; compare Monte Carlo counts with analytic quantum predictions.",
+      "description": "Interactive Stern–Gerlach experiment: assemble analyzers, magnets, and counters; fire spin-½ / spin-1 atoms; compare Monte Carlo counts with analytic quantum predictions.",
       "deployedUrl": "https://openphysics.github.io/SternGerlach",
       "physicsTopics": [
         "quantum mechanics",
@@ -1025,8 +1299,14 @@
         "measurement",
         "superposition"
       ],
+      "githubTopics": [
+        "quantum"
+      ],
       "screens": [
-        "Stern Gerlach"
+        {
+          "id": "stern-gerlach-screen",
+          "title": "Stern Gerlach"
+        }
       ],
       "status": "active"
     },
@@ -1055,9 +1335,18 @@
         "Newton's laws",
         "kinematics"
       ],
+      "githubTopics": [
+        "mechanics"
+      ],
       "screens": [
-        "Introduction",
-        "More Features"
+        {
+          "id": "intro",
+          "title": "Introduction"
+        },
+        {
+          "id": "more-features",
+          "title": "More Features"
+        }
       ],
       "status": "active"
     },
@@ -1079,8 +1368,16 @@
         "measurement",
         "data analysis"
       ],
+      "githubTopics": [
+        "motion",
+        "pwa",
+        "tracking"
+      ],
       "screens": [
-        "Track Lab"
+        {
+          "id": "track-lab",
+          "title": "Track Lab"
+        }
       ],
       "status": "active"
     },
@@ -1131,10 +1428,22 @@
         "period finding"
       ],
       "screens": [
-        "Registration",
-        "Blink Comparator",
-        "Photometry",
-        "Analyzer"
+        {
+          "id": "registration",
+          "title": "Registration"
+        },
+        {
+          "id": "blink-comparator",
+          "title": "Blink Comparator"
+        },
+        {
+          "id": "photometry",
+          "title": "Photometry"
+        },
+        {
+          "id": "analyzer",
+          "title": "Analyzer"
+        }
       ],
       "status": "active"
     },
@@ -1157,10 +1466,22 @@
         "vernier caliper"
       ],
       "screens": [
-        "Vernier Principle",
-        "Caliper",
-        "Instruments",
-        "Practice"
+        {
+          "id": "principle",
+          "title": "Vernier Principle"
+        },
+        {
+          "id": "caliper",
+          "title": "Caliper"
+        },
+        {
+          "id": "instruments",
+          "title": "Instruments"
+        },
+        {
+          "id": "practice",
+          "title": "Practice"
+        }
       ],
       "status": "active"
     },
@@ -1183,10 +1504,22 @@
         "Fourier analysis",
         "sound"
       ],
+      "githubTopics": [
+        "audio"
+      ],
       "screens": [
-        "Compose",
-        "Analyzer",
-        "Voice & Vowels"
+        {
+          "id": "composer-screen",
+          "title": "Compose"
+        },
+        {
+          "id": "analyzer-screen",
+          "title": "Analyzer"
+        },
+        {
+          "id": "voice-screen",
+          "title": "Voice & Vowels"
+        }
       ],
       "status": "active"
     },
@@ -1211,7 +1544,10 @@
         "horizon coordinates"
       ],
       "screens": [
-        "Planetarium"
+        {
+          "id": "zenith-screen",
+          "title": "Planetarium"
+        }
       ],
       "status": "active"
     }

@@ -7,10 +7,9 @@
 # workspace README; --pr opens follow-up PRs in Baton / OpenPhysics.
 #
 # Examples:
-#   scripts/create-sim.sh --repo Friction --name "Friction"
-#   scripts/create-sim.sh --repo Friction --name "Friction" --screens Intro,Lab --shared-model
-#   scripts/create-sim.sh --repo Friction --name "Friction" --onboard --pr
-#   scripts/create-sim.sh --repo Friction --name "Friction" --local-only --onboard
+#   scripts/create-sim.sh --repo Friction --name "Friction" --topics "friction,forces" --onboard --pr
+#   scripts/create-sim.sh --repo Friction --name "Friction" --screens Intro,Lab --topics "friction" --shared-model
+#   scripts/create-sim.sh --repo Friction --name "Friction" --local-only --topics "friction" --onboard
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -26,6 +25,8 @@ REPO=""
 SIM_ID=""
 SIM_NAME=""
 SCREENS=""
+TOPICS=""
+GITHUB_TOPICS=""
 TARGET_PATH=""
 LOCAL_ONLY=0
 NO_PUSH=0
@@ -35,6 +36,7 @@ OPEN_PR=0
 SHARED_MODEL=0
 EXISTING=0
 DESCRIPTION=""
+SHORT_DESCRIPTION=""
 
 usage() {
   cat <<'EOF'
@@ -50,9 +52,13 @@ Options:
   --id <kebab>         Package id (default: kebab-case of --repo)
   --screens LIST       Comma-separated screen titles, or kebab:Title pairs.
                        Default: one screen named after --name.
+                       Catalog stores {id, title} (id from kebab: or slug of title).
+  --topics LIST        Comma-separated physicsTopics (required with --catalog/--onboard)
+  --github-topics LIST Optional extra GitHub topics (kebab-case), e.g. game,pwa
   --shared-model       Scaffold src/common/model/SharedModel.ts; each screen composes it
   --path DIR           Checkout path (default: $OPENPHYSICS_WORKSPACE/<repo>)
-  --description TEXT   GitHub + catalog description
+  --description TEXT   Full catalog / Pages card description
+  --short-description TEXT  Optional GitHub About blurb (≤350 chars)
   --local-only         Copy local SceneryStackTemplate; do not create a GitHub repo
   --no-push            Do not git push the sim (default: no auto-push unless --pr)
   --catalog            Insert a repos.json entry in Baton (no commit)
@@ -316,12 +322,24 @@ while [[ $# -gt 0 ]]; do
       SCREENS="${2:?Missing value for --screens}"
       shift 2
       ;;
+    --topics)
+      TOPICS="${2:?Missing value for --topics}"
+      shift 2
+      ;;
+    --github-topics)
+      GITHUB_TOPICS="${2:?Missing value for --github-topics}"
+      shift 2
+      ;;
     --path)
       TARGET_PATH="${2:?Missing value for --path}"
       shift 2
       ;;
     --description)
       DESCRIPTION="${2:?Missing value for --description}"
+      shift 2
+      ;;
+    --short-description)
+      SHORT_DESCRIPTION="${2:?Missing value for --short-description}"
       shift 2
       ;;
     --local-only)
@@ -413,12 +431,18 @@ if [[ "$SHARED_MODEL" -eq 1 ]]; then
   SCREEN_ARGS+=(--shared-model)
 fi
 
-# Human-readable screen list for catalog
+# Structured screen list for catalog: [{id, title}, ...]
 catalog_screens_json='[]'
 if [[ -n "$SCREENS" ]]; then
   catalog_screens_json="$(
     python3 - "$SCREENS" <<'PY'
-import json, sys
+import json, re, sys
+
+def kebab(s: str) -> str:
+    s = s.strip().lower().replace("&", " and ")
+    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+    return s
+
 raw = sys.argv[1]
 parts, cur, q = [], "", False
 for ch in raw:
@@ -427,17 +451,80 @@ for ch in raw:
         continue
     if ch == "," and not q:
         if cur.strip():
-            parts.append(cur.strip().split(":", 1)[-1].strip())
+            parts.append(cur.strip())
         cur = ""
         continue
     cur += ch
 if cur.strip():
-    parts.append(cur.strip().split(":", 1)[-1].strip())
-print(json.dumps(parts))
+    parts.append(cur.strip())
+
+screens = []
+for part in parts:
+    if ":" in part:
+        sid, title = part.split(":", 1)
+        sid, title = sid.strip(), title.strip()
+    else:
+        title = part.strip()
+        sid = kebab(title)
+    if not sid or not title:
+        raise SystemExit(f"invalid --screens entry: {part!r}")
+    screens.append({"id": sid, "title": title})
+print(json.dumps(screens))
 PY
   )"
 else
-  catalog_screens_json="$(jq -cn --arg n "$SIM_NAME" '[$n]')"
+  catalog_screens_json="$(
+    python3 - "$SIM_NAME" <<'PY'
+import json, re, sys
+title = sys.argv[1]
+sid = re.sub(r"[^a-z0-9]+", "-", title.strip().lower()).strip("-")
+print(json.dumps([{"id": sid, "title": title}]))
+PY
+  )"
+fi
+
+catalog_topics_json='[]'
+if [[ -n "$TOPICS" ]]; then
+  catalog_topics_json="$(
+    python3 - "$TOPICS" <<'PY'
+import json, sys
+parts = [p.strip() for p in sys.argv[1].split(",") if p.strip()]
+if not parts:
+    raise SystemExit("--topics must list at least one topic")
+print(json.dumps(parts))
+PY
+  )"
+fi
+
+catalog_github_topics_json='[]'
+if [[ -n "$GITHUB_TOPICS" ]]; then
+  catalog_github_topics_json="$(
+    python3 - "$GITHUB_TOPICS" <<'PY'
+import json, re, sys
+parts = []
+for p in sys.argv[1].split(","):
+    t = p.strip().lower()
+    if not t:
+        continue
+    if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", t):
+        raise SystemExit(f"invalid --github-topics entry (want kebab-case): {p!r}")
+    parts.append(t)
+print(json.dumps(parts))
+PY
+  )"
+fi
+
+if [[ "$CATALOG" -eq 1 || "$ONBOARD" -eq 1 ]]; then
+  if [[ "$catalog_topics_json" == "[]" ]]; then
+    echo "error: --topics is required when using --catalog or --onboard" >&2
+    echo "  example: --topics \"optics,interference,coherence\"" >&2
+    exit 1
+  fi
+fi
+
+if [[ -n "$SHORT_DESCRIPTION" && ${#SHORT_DESCRIPTION} -gt 350 ]]; then
+  echo "error: --short-description must be ≤350 characters (got ${#SHORT_DESCRIPTION})" >&2
+  exit 1
 fi
 
 echo "Creating simulation $REPO"
@@ -445,6 +532,7 @@ echo "  id:       $SIM_ID"
 echo "  name:     $SIM_NAME"
 echo "  path:     $TARGET_PATH"
 echo "  screens:  ${SCREENS:-"(default: $SIM_NAME)"}"
+echo "  topics:   ${TOPICS:-"(none)"}"
 echo "  shared:   $([[ "$SHARED_MODEL" -eq 1 ]] && echo yes || echo no)"
 echo "  onboard:  $([[ "$ONBOARD" -eq 1 ]] && echo yes || echo no)"
 echo "  existing: $([[ "$EXISTING" -eq 1 ]] && echo "yes (adopt already-on-GitHub repo)" || echo "no (create from template)")"
@@ -542,23 +630,30 @@ entry="$(jq -n \
   --arg name "$REPO" \
   --arg display "$SIM_NAME" \
   --arg desc "$DESCRIPTION" \
+  --arg short "$SHORT_DESCRIPTION" \
   --arg url "https://openphysics.github.io/${REPO}" \
   --argjson screens "$catalog_screens_json" \
-  '{
-    name: $name,
-    displayName: $display,
-    type: "simulation",
-    isSimulation: true,
-    lineage: "original",
-    upstream: null,
-    language: ["TypeScript"],
-    framework: "SceneryStack",
-    description: $desc,
-    deployedUrl: $url,
-    physicsTopics: [],
-    screens: $screens,
-    status: "active"
-  }')"
+  --argjson topics "$catalog_topics_json" \
+  --argjson githubTopics "$catalog_github_topics_json" \
+  '
+    {
+      name: $name,
+      displayName: $display,
+      type: "simulation",
+      isSimulation: true,
+      lineage: "original",
+      upstream: null,
+      language: ["TypeScript"],
+      framework: "SceneryStack",
+      description: $desc,
+      deployedUrl: $url,
+      physicsTopics: $topics,
+      screens: $screens,
+      status: "active"
+    }
+    + (if ($short | length) > 0 then {shortDescription: $short} else {} end)
+    + (if ($githubTopics | length) > 0 then {githubTopics: $githubTopics} else {} end)
+  ')"
 
 if [[ "$CATALOG" -eq 1 ]]; then
   echo ""

@@ -24,6 +24,7 @@ Baton/scripts/create-sim.sh \
   --repo MyNewSim \
   --name "My New Sim" \
   --screens Intro,Lab \
+  --topics "optics,interference" \
   --shared-model \
   --onboard \
   --pr
@@ -72,10 +73,15 @@ Edit [`structure/repos.json`](../structure/repos.json). Insert a new object in `
   "upstream": null,
   "language": ["TypeScript"],
   "framework": "SceneryStack",
-  "description": "One or two sentences for GitHub and the landing-page card.",
+  "description": "One or two sentences for the landing-page card (can be longer than GitHub’s 350-char About limit).",
+  "shortDescription": "Optional shorter blurb used for the GitHub About sidebar (≤350 chars).",
   "deployedUrl": "https://openphysics.github.io/MyNewSim",
   "physicsTopics": ["topic-a", "topic-b"],
-  "screens": ["Screen One"],
+  "githubTopics": ["optional-extra-topic"],
+  "screens": [
+    { "id": "intro", "title": "Intro" },
+    { "id": "lab", "title": "Lab" }
+  ],
   "status": "active"
 }
 ```
@@ -86,10 +92,12 @@ Edit [`structure/repos.json`](../structure/repos.json). Insert a new object in `
 | `displayName` | Human title on the landing-page card (and for docs). |
 | `lineage` | Landing-page bucket: `"original"`, `"phet"`, or `"naap"`. Non-simulations use `null`. |
 | `upstream` | For `phet` / `naap` ports: `{ "org", "name", "url" }` pointing at the source lab. Otherwise `null`. |
-| `description` | Shown on the card and synced to the GitHub repo description. |
+| `description` | Full blurb on the Pages card. |
+| `shortDescription` | Optional. GitHub About text (≤350 chars). When omitted, metadata sync uses `description` (truncated if needed). |
 | `deployedUrl` | Canonical Pages URL with lowercase `openphysics` host (trailing slash optional). |
-| `physicsTopics` | Up to three tags are shown on the card. |
-| `screens` | Human-readable screen titles (required for simulations; non-empty). |
+| `physicsTopics` | Required for simulations (non-empty). Up to three tags are shown on the card; all are slugified into GitHub topics. |
+| `githubTopics` | Optional extra kebab-case GitHub topics (e.g. `game`, `pwa`) beyond the base set + `physicsTopics`. |
+| `screens` | Required for simulations: `{ "id", "title" }` objects. `id` is kebab-case (usually `src/<id>/`). |
 | `status` | `"active"` appears on the landing page and in fleet health. Also: `"draft"` / `"wip"` (in catalog, not shipped), `"archived"` (retained, skipped by Pages/health), `"template"` (seed repo). |
 
 Validate locally:
@@ -180,7 +188,8 @@ Pushing `screenshots/**` to `main` also triggers
 scripts/sync-github-settings.sh --apply --repo MyNewSim
 
 # Description + Website + topics on the GitHub repo page
-# (simulations get physics / scenerystack / simulation + kebab-case physicsTopics)
+# (simulations: shortDescription or description; physics/scenerystack/simulation
+#  + kebab-case physicsTopics + optional githubTopics)
 scripts/sync-github-metadata.sh --repo MyNewSim
 
 # Dependabot + Claude settings (operate on every matching local checkout;

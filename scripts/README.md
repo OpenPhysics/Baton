@@ -182,13 +182,13 @@ scripts/sync-github-metadata.sh --simulation
 ```
 
 Simulations get `physics`, `scenerystack`, `simulation`, plus kebab-case slugs of
-`physicsTopics` (catalog is source of truth; the topic set is replaced). The
-template repo also gets `template`. Non-sim / non-template repos leave topics
-untouched.
+`physicsTopics` and any `githubTopics` extras (catalog is source of truth; the
+topic set is replaced). The template repo also gets `template`. Non-sim /
+non-template repos leave topics untouched.
 
-Note: GitHub does not expose API toggles for **Deployments** / **Packages** in the About sidebar.
-Descriptions longer than 350 characters are truncated with a warning (GitHub’s API limit).
-Topics are capped at 20 (GitHub’s limit).
+GitHub **Description** prefers `shortDescription` when set, otherwise
+`description`. Descriptions longer than 350 characters are truncated with a
+warning (GitHub’s API limit). Topics are capped at 20 (GitHub’s limit).
 
 ## sync-github-settings.sh
 
