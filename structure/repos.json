@@ -970,6 +970,33 @@
       "status": "active"
     },
     {
+      "name": "StandingWaves",
+      "displayName": "Standing Waves",
+      "type": "simulation",
+      "isSimulation": true,
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
+      "framework": "SceneryStack",
+      "description": "Longitudinal standing waves in a pipe: displacement, velocity and pressure phase relationships, open vs. closed end reflection, and the harmonic series of open and stopped pipes.",
+      "deployedUrl": "https://openphysics.github.io/StandingWaves",
+      "physicsTopics": [
+        "standing waves",
+        "acoustics",
+        "pipes",
+        "harmonics"
+      ],
+      "screens": [
+        "Reflection",
+        "Phase",
+        "Standing Waves",
+        "Instruments"
+      ],
+      "status": "active"
+    },
+    {
       "name": "SternGerlach",
       "displayName": "Stern\u2013Gerlach",
       "type": "simulation",
