@@ -156,21 +156,37 @@ function patchViteConfig(pkgName, displayName, description) {
     log("vite: added CSP TODOs");
   }
 
-  if (!text.includes("INLINE_LIMIT_BYTES")) {
-    // Insert constants after securityHeaders block closing `};`
+  const hasInlineLimit =
+    /assetsInlineLimit:\s*(?:100_000_000|100\s*\*\s*1024\s*\*\s*1024)/.test(text);
+  const hasWorkboxLimit = /maximumFileSizeToCacheInBytes:\s*12\s*\*\s*1024\s*\*\s*1024/.test(text);
+  if (!text.includes("INLINE_LIMIT_BYTES") && !text.includes("WORKBOX_MAX_FILE_BYTES") && (hasInlineLimit || hasWorkboxLimit)) {
+    const constants = [
+      hasInlineLimit
+        ? "/** Single-file mode: inline every imported asset as base64 (effectively unlimited). */\nconst INLINE_LIMIT_BYTES = 100 * 1024 * 1024;"
+        : "",
+      hasWorkboxLimit
+        ? "/** Workbox precache ceiling — SceneryStack bundles exceed the default 2 MB limit. */\nconst WORKBOX_MAX_FILE_BYTES = 12 * 1024 * 1024;"
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
     text = text.replace(
       /(const securityHeaders: Record<string, string> = \{[\s\S]*?\n\};\n)/,
-      `$1\n/** Single-file mode: inline every imported asset as base64 (effectively unlimited). */\nconst INLINE_LIMIT_BYTES = 100 * 1024 * 1024;\n\n/** Workbox precache ceiling — SceneryStack bundles exceed the default 2 MB limit. */\nconst WORKBOX_MAX_FILE_BYTES = 12 * 1024 * 1024;\n`,
+      `$1\n${constants}\n`,
     );
-    text = text.replace(/assetsInlineLimit:\s*100_000_000/, "assetsInlineLimit: INLINE_LIMIT_BYTES");
-    text = text.replace(
-      /assetsInlineLimit:\s*100\s*\*\s*1024\s*\*\s*1024/,
-      "assetsInlineLimit: INLINE_LIMIT_BYTES",
-    );
-    text = text.replace(
-      /maximumFileSizeToCacheInBytes:\s*12\s*\*\s*1024\s*\*\s*1024/,
-      "maximumFileSizeToCacheInBytes: WORKBOX_MAX_FILE_BYTES",
-    );
+    if (hasInlineLimit) {
+      text = text.replace(/assetsInlineLimit:\s*100_000_000/, "assetsInlineLimit: INLINE_LIMIT_BYTES");
+      text = text.replace(
+        /assetsInlineLimit:\s*100\s*\*\s*1024\s*\*\s*1024/,
+        "assetsInlineLimit: INLINE_LIMIT_BYTES",
+      );
+    }
+    if (hasWorkboxLimit) {
+      text = text.replace(
+        /maximumFileSizeToCacheInBytes:\s*12\s*\*\s*1024\s*\*\s*1024/,
+        "maximumFileSizeToCacheInBytes: WORKBOX_MAX_FILE_BYTES",
+      );
+    }
     log("vite: extracted INLINE_LIMIT_BYTES / WORKBOX_MAX_FILE_BYTES");
   }
 
@@ -421,19 +437,43 @@ function patchGenerateIcons(themeHex) {
     `Rasterizes public/icons/icon.svg into the PNG icons, favicon.ico, and placeholder\n * PWA install screenshots used by the manifest. Run with: npm run icons\n *\n * Replace public/screenshots/{wide,narrow}.png with real sim shots before shipping\n * (e.g. Baton/scripts/generate-screenshots.sh → copy into public/screenshots/).`,
   );
 
-  // Insert THEME_BG after svg read
+  // Insert THEME_BG after whatever local holds the SVG bytes (`svg` or `svgBuffer`).
   if (!text.includes("THEME_BG")) {
-    text = text.replace(
-      /(const svg = readFileSync\([^;]+;\n)/,
+    const inserted = text.replace(
+      /(const (?:svg|svgBuffer)\b[^;]*readFileSync\([^;]+;\n)/,
       `$1\n${themeLine}`,
     );
+    if (inserted === text) {
+      log("WARN: could not find svg/svgBuffer read to insert THEME_BG — skip screenshots");
+      write(path, text);
+      return false;
+    }
+    text = inserted;
+  }
+
+  const svgIdent = /\bconst svgBuffer\b/.test(text) ? "svgBuffer" : "svg";
+  if (!/\bconst density\b/.test(text)) {
+    text = text.replace(
+      /(const THEME_BG = \{[^}]+};\n)/,
+      `$1\nconst density = 512;\n`,
+    );
+  }
+  const publicExpr = /\bconst publicDir\b/.test(text)
+    ? "publicDir"
+    : /\bconst root\b/.test(text)
+      ? 'resolve(root, "public")'
+      : "publicDir";
+  if (publicExpr === "publicDir" && !/\bconst publicDir\b/.test(text)) {
+    log("WARN: no publicDir/root in generate-icons.ts — skip screenshots");
+    write(path, text);
+    return false;
   }
 
   const screenshotTail = `
 /** Branded placeholder screenshots for the Web App Manifest \`screenshots\` member. */
 async function writeScreenshot(width: number, height: number, file: string): Promise<void> {
   const iconSize = Math.round(Math.min(width, height) * 0.4);
-  const icon = await sharp(svg, { density }).resize(iconSize, iconSize).png().toBuffer();
+  const icon = await sharp(${svgIdent}, { density }).resize(iconSize, iconSize).png().toBuffer();
   await sharp({
     create: {
       width,
@@ -444,10 +484,10 @@ async function writeScreenshot(width: number, height: number, file: string): Pro
   })
     .composite([{ input: icon, gravity: "center" }])
     .png()
-    .toFile(resolve(publicDir, file));
+    .toFile(resolve(${publicExpr}, file));
 }
 
-mkdirSync(resolve(publicDir, "screenshots"), { recursive: true });
+mkdirSync(resolve(${publicExpr}, "screenshots"), { recursive: true });
 await writeScreenshot(1280, 720, "screenshots/wide.png");
 await writeScreenshot(720, 1280, "screenshots/narrow.png");
 `;
@@ -504,6 +544,15 @@ function main() {
       execFileSync("npm", ["run", "icons"], { cwd: ROOT, stdio: "inherit" });
     } catch {
       log("WARN: npm run icons failed — screenshots may be missing");
+    }
+  }
+
+  if (process.env.SKIP_FIX !== "1") {
+    log("npm run fix (format + lint write)…");
+    try {
+      execFileSync("npm", ["run", "fix"], { cwd: ROOT, stdio: "inherit" });
+    } catch {
+      log("WARN: npm run fix failed — CI will catch leftover lint on the PR");
     }
   }
 
