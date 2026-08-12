@@ -16,7 +16,7 @@ Pages simulation landing page.
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Reusable CI workflow (audit, lint, type-check, test, build) |
 | [`.github/actions/security-audit/action.yml`](.github/actions/security-audit/action.yml) | Composite action used by `ci.yml`: `npm audit` summary, blocks only on high/critical in direct deps |
 | [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | Reusable GitHub Pages deploy workflow |
-| [`.github/workflows/shared-codeql.yml`](.github/workflows/shared-codeql.yml) | Reusable CodeQL analysis |
+| [`.github/workflows/shared-codeql.yml`](.github/workflows/shared-codeql.yml) | Reusable CodeQL analysis ([`doc/codeql.md`](doc/codeql.md)) |
 | [`.github/workflows/shared-dependency-review.yml`](.github/workflows/shared-dependency-review.yml) | Reusable dependency review |
 | [`.github/workflows/shared-compliance-check.yml`](.github/workflows/shared-compliance-check.yml) | README and repo-structure compliance audit |
 | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | Build and deploy the org simulation index to GitHub Pages |
