@@ -179,7 +179,8 @@ Pushing `screenshots/**` to `main` also triggers
 # Source of truth: config/github-repo-baseline.json — see doc/github-repo-settings.md
 scripts/sync-github-settings.sh --apply --repo MyNewSim
 
-# Description + Website on the GitHub repo page
+# Description + Website + topics on the GitHub repo page
+# (simulations get physics / scenerystack / simulation + kebab-case physicsTopics)
 scripts/sync-github-metadata.sh --repo MyNewSim
 
 # Dependabot + Claude settings (operate on every matching local checkout;

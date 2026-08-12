@@ -311,9 +311,16 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Explore fluid flow concepts \u2014 Intro and Lab screens for interactive fluid dynamics.",
+      "description": "Flow past an obstacle, from laminar streamlines to a K\u00e1rm\u00e1n vortex street to a turbulent wake \u2014 real-time GPU fluid simulation across Intro and Lab screens.",
       "deployedUrl": "https://openphysics.github.io/FluidDynamics",
-      "physicsTopics": [],
+      "physicsTopics": [
+        "fluid dynamics",
+        "Reynolds number",
+        "vortex street",
+        "laminar flow",
+        "turbulence",
+        "viscosity"
+      ],
       "screens": [
         "Intro",
         "Lab"
@@ -949,13 +956,14 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "Explore special relativity across four screens: a moving light clock, an interactive Minkowski spacetime diagram, the twin paradox, and the relativistic Doppler effect.",
+      "description": "Explore special relativity across five screens: a moving light clock, an interactive Minkowski spacetime diagram, length contraction (ladder and barn), the twin paradox, and the relativistic Doppler effect.",
       "deployedUrl": "https://openphysics.github.io/SpecialRelativity",
       "physicsTopics": [
         "special relativity",
         "spacetime",
         "time dilation",
         "light clock",
+        "length contraction",
         "Lorentz transformation",
         "simultaneity",
         "twin paradox",
@@ -964,6 +972,7 @@
       "screens": [
         "Light Clock",
         "Spacetime Diagram",
+        "Length Contraction",
         "Twin Paradox",
         "Relativistic Doppler"
       ],

@@ -9,7 +9,7 @@ and the apply script in this repo instead.
 |---|---|
 | [`config/github-repo-baseline.json`](../config/github-repo-baseline.json) | Source of truth (feature flags + security + Pages) |
 | [`scripts/sync-github-settings.sh`](../scripts/sync-github-settings.sh) | `--check` drift / `--apply` via GitHub API |
-| [`scripts/sync-github-metadata.sh`](../scripts/sync-github-metadata.sh) | Description + homepage from `structure/repos.json` |
+| [`scripts/sync-github-metadata.sh`](../scripts/sync-github-metadata.sh) | Description + homepage + topics from `structure/repos.json` |
 
 ## Quick use
 
@@ -20,7 +20,7 @@ cd Baton
 scripts/sync-github-settings.sh --check --repo MyNewSim
 scripts/sync-github-settings.sh --apply --repo MyNewSim
 
-# Description + website from the catalog
+# Description + website + topics from the catalog
 scripts/sync-github-metadata.sh --repo MyNewSim
 
 # Whole sim fleet + template

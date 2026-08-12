@@ -24,7 +24,7 @@ the monorepo checkout.
 | [`../doc/fleet-git.md`](../doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
 | [`sync-gitlab-mirror.sh`](sync-gitlab-mirror.sh) | Mirror every catalog repo's git history to a GitLab group (off-GitHub backup) |
 | [`../doc/gitlab-mirror.md`](../doc/gitlab-mirror.md) | GitLab backup: setup, initial import, periodic sync, restore |
-| [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website to GitHub |
+| [`sync-github-metadata.sh`](sync-github-metadata.sh) | Push description + website + topics to GitHub |
 | [`sync-github-settings.sh`](sync-github-settings.sh) | Check/apply GitHub repo settings baseline (security + feature flags) |
 | [`../doc/github-repo-settings.md`](../doc/github-repo-settings.md) | Documented GitHub settings baseline for sims |
 | [`create-sim.sh`](create-sim.sh) | Bootstrap a new sim from SceneryStackTemplate (rename + N screens; `--onboard` applies the full baseline incl. GitHub settings; `--existing` adopts a repo already on GitHub; `--pr` / `--shared-model`) |
@@ -172,16 +172,23 @@ Runs daily from [`gitlab-mirror.yml`](../.github/workflows/gitlab-mirror.yml) on
 
 ## sync-github-metadata.sh
 
-Updates GitHub **Description** and **Website** from `repos.json`:
+Updates GitHub **Description**, **Website**, and **topics** from `repos.json`:
 
 ```bash
 scripts/sync-github-metadata.sh --dry-run
 scripts/sync-github-metadata.sh
 scripts/sync-github-metadata.sh --repo SceneryStackTemplate
+scripts/sync-github-metadata.sh --simulation
 ```
+
+Simulations get `physics`, `scenerystack`, `simulation`, plus kebab-case slugs of
+`physicsTopics` (catalog is source of truth; the topic set is replaced). The
+template repo also gets `template`. Non-sim / non-template repos leave topics
+untouched.
 
 Note: GitHub does not expose API toggles for **Deployments** / **Packages** in the About sidebar.
 Descriptions longer than 350 characters are truncated with a warning (GitHub’s API limit).
+Topics are capped at 20 (GitHub’s limit).
 
 ## sync-github-settings.sh
 
