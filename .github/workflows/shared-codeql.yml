@@ -31,6 +31,12 @@ jobs:
           languages: ${{ matrix.language }}
           queries: +security-extended,security-and-quality
           source-root: ${{ inputs.source-path }}
+          # Offline tooling that downloads curated assets into the repo / .cache.
+          # Not shipped sim runtime — see doc/codeql.md.
+          config: |
+            paths-ignore:
+              - '**/scripts/decompile-flash.ts'
+              - '**/scripts/data/**'
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v4.37.6
