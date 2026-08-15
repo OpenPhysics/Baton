@@ -316,6 +316,18 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
   fi
   [ "$hooks_ok" -eq 1 ] && pass ".githooks/ pre-commit + pre-push with prepare activation"
 
+  # Pages deploy (CONVENTIONS.md §7): reusable Baton workflow + manual dispatch,
+  # matching Baton's own pages.yml triggers so a missed push can be recovered.
+  if [ ! -f .github/workflows/deploy.yml ]; then
+    fail ".github/workflows/deploy.yml is missing"
+  elif ! grep -q "OpenPhysics/Baton/.github/workflows/deploy.yml@main" .github/workflows/deploy.yml; then
+    fail "deploy.yml must call OpenPhysics/Baton reusable deploy workflow"
+  elif ! grep -q "workflow_dispatch:" .github/workflows/deploy.yml; then
+    fail "deploy.yml must allow workflow_dispatch (manual Pages publish)"
+  else
+    pass "deploy.yml uses shared reusable workflow with workflow_dispatch"
+  fi
+
   # PWA (CONVENTIONS.md §7): vite-plugin-pwa + generate-icons + public assets + index meta.
   if ! grep -q '"vite-plugin-pwa"' package.json; then
     fail "package.json is missing vite-plugin-pwa"
