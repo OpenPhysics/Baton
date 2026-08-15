@@ -96,9 +96,18 @@ Optional compliance checking:
 flag needed. Pass `run-tests: "true"` to force it on (e.g. before a test script exists) or
 `run-tests: "false"` to opt out.
 
-Pages deploy (sims that publish to GitHub Pages):
+Pages deploy (sims that publish to GitHub Pages). Callers use `push` to `main` **and**
+`workflow_dispatch`, so a site can be published without waiting for a push (same pair of
+triggers as this repo's [`pages.yml`](.github/workflows/pages.yml)):
 
 ```yaml
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
 jobs:
   deploy:
     uses: OpenPhysics/Baton/.github/workflows/deploy.yml@main
@@ -120,7 +129,8 @@ unless marked *(warn)*):
   Stack → License → Contributing**).
 - **CI wiring** — `.github/workflows/ci.yml` calls this repo's reusable `ci.yml` plus
   [`shared-dependency-review.yml`](.github/workflows/shared-dependency-review.yml) and
-  [`shared-codeql.yml`](.github/workflows/shared-codeql.yml); `.github/dependabot.yml` present.
+  [`shared-codeql.yml`](.github/workflows/shared-codeql.yml); `.github/workflows/deploy.yml`
+  calls the reusable Pages deploy and allows `workflow_dispatch`; `.github/dependabot.yml` present.
 - **Node pins** — `engines.node` is `>=24` and `@types/node` major is `24` (matching the fleet Node
   version); a `.nvmrc` / `.node-version`, if present, agrees.
 - **SceneryStack structure** (sims only) — the five-file bootstrap chain with `main.ts` importing

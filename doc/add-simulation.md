@@ -49,7 +49,7 @@ npm run check
 
 Then confirm:
 - `.github/workflows/ci.yml` calls `OpenPhysics/Baton/.../ci.yml@main`
-- `.github/workflows/deploy.yml` (or equivalent) calls Baton's reusable Pages deploy
+- `.github/workflows/deploy.yml` (or equivalent) calls Baton's reusable Pages deploy and allows `workflow_dispatch`
 - README follows the six-section outline (enforced by compliance — see
   [`CONVENTIONS.md`](../CONVENTIONS.md))
 
