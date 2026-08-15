@@ -151,10 +151,28 @@ License / Contributing` (enforced by Baton's compliance check). Do **not** add a
 | `.github/workflows/ci.yml` | calls `OpenPhysics/Baton` reusable CI + shared security workflows |
 | `.github/dependabot.yml` | present |
 
+**PWA** (`vite-plugin-pwa`) is fleet-standard. Copy the template's `VitePWA({…})` block, `scripts/generate-icons.ts`, and `index.html` meta; only `id` / `name` / `short_name` / `description` / `theme_color` / screenshot `label` change per sim.
+
+```
+scripts/generate-icons.ts
+public/favicon.ico
+public/icons/icon.svg  icon-192.png  icon-512.png  apple-touch-icon.png
+public/screenshots/wide.png  narrow.png   ← 1280×720 and 720×1280; placeholders from `npm run icons`
+```
+
+| Piece | Standard |
+|---|---|
+| `package.json` | `vite-plugin-pwa ^1`, `sharp` + `png-to-ico` + `tsx`, `"pwa"` in `keywords`, `icons` script runs `tsx scripts/generate-icons.ts` (a `generate-svg-icon &&` prefix is allowed) |
+| `vite.config.ts` | `registerType: "autoUpdate"`; `includeAssets: ["favicon.ico", "icons/apple-touch-icon.png"]`; manifest `id` (= `package.json` `name`), `categories: ["education", "science"]`, `display: "standalone"`, `display_override: ["window-controls-overlay", "standalone"]`, **no** `orientation`; PNG 192/512 + SVG `purpose: "maskable"`; `screenshots` wide + narrow; Workbox `maximumFileSizeToCacheInBytes` + `globPatterns` including `js,css,html,svg,png,woff2` |
+| `index.html` | `mobile-web-app-capable`, `apple-mobile-web-app-capable`, `theme-color` (must match `theme_color`), `description`, Open Graph + Twitter meta (`og:image` / `twitter:image` → `./icons/icon-512.png`), favicon + SVG icon + apple-touch-icon |
+| Single-file mode | `vite build --mode single` skips `VitePWA` (inlines into one HTML file). Omit this only when the bundle cannot be self-contained (document in `CLAUDE.md`) |
+
+`theme_color` / icon art may be sim-specific. `background_color` is `#000000` unless the play area is light (document it). Extra Workbox `globPatterns` (audio) or `globIgnores` / `runtimeCaching` (large WASM) are allowed when documented.
+
 **Documented-as-allowed variations** (not violations — note each in the sim's `CLAUDE.md`):
 sim-specific `vite.config.ts` plugins (e.g. TrackLab's OpenCV/video serving), `biome.json` /
 `.gitignore` additions for vendored binaries or local references, extra `package.json` scripts
-(`release` / `serve` / `watch` / domain checks), and the a11y traversal choice (`pdomOrder`
+(`release` / `serve` / `watch` / domain checks), PWA extras listed above, and the a11y traversal choice (`pdomOrder`
 wrapper-Node *or* `pdomPlayAreaNode`/`pdomControlAreaNode`, per
 [ACCESSIBILITY.md §3](ACCESSIBILITY.md)).
 
@@ -200,6 +218,7 @@ rest are a quick manual scan.
 - [ ] `tests/memory-leak.test.ts` exists and `vitest.config.ts` enables `--expose-gc`. *(auto)*
 - [ ] `*KeyboardHelpContent.ts` exists under `src/` (Keyboard Shortcuts dialog). *(auto)*
 - [ ] `.githooks/{pre-commit,pre-push}` present; `prepare` sets `core.hooksPath`. *(auto)*
+- [ ] PWA: `VitePWA` manifest has `id`, `categories`, `display_override`, screenshots, no `orientation`; `public/icons/` + `public/screenshots/{wide,narrow}.png` exist; `index.html` has theme-color + OG/Twitter. *(auto)*
 - [ ] `doc/model.md` + `doc/implementation-notes.md` exist and are filled. *(auto presence; manual content)*
 - [ ] `README.md` follows the six-section outline; no local `CONTRIBUTING.md` / `LICENSE`. *(auto)*
 - [ ] `biome.json` `$schema` matches the pinned `@biomejs/biome` (resync with `npx @biomejs/biome migrate --write`); `npm run lint` is green. *(auto)*

@@ -316,6 +316,72 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
   fi
   [ "$hooks_ok" -eq 1 ] && pass ".githooks/ pre-commit + pre-push with prepare activation"
 
+  # PWA (CONVENTIONS.md §7): vite-plugin-pwa + generate-icons + public assets + index meta.
+  if ! grep -q '"vite-plugin-pwa"' package.json; then
+    fail "package.json is missing vite-plugin-pwa"
+  else
+    pass "vite-plugin-pwa in package.json"
+  fi
+  if ! grep -qE '"icons":\s*".*scripts/generate-icons\.ts' package.json; then
+    fail "package.json icons script must run tsx scripts/generate-icons.ts"
+  else
+    pass "package.json icons script"
+  fi
+  if ! grep -qE '"pwa"' package.json; then
+    fail "package.json keywords must include \"pwa\""
+  else
+    pass "package.json keywords include pwa"
+  fi
+
+  if [ ! -f vite.config.ts ]; then
+    fail "vite.config.ts is missing (PWA plugin lives there)"
+  else
+    pwa_ok=1
+    grep -q 'vite-plugin-pwa' vite.config.ts || { fail "vite.config.ts must import vite-plugin-pwa"; pwa_ok=0; }
+    grep -qE 'registerType:\s*"autoUpdate"' vite.config.ts || { fail "VitePWA registerType must be autoUpdate"; pwa_ok=0; }
+    grep -qE '^\s*id:\s*"' vite.config.ts || { fail "PWA manifest is missing id"; pwa_ok=0; }
+    grep -q 'categories: \["education", "science"\]' vite.config.ts || { fail "PWA manifest categories must be [\"education\", \"science\"]"; pwa_ok=0; }
+    grep -q 'display_override' vite.config.ts || { fail "PWA manifest is missing display_override"; pwa_ok=0; }
+    grep -q 'screenshots:' vite.config.ts || { fail "PWA manifest is missing screenshots"; pwa_ok=0; }
+    if grep -qE 'orientation:\s*"' vite.config.ts; then
+      fail "PWA manifest must omit orientation (do not force landscape)"
+      pwa_ok=0
+    fi
+    grep -q 'icons/icon-192.png' vite.config.ts && grep -q 'icons/icon-512.png' vite.config.ts && grep -q 'icons/icon.svg' vite.config.ts || { fail "PWA manifest icons must include icon-192.png, icon-512.png, and icon.svg"; pwa_ok=0; }
+    grep -q 'screenshots/wide.png' vite.config.ts && grep -q 'screenshots/narrow.png' vite.config.ts || { fail "PWA manifest screenshots must include wide.png and narrow.png"; pwa_ok=0; }
+    [ "$pwa_ok" -eq 1 ] && pass "VitePWA manifest matches fleet pattern"
+  fi
+
+  if [ ! -f scripts/generate-icons.ts ]; then
+    fail "scripts/generate-icons.ts is missing"
+  elif ! grep -q 'screenshots/wide.png' scripts/generate-icons.ts || ! grep -q 'screenshots/narrow.png' scripts/generate-icons.ts; then
+    fail "scripts/generate-icons.ts must emit public/screenshots/{wide,narrow}.png"
+  else
+    pass "generate-icons.ts emits PWA screenshots"
+  fi
+
+  pwa_assets_ok=1
+  for f in public/favicon.ico public/icons/icon.svg public/icons/icon-192.png public/icons/icon-512.png public/icons/apple-touch-icon.png public/screenshots/wide.png public/screenshots/narrow.png; do
+    if [ ! -f "$f" ]; then
+      fail "missing PWA asset $f"
+      pwa_assets_ok=0
+    fi
+  done
+  [ "$pwa_assets_ok" -eq 1 ] && pass "PWA public icons + screenshots present"
+
+  if [ ! -f index.html ]; then
+    fail "index.html is missing"
+  else
+    html_ok=1
+    grep -q 'name="theme-color"' index.html || { fail "index.html is missing theme-color meta"; html_ok=0; }
+    grep -q 'name="description"' index.html || { fail "index.html is missing description meta"; html_ok=0; }
+    grep -q 'property="og:image"' index.html || { fail "index.html is missing og:image (PWA / share preview)"; html_ok=0; }
+    grep -q 'name="twitter:image"' index.html || { fail "index.html is missing twitter:image"; html_ok=0; }
+    grep -q 'rel="apple-touch-icon"' index.html || { fail "index.html is missing apple-touch-icon"; html_ok=0; }
+    grep -q 'name="apple-mobile-web-app-capable"' index.html || { fail "index.html is missing apple-mobile-web-app-capable"; html_ok=0; }
+    [ "$html_ok" -eq 1 ] && pass "index.html PWA / share meta"
+  fi
+
   for d in doc/model.md doc/implementation-notes.md; do
     if [ ! -f "$d" ]; then
       fail "$d is missing"

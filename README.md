@@ -128,8 +128,10 @@ unless marked *(warn)*):
   root; the `preferences/` trio; `i18n/` with `StringManager.ts` + `en`/`es`/`fr` locales; a
   `*KeyboardHelpContent.ts`; `.claude/settings.json` enabling the `scenerystack` plugin; no tests
   co-located under `src/`; no top-level `src/model` or `src/view` *(warn)*.
-- **Tests & hooks** — `tests/memory-leak.test.ts` + a `vitest.config.ts` that sets `--expose-gc`;
-  `.githooks/{pre-commit,pre-push}` activated via the `prepare` script.
+- **Tests, hooks & PWA** — `tests/memory-leak.test.ts` + a `vitest.config.ts` that sets `--expose-gc`;
+  `.githooks/{pre-commit,pre-push}` activated via the `prepare` script; `vite-plugin-pwa` manifest
+  (`id`, `categories`, `display_override`, screenshots, no `orientation`), `scripts/generate-icons.ts`,
+  `public/icons/` + `public/screenshots/{wide,narrow}.png`, and `index.html` theme/OG meta.
 - **Docs & tooling** — `doc/model.md` + `doc/implementation-notes.md` present and filled
   *(warn if stub)*; `biome.json` `$schema` version matches the pinned `@biomejs/biome`.
 - **GitHub security** (when `gh` is authenticated) — Dependabot vulnerability alerts + security
