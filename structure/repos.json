@@ -902,8 +902,8 @@
       ],
       "screens": [
         {
-          "id": "plate-tectonics",
-          "title": "Plate Tectonics"
+          "id": "earth",
+          "title": "Earth"
         },
         {
           "id": "crust",
