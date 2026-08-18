@@ -91,10 +91,26 @@ Ship `tests/memory-leak.test.ts` modeled on SceneryStackTemplate / QubitSketch:
 
 ## Optional Playwright fuzz
 
-SceneryStackTemplate and Resonance ship `tests/fuzz/fuzz.spec.ts` + `playwright.config.ts`
-with `npm run test:fuzz` / `test:fuzz:quick`. Fuzz uses joist's `?fuzz` query parameter and
-fails on console/`pageerror`. Use it for pre-release / CRC stress; it is not required in
-the default CI path.
+SceneryStackTemplate ships `tests/fuzz/fuzz.spec.ts` + `playwright.config.ts` +
+`scripts/test-fuzz.ts` with `npm run test:fuzz` / `test:fuzz:quick` / `test:fuzz:long`.
+Fuzz uses joist's `?fuzz&ea` query parameters (fuzz plus enable-assertions) and fails on
+console/`pageerror` or an assertion failure. Use it for pre-release / CRC stress; it is not
+required in the default CI path.
+
+Duration is **30 seconds** by default. Change it without editing the spec:
+
+```bash
+npm run test:fuzz                 # 30s
+npm run test:fuzz:quick           # 10s
+npm run test:fuzz:long            # 300s
+npm run test:fuzz -- 90           # 90s
+npm run test:fuzz -- --duration 90
+FUZZ_DURATION=90 npm run test:fuzz
+```
+
+`scripts/test-fuzz.ts` forwards extra Playwright args (`npm run test:fuzz -- 60 --headed`).
+The Playwright test timeout is `FUZZ_DURATION + 120s` so a long run is not killed by the
+default 5-minute cap. Always include `&ea` in the fuzz URL — without it assertions are silent.
 
 ## WebGPU / GPU sims in Playwright
 
