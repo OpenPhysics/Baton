@@ -136,7 +136,7 @@ new NumberControl(titleStringProperty, model.valueProperty, model.valueProperty.
   titleNodeOptions: { fill: SimColors.textColorProperty },
   numberDisplayOptions: {
     decimalPlaces: 1,
-    textOptions: { fill: SimColors.textColorProperty },
+    textOptions: { fill: SimColors.controlSurfaceTextColorProperty },
     backgroundFill: SimColors.controlSurfaceColorProperty, // or a dedicated overlay input fill
     backgroundStroke: SimColors.panelBorderColorProperty,
   },
@@ -145,10 +145,24 @@ new NumberControl(titleStringProperty, model.valueProperty, model.valueProperty.
 
 On Preferences (always-white dialog), use `controlSurfaceTextColorProperty` for title and readout text instead of `textColorProperty`.
 
+### RectangularPushButton (flat)
+
+`RectangularPushButton` with `ButtonNode.FlatAppearanceStrategy` defaults to a **light** fill. Labels filled with `textColorProperty` (near-white in default mode) become **near-white on white**. **RotatingSky** is the reference: dark ink on white chrome.
+
+```typescript
+new RectangularPushButton({
+  ...FLAT_RECTANGULAR_BUTTON_OPTIONS,
+  baseColor: SimColors.controlSurfaceColorProperty,
+  content: new Text(labelProperty, { fill: LIGHT_SURFACE_TEXT_FILL }),
+  listener,
+});
+```
+
+Never put `textColorProperty` on button content that sits on `controlSurfaceColorProperty`. SternGerlach is the other valid pairing: dark `controlSurfaceColorProperty` with near-white `controlSurfaceTextColorProperty` — fill and label must come from the **same** surface.
+
 ### Related defaults that bite the same way
 
 - `TimeControlNode` speed-radio labels default to black → use `TIME_CONTROL_SPEED_RADIO_OPTIONS` (`labelOptions.fill: textColorProperty`).
-- Flat push-button labels on light chrome → `LIGHT_SURFACE_TEXT_FILL`, not `textColorProperty`.
 - Panel title / body `Text` nodes → always pass `fill: textColorProperty`; Scenery text is black by default.
 
 ## Rules
@@ -169,6 +183,8 @@ On Preferences (always-white dialog), use `controlSurfaceTextColorProperty` for 
 - Leaving Checkbox / NumberDisplay / Text on framework black defaults → invisible on dark default panels; projector mode masks the bug.
 - Filling ComboBox item labels with `textColorProperty` while the button/list stay white → white-on-white in default mode.
 - Using `textColorProperty` (near-white in default) for Preferences dialog labels/checkboxes → invisible on the always-white Preferences chrome; use `controlSurfaceTextColorProperty`.
+- Using `textColorProperty` for labels on white push buttons / NumberDisplay chrome → near-white on white in default mode; use `LIGHT_SURFACE_TEXT_FILL` / `controlSurfaceTextColorProperty`.
+- Using `controlSurfaceColorProperty` as checkbox background on a dark panel (white floating box); pair tick with `textColorProperty` and fill with `panelBackgroundColorProperty`.
 - Theming `NumberControl` title fill but forgetting `numberDisplayOptions.textOptions.fill` (or the reverse) → one of the two stays black.
 
 Related skills: scenerystack-preferences (projector toggle), scenerystack-ui-controls (Checkbox / ComboBox / NumberControl wiring).
