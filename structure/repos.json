@@ -682,6 +682,42 @@
       "status": "active"
     },
     {
+      "name": "MotionMatch",
+      "displayName": "Motion Match",
+      "type": "simulation",
+      "isSimulation": true,
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
+      "framework": "SceneryStack",
+      "description": "Match target position-versus-time and velocity-versus-time graphs by moving a character with pointer controls or by walking in front of a PASCO Wireless Motion Sensor.",
+      "deployedUrl": "https://openphysics.github.io/MotionMatch",
+      "physicsTopics": [
+        "kinematics",
+        "motion graphs",
+        "position",
+        "velocity"
+      ],
+      "screens": [
+        {
+          "id": "simulation",
+          "title": "Simulation"
+        },
+        {
+          "id": "sensor",
+          "title": "Motion Sensor"
+        }
+      ],
+      "status": "active",
+      "shortDescription": "Match position-time and velocity-time graphs with pointer controls or a PASCO Wireless Motion Sensor over Web Bluetooth.",
+      "githubTopics": [
+        "web-bluetooth",
+        "pasco"
+      ]
+    },
+    {
       "name": "MotionsOfTheSun",
       "displayName": "Motions of the Sun",
       "type": "simulation",
