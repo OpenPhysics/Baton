@@ -404,6 +404,52 @@
       "status": "active"
     },
     {
+      "name": "FluidPressureAndFlow",
+      "displayName": "Fluid Pressure and Flow",
+      "type": "simulation",
+      "isSimulation": true,
+      "lineage": "phet",
+      "upstream": {
+        "org": "phet",
+        "name": "Fluid Pressure and Flow",
+        "url": "https://phet.colorado.edu/en/simulation/fluid-pressure-and-flow"
+      },
+      "language": [
+        "TypeScript"
+      ],
+      "framework": "SceneryStack",
+      "description": "SceneryStack recreation of PhET's Fluid Pressure and Flow — Under Pressure, Flow, and Water Tower screens for hydrostatic pressure, Bernoulli flow, and a water tower with a hose.",
+      "deployedUrl": "https://openphysics.github.io/FluidPressureAndFlow",
+      "physicsTopics": [
+        "fluid pressure",
+        "hydrostatics",
+        "Bernoulli",
+        "fluid flow",
+        "Pascal"
+      ],
+      "screens": [
+        {
+          "id": "under-pressure",
+          "title": "Under Pressure"
+        },
+        {
+          "id": "flow",
+          "title": "Flow"
+        },
+        {
+          "id": "water-tower",
+          "title": "Water Tower"
+        }
+      ],
+      "status": "active",
+      "shortDescription": "PhET Fluid Pressure and Flow recreation: hydrostatic pressure, Bernoulli pipe flow, and a water tower with hose.",
+      "githubTopics": [
+        "phet",
+        "fluids",
+        "pwa"
+      ]
+    },
+    {
       "name": "HabitableZones",
       "displayName": "Habitable Zones",
       "type": "simulation",
@@ -751,7 +797,6 @@
       "githubTopics": [
         "web-bluetooth",
         "pwa"
-
       ]
     },
     {
@@ -1097,6 +1142,46 @@
         }
       ],
       "status": "active"
+    },
+    {
+      "name": "RadioactivityAndStatistics",
+      "displayName": "Radioactivity and Statistics",
+      "type": "simulation",
+      "isSimulation": true,
+      "lineage": "original",
+      "upstream": null,
+      "language": [
+        "TypeScript"
+      ],
+      "framework": "SceneryStack",
+      "description": "Counting-statistics laboratory: measure radioactive decay — simulated or from a PASCO Wireless Geiger Counter over Web Bluetooth — and compare the distribution against Poisson and Gaussian theory.",
+      "deployedUrl": "https://openphysics.github.io/RadioactivityAndStatistics",
+      "physicsTopics": [
+        "radioactivity",
+        "statistics",
+        "Poisson",
+        "Geiger counter",
+        "counting"
+      ],
+      "screens": [
+        {
+          "id": "simulation",
+          "title": "Simulation"
+        },
+        {
+          "id": "device",
+          "title": "Device"
+        }
+      ],
+      "status": "active",
+      "shortDescription": "Count radioactive decays (simulated or PASCO PS-3238) and compare the histogram to Poisson and Gaussian theory.",
+      "githubTopics": [
+        "web-bluetooth",
+        "pasco",
+        "geiger-counter",
+        "statistics",
+        "pwa"
+      ]
     },
     {
       "name": "RadioWaves",
