@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Assert the fleet's default Node version is in sync across the workflows that
-# declare it, and — when sibling OpenPhysics checkouts are present — that member
+# declare it, and — when sibling fleet checkouts are present — that member
 # package.json files track the same major (engines.node floor + @types/node).
 # README.md ("Node version") says these "must stay in sync" — this turns that
 # prose warning into an enforced check.
@@ -62,7 +62,7 @@ echo "OK: all workflows agree on Node $FLEET_NODE_MAJOR"
 echo "Expected member-repo pins: engines.node \">=${FLEET_NODE_MAJOR}\" and @types/node major ${FLEET_NODE_MAJOR}"
 
 # Optional workspace scan: when Baton lives beside sibling checkouts (local
-# OpenPhysics bootstrap layout), assert catalog member pins match. Limited to
+# bootstrap layout), assert catalog member pins match. Limited to
 # simulations, SceneryStackTemplate, and Almanach — not every sibling npm repo
 # (jscd48 / pyro / … keep their own engine floors). Skipped in Baton-only CI.
 PARENT="$(cd "$ROOT/.." && pwd)"

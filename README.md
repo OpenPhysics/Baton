@@ -1,12 +1,12 @@
-# OpenPhysics `Baton`
+# OpenLyceum `Baton`
 
-Orchestration repository for the [OpenPhysics](https://github.com/OpenPhysics) organization. Baton owns
+Orchestration repository for the [OpenLyceum](https://github.com/OpenLyceum) organization. Baton owns
 the **operational** side of the org: the reusable CI/CD workflows every simulation calls, the cross-repo
 automation scripts, the Dependabot templates, the machine-readable repository catalog, and the GitHub
 Pages simulation landing page.
 
 > Community-health defaults (license, contributing, code of conduct, security policy, issue/PR templates,
-> org profile) live in [OpenPhysics/.github](https://github.com/OpenPhysics/.github) — GitHub requires those
+> org profile) live in [OpenLyceum/.github](https://github.com/OpenLyceum/.github) — GitHub requires those
 > in the special `.github` repo so they are inherited org-wide.
 
 ## Contents
@@ -34,8 +34,8 @@ Pages simulation landing page.
 | [`CONVENTIONS.md`](CONVENTIONS.md) | Shared codebase structure every SceneryStack sim must follow |
 | [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | Shared accessibility pattern for SceneryStack sims |
 | [`skills/`](skills/) | SceneryStack development reference docs for AI assistants |
-| [`.claude-plugin/`](.claude-plugin/) | Marketplace + plugin manifests that package `skills/` as the `scenerystack@openphysics` Claude Code plugin |
-| [`docs/`](docs/) | Generated landing page ([openphysics.github.io/Baton](https://openphysics.github.io/Baton/)) |
+| [`.claude-plugin/`](.claude-plugin/) | Marketplace + plugin manifests that package `skills/` as the `scenerystack@baton` Claude Code plugin |
+| [`docs/`](docs/) | Generated landing page ([openlyceum.github.io/Baton](https://openlyceum.github.io/Baton/)) |
 | [`doc/add-simulation.md`](doc/add-simulation.md) | Checklist for adding a sim to the catalog and landing page |
 | [`doc/github-repo-settings.md`](doc/github-repo-settings.md) | GitHub settings/security baseline for sims + apply/check script |
 | [`doc/fleet-git.md`](doc/fleet-git.md) | Cheat sheet: everyday git across local checkouts (`pull`/`push`/`status` all) |
@@ -55,14 +55,14 @@ Member repos enable it from their `.claude/settings.json` (the canonical keys li
 ```json
 {
   "extraKnownMarketplaces": {
-    "openphysics": { "source": { "source": "github", "repo": "OpenPhysics/Baton" } }
+    "baton": { "source": { "source": "github", "repo": "OpenLyceum/Baton" } }
   },
-  "enabledPlugins": { "scenerystack@openphysics": true }
+  "enabledPlugins": { "scenerystack@baton": true }
 }
 ```
 
-Or interactively: `claude plugin marketplace add OpenPhysics/Baton` then
-`claude plugin install scenerystack@openphysics`. Validate manifest changes with
+Or interactively: `claude plugin marketplace add OpenLyceum/Baton` then
+`claude plugin install scenerystack@baton`. Validate manifest changes with
 `claude plugin validate .claude-plugin/marketplace.json`.
 
 Roll it out across the fleet with [`scripts/sync-claude-settings.sh`](scripts/sync-claude-settings.sh),
@@ -75,19 +75,19 @@ Each simulation's `.github/workflows/ci.yml` calls the reusable workflows from t
 ```yaml
 jobs:
   ci:
-    uses: OpenPhysics/Baton/.github/workflows/ci.yml@main
+    uses: OpenLyceum/Baton/.github/workflows/ci.yml@main
   dependency-review:
     if: github.event_name == 'pull_request'
-    uses: OpenPhysics/Baton/.github/workflows/shared-dependency-review.yml@main
+    uses: OpenLyceum/Baton/.github/workflows/shared-dependency-review.yml@main
   codeql:
-    uses: OpenPhysics/Baton/.github/workflows/shared-codeql.yml@main
+    uses: OpenLyceum/Baton/.github/workflows/shared-codeql.yml@main
 ```
 
 Optional compliance checking:
 
 ```yaml
   compliance:
-    uses: OpenPhysics/Baton/.github/workflows/shared-compliance-check.yml@main
+    uses: OpenLyceum/Baton/.github/workflows/shared-compliance-check.yml@main
     with:
       repo-name: ${{ github.event.repository.name }}
 ```
@@ -110,7 +110,7 @@ on:
 
 jobs:
   deploy:
-    uses: OpenPhysics/Baton/.github/workflows/deploy.yml@main
+    uses: OpenLyceum/Baton/.github/workflows/deploy.yml@main
     permissions:
       contents: read
       pages: write
@@ -124,7 +124,7 @@ and on manual dispatch. It reads [`structure/repos.json`](structure/repos.json),
 and runs [`scripts/check-repo-compliance.sh`](scripts/check-repo-compliance.sh). The gate enforces (FAIL
 unless marked *(warn)*):
 
-- **Legal & README** — no root `CONTRIBUTING.md` / `LICENSE` (org defaults from `OpenPhysics/.github`);
+- **Legal & README** — no root `CONTRIBUTING.md` / `LICENSE` (org defaults from `OpenLyceum/.github`);
   `README.md` has the six sections in order with no extras (**Features → Quick Start → Scripts → Tech
   Stack → License → Contributing**).
 - **CI wiring** — `.github/workflows/ci.yml` calls this repo's reusable `ci.yml` plus
@@ -162,13 +162,13 @@ scripts/check-repo-compliance.sh /path/to/sim-repo
 
 ## Repository catalog
 
-[`structure/repos.json`](structure/repos.json) lists all OpenPhysics repositories with metadata
+[`structure/repos.json`](structure/repos.json) lists all OpenLyceum repositories with metadata
 (`displayName`, `lineage`, `upstream`, framework, deployed URL, physics topics,
 structured `screens`, optional `githubTopics` / `shortDescription`, `status`, etc.).
 Schema: [`structure/repos.schema.json`](structure/repos.schema.json) (validated by
 [`scripts/check-repos-catalog.sh`](scripts/check-repos-catalog.sh)). The compliance workflow,
 Pages landing page, and the catalog scripts consume this file. Ground-truth upstream references
-for sims live in the sibling [`Baseline`](https://github.com/OpenPhysics/Baseline) repo (also
+for sims live in the sibling [`Baseline`](https://github.com/OpenLyceum/Baseline) repo (also
 listed here as `type: tool`). See
 [`scripts/README.md`](scripts/README.md) for the tooling:
 
@@ -182,14 +182,14 @@ scripts/sync-github-settings.sh --check
 ```
 
 **Adding a new simulation** (create from template, catalog, screenshot, WebP, Pages,
-OpenPhysics README): run
+OpenLyceum README): run
 [`scripts/create-sim.sh --onboard`](scripts/create-sim.sh) (add `--pr` to open PRs), then
 see [`doc/add-simulation.md`](doc/add-simulation.md) for any remaining hand edits
 (`.github` profile tallies). The webpage is generated from `repos.json` + `screenshots/` —
 there is no separate Markdown card list to edit.
 
 Scripts assume the `Baton` repo lives beside member repos in a shared workspace; set
-`OPENPHYSICS_WORKSPACE` or pass `--catalog /path/to/repos.json` if your checkout differs.
+`FLEET_WORKSPACE` or pass `--catalog /path/to/repos.json` if your checkout differs.
 
 ## Fleet operations
 
@@ -237,7 +237,7 @@ runs `setup-node` — bump them together:
 [`scripts/check-node-version.sh`](scripts/check-node-version.sh) enforces that they stay in
 sync (run in CI by [`baton-selfcheck.yml`](.github/workflows/baton-selfcheck.yml)), so a half-done
 bump fails fast instead of drifting silently. When sibling member checkouts are present (local
-OpenPhysics workspace), it also asserts each `package.json` matches the same major.
+OpenLyceum workspace), it also asserts each `package.json` matches the same major.
 
 Member repos must keep:
 

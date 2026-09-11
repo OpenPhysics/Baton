@@ -30,9 +30,9 @@ run_pages() {
   # LC_ALL=C keeps the card sort order independent of the developer's locale, so
   # the golden file means the same thing locally and in CI.
   run env LC_ALL=C \
-    OPENPHYSICS_CATALOG="$CATALOG" \
-    OPENPHYSICS_DOCS_DIR="$DOCS" \
-    OPENPHYSICS_SCREENSHOTS_DIR="$SHOTS" \
+    FLEET_CATALOG="$CATALOG" \
+    FLEET_DOCS_DIR="$DOCS" \
+    FLEET_SCREENSHOTS_DIR="$SHOTS" \
     "$BATON_ROOT/scripts/generate-pages-index.sh"
 }
 
@@ -128,14 +128,14 @@ page() {
 @test "derives the card link from deployedUrl, lowercasing the host and dropping the trailing slash" {
   run_pages
   run page
-  assert_output --partial 'href="https://openphysics.github.io/GammaRay/"'
-  refute_output --partial "OpenPhysics.github.io"
+  assert_output --partial 'href="https://exampleorg.github.io/GammaRay/"'
+  refute_output --partial "ExampleOrg.github.io"
 }
 
 @test "falls back to the conventional Pages URL when deployedUrl is null" {
   run_pages
   run page
-  assert_output --partial 'href="https://openphysics.github.io/AlphaSim/"'
+  assert_output --partial 'href="https://exampleorg.github.io/AlphaSim/"'
 }
 
 @test "renders a thumbnail when the WebP exists" {

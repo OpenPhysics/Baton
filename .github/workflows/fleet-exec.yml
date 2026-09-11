@@ -1,6 +1,6 @@
 name: Fleet Exec
 
-# Manually fan a change out across OpenPhysics repos: clone each, run a command,
+# Manually fan a change out across the org's repos: clone each, run a command,
 # and (when apply=true) open one PR per repo. Defaults to a dry-run that only
 # prints diffs. Powered by scripts/fleet-exec.sh.
 

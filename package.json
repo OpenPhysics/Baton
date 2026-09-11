@@ -1,9 +1,9 @@
 {
-  "name": "openphysics-org-scripts",
+  "name": "openlyceum-org-scripts",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Tooling for the OpenPhysics org orchestration repo (Baton): repo metadata helpers, simulation screenshot capture, and the Pages landing page.",
+  "description": "Tooling for the OpenLyceum org orchestration repo (Baton): repo metadata helpers, simulation screenshot capture, and the Pages landing page.",
   "scripts": {
     "screenshots": "bash scripts/generate-screenshots.sh",
     "thumbnails": "node scripts/make-thumbnails.mjs",

@@ -57,8 +57,9 @@ jobs:
               .filter((n) => only.length === 0 || only.includes(n));
             console.log(sims.join("\n"));
           ')
+          PAGES_BASE="$(node -p 'const c = require("./structure/repos.json"); c.pagesBase || `https://${c.organization.toLowerCase()}.github.io`')"
           for sim in "${SIMS[@]}"; do
-            url="https://openphysics.github.io/${sim}/?screens=1"
+            url="${PAGES_BASE}/${sim}/?screens=1"
             echo "Capturing ${sim} from ${url}"
             npx playwright screenshot \
               --browser chromium \
@@ -81,7 +82,7 @@ jobs:
           body: |
             Automated weekly (or manual) refresh of Baton card screenshots from live GitHub Pages.
 
-            - Captured `screenshots/*.png` from `https://openphysics.github.io/<Sim>/`
+            - Captured `screenshots/*.png` from the deployed Pages site for each sim
             - Regenerated `docs/assets/*.webp` via `make-thumbnails.mjs`
             - Regenerated `docs/index.html` via `generate-pages-index.sh`
           branch: chore/refresh-screenshots

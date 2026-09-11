@@ -1,7 +1,7 @@
-# OpenPhysics org scripts
+# OpenLyceum org scripts
 
 Utilities for reading [`structure/repos.json`](../structure/repos.json) and operating on
-OpenPhysics repositories. These scripts are intended for local use and for AI agents working in
+OpenLyceum repositories. These scripts are intended for local use and for AI agents working in
 the monorepo checkout.
 
 ## Prerequisites
@@ -45,7 +45,7 @@ the monorepo checkout.
 
 Primary entry point for agents. Reads `structure/repos.json` and adds computed fields:
 
-- `githubHomepage` — normalized Pages URL (`https://openphysics.github.io/{name}`)
+- `githubHomepage` — normalized Pages URL (`https://openlyceum.github.io/{name}`)
 - `localPath` — sibling directory in the workspace checkout
 - `localExists` — whether that directory is present locally
 
@@ -87,7 +87,7 @@ beside `Baton`. `repos.json` is the single source of truth — there are no subm
 repo appears here the moment it is added to the catalog. Re-runnable and safe: repos already
 on disk are skipped unless `--update` is given (which `git pull --ff-only`s them).
 
-The thin [`OpenPhysics` superproject](https://github.com/OpenPhysics/OpenPhysics)'s
+The thin [`OpenLyceum` superproject](https://github.com/OpenLyceum/OpenLyceum)'s
 `bootstrap.sh` clones `Baton` and then calls this; run it directly once you already have
 `Baton`.
 
@@ -112,7 +112,7 @@ Run any git command across every catalog repo already checked out locally:
 
 ```bash
 # put on PATH once (if ~/.local/bin is already there)
-ln -sfn ~/OpenPhysics/Baton/scripts/fleet ~/.local/bin/fleet
+ln -sfn ~/OpenLyceum/Baton/scripts/fleet ~/.local/bin/fleet
 
 fleet push
 fleet pull --ff-only
@@ -161,7 +161,7 @@ scripts/sync-gitlab-mirror.sh --simulation # later syncs, sims only
 scripts/sync-gitlab-mirror.sh --check      # is the backup current? (read-only)
 ```
 
-Key options: `--group`/`--host` (default `OpenPhysics` on `https://gitlab.com`),
+Key options: `--group`/`--host` (default `OpenLyceum` on `https://gitlab.com`),
 `--visibility private|internal|public` (default private), `--work-dir`, `--fresh`,
 `--no-prune`, plus the usual catalog filters. `.github` is mirrored as `dot-github`
 (GitLab paths cannot start with a dot).
@@ -213,8 +213,8 @@ inspecting a mature sim by hand.
 Roll the [`scenerystack` Claude Code plugin](../.claude-plugin/marketplace.json) out to the
 SceneryStack repos by **merging** the canonical keys from
 [`config/claude-settings.json`](../config/claude-settings.json) into each repo's
-`.claude/settings.json`. It only adds/updates `extraKnownMarketplaces.openphysics` and
-`enabledPlugins["scenerystack@openphysics"]` — existing keys in a repo's settings are preserved.
+`.claude/settings.json`. It only adds/updates `extraKnownMarketplaces.baton` and
+`enabledPlugins["scenerystack@baton"]` — existing keys in a repo's settings are preserved.
 Targets every catalog repo whose framework is `SceneryStack`. Writes files only; commit/push (or
 fan out as PRs via `fleet-exec.sh`) is left to you.
 
@@ -311,7 +311,7 @@ build, or a system Chromium); override with `PLAYWRIGHT_CHROMIUM_EXECUTABLE`.
 
 One-command, end-to-end refresh of every screenshot and the landing page. It chains the three
 pipeline scripts so the step that copies captures into Baton (`make-thumbnails.mjs`) can't be
-forgotten — which is otherwise the easy way to leave `https://openphysics.github.io/Baton/` stale:
+forgotten — which is otherwise the easy way to leave `https://openlyceum.github.io/Baton/` stale:
 
 1. [`generate-screenshots.sh`](generate-screenshots.sh) — capture `<sim>/assets/screenshot.png`
 2. [`make-thumbnails.mjs`](make-thumbnails.mjs) — copy sibling shots → `screenshots/<sim>.png` + `docs/assets/<sim>.webp`
@@ -357,11 +357,11 @@ scripts/parse-repos.sh names --simulation
 Scripts assume the orchestration `Baton` repo lives beside member repos:
 
 ```
-OpenPhysics/
+OpenLyceum/
   Baton/            ← this repo
   DopplerEffect/
   SceneryStackTemplate/
   ...
 ```
 
-If your checkout differs, set `OPENPHYSICS_WORKSPACE` or pass `--catalog /path/to/repos.json`.
+If your checkout differs, set `FLEET_WORKSPACE` or pass `--catalog /path/to/repos.json`.

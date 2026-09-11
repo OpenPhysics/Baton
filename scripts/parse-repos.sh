@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Parse OpenPhysics structure/repos.json for tooling and AI agents.
+# Parse structure/repos.json for tooling and AI agents.
 #
 # Examples:
 #   parse-repos.sh names
@@ -40,7 +40,7 @@ Options:
 
 Environment:
   REPOS_JSON              Path to structure/repos.json
-  OPENPHYSICS_WORKSPACE   Monorepo root containing member repos
+  FLEET_WORKSPACE         Workspace root containing member repos
 EOF
 }
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# generate-screenshots.sh — capture a screenshot of every OpenPhysics simulation.
+# generate-screenshots.sh — capture a screenshot of every simulation.
 #
 # For each SceneryStack simulation listed in structure/repos.json this:
 #   1. builds the sim if it has no dist/ (or --build is given),
@@ -30,8 +30,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Repo root is one level up from scripts/.
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Workspace is the directory holding the org repo and the sibling sim repos.
-WORKSPACE="${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}"
-CATALOG="${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}"
+WORKSPACE="${FLEET_WORKSPACE:-${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}}"
+CATALOG="${FLEET_CATALOG:-${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}}"
 
 FORCE_BUILD=0
 SCREEN=1

@@ -5,7 +5,7 @@ Every simulation (and most tools) call the reusable workflow
 
 ```yaml
 codeql:
-  uses: OpenPhysics/Baton/.github/workflows/shared-codeql.yml@main
+  uses: OpenLyceum/Baton/.github/workflows/shared-codeql.yml@main
 ```
 
 The shared job analyzes JavaScript/TypeScript with the

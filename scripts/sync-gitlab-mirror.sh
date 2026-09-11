@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Mirror every OpenPhysics repository from GitHub to a GitLab group, as an
+# Mirror every repository in the org from GitHub to a GitLab group, as an
 # off-GitHub backup of the fleet's git history.
 #
 # Scope is deliberately narrow: **git data only** — branches, tags, and the
@@ -36,12 +36,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/repos.sh
 source "$SCRIPT_DIR/lib/repos.sh"
 
-ORG="${OPENPHYSICS_ORG:-OpenPhysics}"
+ORG="${FLEET_ORG:-${OPENPHYSICS_ORG:-$(repos_org)}}"
 GITHUB_BASE="${GITHUB_BASE:-https://github.com}"
 GITLAB_HOST="${GITLAB_HOST:-https://gitlab.com}"
-GITLAB_GROUP="${GITLAB_GROUP:-OpenPhysics}"
+GITLAB_GROUP="${GITLAB_GROUP:-$ORG}"
 VISIBILITY="${GITLAB_VISIBILITY:-private}"
-WORK_DIR="${GITLAB_MIRROR_WORK_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/openphysics/gitlab-mirror}"
+WORK_DIR="${GITLAB_MIRROR_WORK_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/${ORG,,}/gitlab-mirror}"
 MODE="sync"
 DRY_RUN=0
 FRESH=0
@@ -75,7 +75,7 @@ Filters (from structure/repos.json):
   --catalog PATH      Override path to repos.json
 
 Options:
-  --group PATH        GitLab group/namespace to mirror into (default: OpenPhysics)
+  --group PATH        GitLab group/namespace to mirror into (default: the GitHub org)
   --host URL          GitLab instance (default: https://gitlab.com)
   --visibility LEVEL  private|internal|public for created projects (default: private)
   --work-dir DIR      Where bare mirrors are cached between runs
@@ -89,7 +89,7 @@ Environment:
   GH_TOKEN / GITHUB_TOKEN Optional. Only needed to read private source repos.
   GITLAB_HOST, GITLAB_GROUP, GITLAB_VISIBILITY, GITLAB_MIRROR_WORK_DIR
                           Defaults for the matching options.
-  OPENPHYSICS_ORG         GitHub org to mirror from (default: OpenPhysics).
+  FLEET_ORG               GitHub org to mirror from (default: catalog organization).
   GITHUB_BASE             Source host (default: https://github.com).
   GITLAB_GIT_BASE         Git host, when it differs from the API host
                           (default: same as GITLAB_HOST).

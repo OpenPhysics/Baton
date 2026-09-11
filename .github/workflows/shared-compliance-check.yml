@@ -20,7 +20,7 @@ jobs:
     # never 'workflow_call'; run for those. The fleet-audit path below only makes
     # sense in Baton itself (it needs structure/repos.json), so dispatch/schedule in
     # any other repo — e.g. a sim's weekly cron — takes the single-repo path too.
-    if: github.repository != 'OpenPhysics/Baton' || (github.event_name != 'workflow_dispatch' && github.event_name != 'schedule')
+    if: github.repository != format('{0}/Baton', github.repository_owner) || (github.event_name != 'workflow_dispatch' && github.event_name != 'schedule')
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository under test
@@ -28,10 +28,10 @@ jobs:
 
       # The compliance script lives in this orchestration repo (Baton), not in the
       # caller, so check it out alongside and run it against the caller's working tree.
-      - name: Check out OpenPhysics/Baton for the compliance script
+      - name: Check out Baton for the compliance script
         uses: actions/checkout@v7.0.1
         with:
-          repository: OpenPhysics/Baton
+          repository: ${{ github.repository_owner }}/Baton
           path: .org-compliance
 
       - name: Run compliance checks
@@ -41,7 +41,7 @@ jobs:
             REPO="${{ github.event.repository.name }}"
           fi
           echo "Checking repository: $REPO"
-          GITHUB_REPOSITORY="OpenPhysics/$REPO" \
+          GITHUB_REPOSITORY="${{ github.repository_owner }}/$REPO" \
             bash .org-compliance/scripts/check-repo-compliance.sh "$PWD"
 
   # Org-wide audit (dispatch/schedule). Fan out one sim per runner so they audit in
@@ -49,7 +49,7 @@ jobs:
   # sim list from the catalog, `audit` checks each, `report` aggregates pass/fail.
   discover-all:
     # Baton-only: the catalog (structure/repos.json) lives here, not in the callers.
-    if: github.repository == 'OpenPhysics/Baton' && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    if: github.repository == format('{0}/Baton', github.repository_owner) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.list.outputs.matrix }}
@@ -71,7 +71,7 @@ jobs:
       matrix:
         sim: ${{ fromJson(needs.discover-all.outputs.matrix) }}
     steps:
-      - name: Check out OpenPhysics/Baton for the compliance script
+      - name: Check out Baton for the compliance script
         uses: actions/checkout@v7.0.1
 
       - name: Audit ${{ matrix.sim }}
@@ -81,11 +81,11 @@ jobs:
         run: |
           set -uo pipefail
           WORKDIR=$(mktemp -d)
-          if ! gh repo clone "OpenPhysics/$SIM" "$WORKDIR" -- --depth 1 --quiet; then
+          if ! gh repo clone "${{ github.repository_owner }}/$SIM" "$WORKDIR" -- --depth 1 --quiet; then
             echo "| $SIM | ❌ clone |" > "row-$SIM.md"
             exit 1
           fi
-          if GITHUB_REPOSITORY="OpenPhysics/$SIM" ./scripts/check-repo-compliance.sh "$WORKDIR"; then
+          if GITHUB_REPOSITORY="${{ github.repository_owner }}/$SIM" ./scripts/check-repo-compliance.sh "$WORKDIR"; then
             echo "| $SIM | ✅ |" > "row-$SIM.md"
             rc=0
           else
@@ -105,7 +105,7 @@ jobs:
 
   report-all:
     needs: [discover-all, audit]
-    if: always() && github.repository == 'OpenPhysics/Baton' && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    if: always() && github.repository == format('{0}/Baton', github.repository_owner) && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
     runs-on: ubuntu-latest
     steps:
       - name: Download rows

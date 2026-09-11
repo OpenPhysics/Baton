@@ -1,6 +1,6 @@
-# OpenPhysics Accessibility Convention
+# OpenLyceum Accessibility Convention
 
-This document defines the **single, shared accessibility pattern** every OpenPhysics
+This document defines the **single, shared accessibility pattern** every OpenLyceum
 SceneryStack simulation must follow, so that all sims behave the same way internally and
 present the same experience to assistive-technology users. It is built on SceneryStack's
 accessibility toolkit — see https://scenerystack.org/accessibility/a11y_guides.

@@ -1,6 +1,6 @@
 # Fleet authentication
 
-Cross-repo **writes** — pushing branches and opening PRs in other OpenPhysics repos from
+Cross-repo **writes** — pushing branches and opening PRs in other OpenLyceum repos from
 [`fleet-exec.yml`](../.github/workflows/fleet-exec.yml) / [`scripts/fleet-exec.sh`](../scripts/fleet-exec.sh)
 with `--apply` — need a token with write access to **those** repos.
 
@@ -23,7 +23,7 @@ choice for ongoing org-wide automation (short-lived tokens, not tied to a person
 1. Create the token at **GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token**
    (<https://github.com/settings/personal-access-tokens>).
 2. Set:
-   - **Resource owner**: `OpenPhysics` (not your personal account).
+   - **Resource owner**: `OpenLyceum` (not your personal account).
    - **Repository access**: *All repositories*, or *Only select repositories* and pick the sim
      repos listed in [`structure/repos.json`](../structure/repos.json).
    - **Repository permissions**:
@@ -36,7 +36,7 @@ choice for ongoing org-wide automation (short-lived tokens, not tied to a person
 3. Add it as a Baton repository secret named **`FLEET_PAT`**:
 
    ```bash
-   gh secret set FLEET_PAT --repo OpenPhysics/Baton
+   gh secret set FLEET_PAT --repo OpenLyceum/Baton
    # paste the token when prompted
    ```
 
@@ -58,12 +58,12 @@ scopes cleanly to the installed repos.
    - **Permissions**: Contents → Read and write; Pull requests → Read and write
      (+ Workflows → Read and write only if editing workflow files).
    - No webhook needed.
-2. **Install** the app on the OpenPhysics repos you want to target.
+2. **Install** the app on the OpenLyceum repos you want to target.
 3. Generate a **private key** and store two secrets on Baton:
 
    ```bash
-   gh secret set FLEET_APP_ID      --repo OpenPhysics/Baton   # the app's numeric ID
-   gh secret set FLEET_APP_PRIVATE_KEY --repo OpenPhysics/Baton < path/to/app-private-key.pem
+   gh secret set FLEET_APP_ID      --repo OpenLyceum/Baton   # the app's numeric ID
+   gh secret set FLEET_APP_PRIVATE_KEY --repo OpenLyceum/Baton < path/to/app-private-key.pem
    ```
 4. Mint a token in the workflow and hand it to `fleet-exec` as `GH_TOKEN`. Add this step before
    "Run fleet-exec" in [`fleet-exec.yml`](../.github/workflows/fleet-exec.yml):
@@ -75,7 +75,7 @@ scopes cleanly to the installed repos.
      with:
        app-id: ${{ secrets.FLEET_APP_ID }}
        private-key: ${{ secrets.FLEET_APP_PRIVATE_KEY }}
-       owner: OpenPhysics
+       owner: OpenLyceum
    ```
 
    then change the `GH_TOKEN` line to:
@@ -93,7 +93,7 @@ scopes cleanly to the installed repos.
    repo's push permission via the API and opens nothing:
 
    ```bash
-   gh workflow run fleet-exec.yml --repo OpenPhysics/Baton -f target=simulation -f check_auth=true
+   gh workflow run fleet-exec.yml --repo OpenLyceum/Baton -f target=simulation -f check_auth=true
    # or a single repo: -f only=Resonance -f check_auth=true
    # locally: scripts/fleet-exec.sh --simulation --check-auth
    ```

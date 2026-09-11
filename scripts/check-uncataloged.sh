@@ -8,7 +8,7 @@
 # in an allowlist so they don't trip the check.
 #
 #   scripts/check-uncataloged.sh                                  # live org vs catalog
-#   OPENPHYSICS_ORG=OpenPhysics scripts/check-uncataloged.sh
+#   FLEET_ORG=SomeOrg scripts/check-uncataloged.sh              # audit another org
 #   UNCATALOGED_ALLOWLIST="Foo Bar" scripts/check-uncataloged.sh  # extra allowed names
 #
 # Requires: gh (authed), jq. Exits 1 if any uncataloged repo is found.
@@ -16,13 +16,15 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-ORG="${OPENPHYSICS_ORG:-OpenPhysics}"
-CATALOG="${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}"
+CATALOG="${FLEET_CATALOG:-${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}}"
 ALLOWLIST_FILE="${UNCATALOGED_ALLOWLIST_FILE:-$REPO_ROOT/structure/uncataloged-allowlist.txt}"
 
 command -v gh >/dev/null 2>&1 || { echo "gh CLI is required" >&2; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "jq is required" >&2; exit 1; }
 [[ -f "$CATALOG" ]] || { echo "missing catalog: $CATALOG" >&2; exit 1; }
+
+# Read after the jq/catalog guards above, so a missing tool reports cleanly.
+ORG="${FLEET_ORG:-${OPENPHYSICS_ORG:-$(jq -r '.organization' "$CATALOG")}}"
 
 if ! gh auth status >/dev/null 2>&1; then
   echo "gh is not authenticated; run: gh auth login" >&2
@@ -31,7 +33,7 @@ fi
 
 # Default intentional non-members. Augment via $UNCATALOGED_ALLOWLIST
 # (whitespace separated) and/or an allowlist file (one name per line).
-default_allow="OpenPhysics osbooks-university-physics-bundle"
+default_allow="$ORG osbooks-university-physics-bundle"
 allow="$default_allow"
 [[ -n "${UNCATALOGED_ALLOWLIST:-}" ]] && allow="$allow ${UNCATALOGED_ALLOWLIST}"
 if [[ -f "$ALLOWLIST_FILE" ]]; then

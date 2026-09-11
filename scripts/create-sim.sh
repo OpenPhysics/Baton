@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Create a new OpenPhysics simulation from SceneryStackTemplate.
+# Create a new simulation from SceneryStackTemplate.
 #
 # Uses the GitHub template repository (Use this template) when creating a remote,
 # then runs npm rename + scaffold-screens so single- or multi-screen sims share
 # one entrypoint. Optional --onboard finishes fleet landing-page assets and the
-# workspace README; --pr opens follow-up PRs in Baton / OpenPhysics.
+# workspace README; --pr opens follow-up PRs in Baton / the superproject.
 #
 # Examples:
 #   scripts/create-sim.sh --repo Friction --name "Friction" --topics "friction,forces" --onboard --pr
@@ -16,8 +16,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/repos.sh
 source "$SCRIPT_DIR/lib/repos.sh"
 
-ORG="${OPENPHYSICS_ORG:-OpenPhysics}"
-TEMPLATE_REPO="${TEMPLATE_REPO:-OpenPhysics/SceneryStackTemplate}"
+ORG="${FLEET_ORG:-${OPENPHYSICS_ORG:-$(repos_org)}}"
+TEMPLATE_REPO="${TEMPLATE_REPO:-$ORG/SceneryStackTemplate}"
+# The superproject repo is named after the org by convention.
+SUPERPROJECT="${FLEET_SUPERPROJECT:-$ORG}"
+PAGES_BASE="$(repos_pages_base)"
 WORKSPACE="$(repos_workspace_root)"
 BATON_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
@@ -56,20 +59,20 @@ Options:
   --topics LIST        Comma-separated physicsTopics (required with --catalog/--onboard)
   --github-topics LIST Optional extra GitHub topics (kebab-case), e.g. game,pwa
   --shared-model       Scaffold src/common/model/SharedModel.ts; each screen composes it
-  --path DIR           Checkout path (default: $OPENPHYSICS_WORKSPACE/<repo>)
+  --path DIR           Checkout path (default: $FLEET_WORKSPACE/<repo>)
   --description TEXT   Full catalog / Pages card description
   --short-description TEXT  Optional GitHub About blurb (≤350 chars)
   --local-only         Copy local SceneryStackTemplate; do not create a GitHub repo
   --no-push            Do not git push the sim (default: no auto-push unless --pr)
   --catalog            Insert a repos.json entry in Baton (no commit)
   --onboard            Full fleet onboarding: catalog + screenshot + WebP + Pages
-                       index + GitHub baseline + OpenPhysics README Layout row
+                       index + GitHub baseline + superproject README Layout row
                        (implies --catalog)
   --existing           Adopt a repo already on GitHub (cloned if absent locally)
                        instead of creating it from the template. Skip rename /
                        scaffold / install. Requires --catalog or --onboard.
   --pr                 After --onboard, commit/push and open PRs in Baton and
-                       OpenPhysics (and push the sim bootstrap if not --local-only)
+                       the superproject (and push the sim bootstrap if not --local-only)
   -h, --help           Show this help
 
 Requires: gh (unless --local-only), jq, npm, Node 24+.
@@ -101,7 +104,7 @@ insert_catalog_entry() {
 update_workspace_readme() {
   local readme="$WORKSPACE/README.md"
   if [[ ! -f "$readme" ]]; then
-    echo "warning: OpenPhysics README not found at $readme — skip Layout update" >&2
+    echo "warning: superproject README not found at $readme — skip Layout update" >&2
     return 0
   fi
   python3 - "$readme" "$REPO" <<'PY'
@@ -126,7 +129,7 @@ names.sort(key=str.lower)
 new_list = ", ".join(f"`{n}`" for n in names)
 text = text[: m.start(2)] + new_list + text[m.end(2) :]
 open(path, "w", encoding="utf-8").write(text)
-print(f"  readme: inserted `{repo}` into OpenPhysics README Layout (alphabetical)")
+print(f"  readme: inserted `{repo}` into superproject README Layout (alphabetical)")
 PY
 }
 
@@ -239,7 +242,7 @@ EOF
 
 ## Test plan
 - [ ] Card appears under New/original on local \`docs/index.html\`
-- [ ] Card links to https://openphysics.github.io/${REPO}/
+- [ ] Card links to ${PAGES_BASE}/${REPO}/
 - [ ] \`scripts/parse-repos.sh names --simulation | grep ${REPO}\`
 
 EOF
@@ -252,10 +255,10 @@ EOF
     fi
   )
 
-  # ── OpenPhysics PR ────────────────────────────────────────────────────────
+  # ── Superproject PR ───────────────────────────────────────────────────────
   if [[ -d "$WORKSPACE/.git" ]]; then
     echo ""
-    echo "Opening OpenPhysics README PR..."
+    echo "Opening superproject README PR..."
     (
       cd "$WORKSPACE"
       git fetch origin main >/dev/null 2>&1 || true
@@ -263,7 +266,7 @@ EOF
       git checkout -B "$op_branch" origin/main 2>/dev/null || git checkout -B "$op_branch"
       git add README.md
       if git diff --cached --quiet; then
-        echo "  openphysics: nothing to commit"
+        echo "  superproject: nothing to commit"
       else
         git commit -m "$(cat <<EOF
 docs: add ${REPO} to the Layout simulation list
@@ -273,7 +276,7 @@ EOF
       fi
       if [[ "$NO_PUSH" -eq 0 ]]; then
         git push -u origin "$op_branch"
-        op_pr="$(gh pr create --repo "$ORG/OpenPhysics" --base main --head "$op_branch" \
+        op_pr="$(gh pr create --repo "$ORG/$SUPERPROJECT" --base main --head "$op_branch" \
           --title "docs: add ${REPO} to Layout" \
           --body "$(cat <<EOF
 ## Summary
@@ -285,14 +288,14 @@ EOF
 EOF
 )" 2>/dev/null || true)"
         if [[ -n "$op_pr" ]]; then
-          echo "  openphysics PR: $op_pr"
+          echo "  superproject PR: $op_pr"
         else
-          echo "  openphysics: branch pushed ($op_branch); create/update the PR manually if needed"
+          echo "  superproject: branch pushed ($op_branch); create/update the PR manually if needed"
         fi
       fi
     )
   else
-    echo "warning: OpenPhysics superproject is not a git checkout — skip README PR" >&2
+    echo "warning: superproject is not a git checkout — skip README PR" >&2
   fi
 }
 
@@ -584,7 +587,7 @@ else
       --public \
       --template "$TEMPLATE_REPO" \
       --description "$DESCRIPTION" \
-      --homepage "https://openphysics.github.io/${REPO}" \
+      --homepage "${PAGES_BASE}/${REPO}" \
       --clone
   )
   if [[ "$(basename "$TARGET_PATH")" != "$REPO" ]]; then
@@ -631,7 +634,7 @@ entry="$(jq -n \
   --arg display "$SIM_NAME" \
   --arg desc "$DESCRIPTION" \
   --arg short "$SHORT_DESCRIPTION" \
-  --arg url "https://openphysics.github.io/${REPO}" \
+  --arg url "${PAGES_BASE}/${REPO}" \
   --argjson screens "$catalog_screens_json" \
   --argjson topics "$catalog_topics_json" \
   --argjson githubTopics "$catalog_github_topics_json" \
@@ -683,11 +686,11 @@ if [[ "$ONBOARD" -eq 1 ]]; then
   echo "  - Baton screenshots/${REPO}.png + docs/assets/${REPO}.webp"
   echo "  - Baton docs/index.html"
   echo "  - GitHub settings + metadata + Dependabot + Claude plugin applied"
-  echo "  - OpenPhysics README Layout row"
+  echo "  - superproject README Layout row"
   if [[ "$OPEN_PR" -eq 1 ]]; then
     echo "  - follow-up PRs opened (see above)"
   else
-    echo "  Review and commit; pass --pr next time to open Baton + OpenPhysics PRs."
+    echo "  Review and commit; pass --pr next time to open Baton + superproject PRs."
   fi
 else
   echo "Next steps (see Baton/doc/add-simulation.md):"

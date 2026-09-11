@@ -2,7 +2,7 @@
 /**
  * retrofit-template-hardening.mjs
  *
- * Ports portable pieces of OpenPhysics/SceneryStackTemplate@ab309a1 into the
+ * Ports portable pieces of SceneryStackTemplate@ab309a1 into the
  * current working directory (a SceneryStack sim checkout). Idempotent.
  *
  * Usage (from a sim root, or via fleet-exec):
@@ -323,7 +323,10 @@ function patchReadme() {
     return;
   }
 
-  const badge = `[![CI](https://github.com/OpenPhysics/${REPO_NAME}/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenPhysics/${REPO_NAME}/actions/workflows/ci.yml)`;
+  // Relative form: GitHub resolves ../../ against the repo serving the README,
+  // so the badge carries no org or repo name and survives any rename.
+  const badge =
+    "[![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)";
   if (!text.includes("actions/workflows/ci.yml/badge.svg")) {
     text = text.replace(/^(#[^\n]+)\n/, `$1\n\n${badge}\n`);
     log("README: added CI badge");

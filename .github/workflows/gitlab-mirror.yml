@@ -64,7 +64,7 @@ jobs:
         env:
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
           GITLAB_HOST: ${{ vars.GITLAB_HOST || 'https://gitlab.com' }}
-          GITLAB_GROUP: ${{ vars.GITLAB_GROUP || 'OpenPhysics' }}
+          GITLAB_GROUP: ${{ vars.GITLAB_GROUP || github.repository_owner }}
           GITLAB_VISIBILITY: ${{ vars.GITLAB_VISIBILITY || 'private' }}
           # Reading the (public) source repos; keeps clones off the anonymous rate limit.
           GH_TOKEN: ${{ github.token }}

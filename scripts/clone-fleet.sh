@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Clone (or update) every OpenPhysics repo from structure/repos.json into the
+# Clone (or update) every repo in structure/repos.json into the
 # workspace, side by side. This is what turns an empty workspace — or the thin
-# OpenPhysics superproject — into the full org checkout the other scripts expect.
+# superproject — into the full org checkout the other scripts expect.
 #
 # repos.json is the single source of truth: there are no submodules, so adding a
 # repo to the catalog is all it takes for this to clone it. Missing repos are
@@ -24,7 +24,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/repos.sh
 source "$SCRIPT_DIR/lib/repos.sh"
 
-ORG="OpenPhysics"
+ORG="${FLEET_ORG:-${OPENPHYSICS_ORG:-$(repos_org)}}"
 SCHEME="ssh"
 UPDATE=0
 DRY_RUN=0
@@ -56,7 +56,7 @@ Options:
   -h, --help          Show this help
 
 Environment:
-  OPENPHYSICS_WORKSPACE   Workspace root to clone into (default: Baton/..)
+  FLEET_WORKSPACE         Workspace root to clone into (default: Baton/..)
 EOF
 }
 

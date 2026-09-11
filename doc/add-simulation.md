@@ -1,13 +1,13 @@
 # Adding a simulation to the fleet
 
-Checklist for bringing a new SceneryStack sim into OpenPhysics end-to-end: GitHub repo,
+Checklist for bringing a new SceneryStack sim into OpenLyceum end-to-end: GitHub repo,
 [`structure/repos.json`](../structure/repos.json) catalog entry, screenshots, and the org
-landing page at [openphysics.github.io/Baton](https://openphysics.github.io/Baton/).
+landing page at [openlyceum.github.io/Baton](https://openlyceum.github.io/Baton/).
 
 > **Two different lists.** The org **landing page** in Baton (`docs/index.html`) is
 > **generated** from `repos.json` plus committed screenshots — no hand-edited card
 > Markdown. Separately, the **workspace bootstrapper** repo
-> [`OpenPhysics/README.md`](https://github.com/OpenPhysics/OpenPhysics/blob/main/README.md)
+> [`OpenLyceum/README.md`](https://github.com/OpenLyceum/OpenLyceum/blob/main/README.md)
 > has a **hand-edited** sim list in its `## Layout` table; that file is *not* generated
 > from the catalog and must be updated by hand when you add a sim (see §7).
 
@@ -19,7 +19,7 @@ landing page at [openphysics.github.io/Baton](https://openphysics.github.io/Bato
 scaffolds screens, runs check):
 
 ```bash
-# From the OpenPhysics workspace (Baton sibling to sims)
+# From the OpenLyceum workspace (Baton sibling to sims)
 Baton/scripts/create-sim.sh \
   --repo MyNewSim \
   --name "My New Sim" \
@@ -33,11 +33,11 @@ Baton/scripts/create-sim.sh \
 Omit `--screens` for a single screen named after `--name`. `--shared-model` scaffolds
 `src/common/model/SharedModel.ts` (fleet-style composition). `--onboard` inserts the catalog row, captures a
 screenshot, builds the WebP card, regenerates `docs/index.html`, and updates the
-OpenPhysics README Layout table; `--pr` opens Baton + OpenPhysics PRs.
+OpenLyceum README Layout table; `--pr` opens Baton + OpenLyceum PRs.
 Pass `--local-only` to bootstrap from a local `SceneryStackTemplate` checkout without
 creating a GitHub repo.
 
-**Or — GitHub UI:** open [SceneryStackTemplate](https://github.com/OpenPhysics/SceneryStackTemplate),
+**Or — GitHub UI:** open [SceneryStackTemplate](https://github.com/OpenLyceum/SceneryStackTemplate),
 click **Use this template**, then in the new clone:
 
 ```bash
@@ -48,13 +48,13 @@ npm run check
 ```
 
 Then confirm:
-- `.github/workflows/ci.yml` calls `OpenPhysics/Baton/.../ci.yml@main`
+- `.github/workflows/ci.yml` calls `OpenLyceum/Baton/.../ci.yml@main`
 - `.github/workflows/deploy.yml` (or equivalent) calls Baton's reusable Pages deploy and allows `workflow_dispatch`
 - README follows the six-section outline (enforced by compliance — see
   [`CONVENTIONS.md`](../CONVENTIONS.md))
 
 In the GitHub repo settings, enable **Pages → Source: GitHub Actions**, then merge a
-green `main` build so `https://openphysics.github.io/<SimName>/` goes live.
+green `main` build so `https://openlyceum.github.io/<SimName>/` goes live.
 
 ---
 
@@ -75,7 +75,7 @@ Edit [`structure/repos.json`](../structure/repos.json). Insert a new object in `
   "framework": "SceneryStack",
   "description": "One or two sentences for the landing-page card (can be longer than GitHub’s 350-char About limit).",
   "shortDescription": "Optional shorter blurb used for the GitHub About sidebar (≤350 chars).",
-  "deployedUrl": "https://openphysics.github.io/MyNewSim",
+  "deployedUrl": "https://openlyceum.github.io/MyNewSim",
   "physicsTopics": ["topic-a", "topic-b"],
   "githubTopics": ["optional-extra-topic"],
   "screens": [
@@ -94,7 +94,7 @@ Edit [`structure/repos.json`](../structure/repos.json). Insert a new object in `
 | `upstream` | For `phet` / `naap` ports: `{ "org", "name", "url" }` pointing at the source lab. Otherwise `null`. |
 | `description` | Full blurb on the Pages card. |
 | `shortDescription` | Optional. GitHub About text (≤350 chars). When omitted, metadata sync uses `description` (truncated if needed). |
-| `deployedUrl` | Canonical Pages URL with lowercase `openphysics` host (trailing slash optional). |
+| `deployedUrl` | Canonical Pages URL with lowercase `openlyceum` host (trailing slash optional). |
 | `physicsTopics` | Required for simulations (non-empty). Up to three tags are shown on the card; all are slugified into GitHub topics. |
 | `githubTopics` | Optional extra kebab-case GitHub topics (e.g. `game`, `pwa`) beyond the base set + `physicsTopics`. |
 | `screens` | Required for simulations: `{ "id", "title" }` objects. `id` is kebab-case (usually `src/<id>/`). |
@@ -111,14 +111,14 @@ scripts/parse-repos.sh names --simulation | grep MyNewSim
 
 ## 3. Pull the repo into the workspace
 
-From the OpenPhysics workspace root (sibling of `Baton`):
+From the OpenLyceum workspace root (sibling of `Baton`):
 
 ```bash
 ./bootstrap.sh --update
 # or: Baton/scripts/clone-fleet.sh --update
 ```
 
-Confirm `../MyNewSim` (or `$OPENPHYSICS_WORKSPACE/MyNewSim`) exists beside `Baton`.
+Confirm `../MyNewSim` (or `$FLEET_WORKSPACE/MyNewSim`) exists beside `Baton`.
 
 ---
 
@@ -168,7 +168,7 @@ Commit in **Baton** at least:
 
 ### Option B — After Pages is live (CI)
 
-Once `https://openphysics.github.io/MyNewSim/` deploys, run the
+Once `https://openlyceum.github.io/MyNewSim/` deploys, run the
 [`refresh-screenshots.yml`](../.github/workflows/refresh-screenshots.yml) workflow
 (workflow_dispatch; optional `repos: MyNewSim` input). It captures live Pages, regenerates
 WebPs + `docs/index.html`, and opens a PR. Useful for refresh; for a brand-new sim, Option A
@@ -217,7 +217,7 @@ the sim up automatically from the catalog (no workflow edit required).
 
 ## 7. Update the workspace README (hand-edited)
 
-The [`OpenPhysics`](https://github.com/OpenPhysics/OpenPhysics) superproject README is **not**
+The [`OpenLyceum`](https://github.com/OpenLyceum/OpenLyceum) superproject README is **not**
 generated. Its `## Layout` table lists every repo type in prose — simulations appear as a
 comma-separated row of backtick names:
 
@@ -227,10 +227,10 @@ comma-separated row of backtick names:
 
 When you add a sim:
 
-1. Open `OpenPhysics/README.md` on `main`.
+1. Open `OpenLyceum/README.md` on `main`.
 2. Append `` `MyNewSim` `` to that simulation row (keep **alphabetical** order with the
    other names).
-3. Open a PR in **OpenPhysics** (separate from the Baton catalog PR).
+3. Open a PR in **OpenLyceum** (separate from the Baton catalog PR).
 
 `bootstrap.sh` / `clone-fleet.sh` read `repos.json`, not this README — the table is for
 humans cloning the workspace, not for tooling. If you skip this step the sim still clones and
@@ -274,12 +274,12 @@ Regenerate the landing page after catalog changes: `npm run pages` (see §4).
 
 | Location | Repo | What to update |
 |---|---|---|
-| [`OpenPhysics/README.md`](https://github.com/OpenPhysics/OpenPhysics/blob/main/README.md) `## Layout` | OpenPhysics | Comma-separated sim names (§7) — **no total count** in that file |
-| [`.github/profile/README.md`](https://github.com/OpenPhysics/.github/blob/main/profile/README.md) | `.github` | Top stats row `` **N** simulations ``; add a table row under **NAAP**, **PhET**, or **Other simulations** (match `lineage`) |
+| [`OpenLyceum/README.md`](https://github.com/OpenLyceum/OpenLyceum/blob/main/README.md) `## Layout` | OpenLyceum | Comma-separated sim names (§7) — **no total count** in that file |
+| [`.github/profile/README.md`](https://github.com/OpenLyceum/.github/blob/main/profile/README.md) | `.github` | Top stats row `` **N** simulations ``; add a table row under **NAAP**, **PhET**, or **Other simulations** (match `lineage`) |
 | [`CONVENTIONS.md`](../CONVENTIONS.md) scope blockquote | Baton | `` As of YYYY-MM-DD that is N sims … `` — bump **N**, date, and example names if you use them |
 | [`ACCESSIBILITY.md`](../ACCESSIBILITY.md) scope blockquote | Baton | Same pattern as CONVENTIONS |
 
-The org **profile README** is what visitors see on github.com/OpenPhysics — it is separate from
+The org **profile README** is what visitors see on github.com/OpenLyceum — it is separate from
 the Baton landing page and from the workspace bootstrapper README. All three can drift
 independently.
 
@@ -303,9 +303,9 @@ independently.
 - [ ] `scripts/sync-github-settings.sh --apply --repo <Sim>` applied
 - [ ] `scripts/sync-github-metadata.sh --repo <Sim>` applied
 
-**OpenPhysics** (hand-edited — separate PR)
+**OpenLyceum** (hand-edited — separate PR)
 
-- [ ] `` `MyNewSim` `` added to the simulation row in `OpenPhysics/README.md` `## Layout`
+- [ ] `` `MyNewSim` `` added to the simulation row in `OpenLyceum/README.md` `## Layout`
 
 **`.github` org profile** (hand-edited — separate PR)
 
@@ -319,5 +319,5 @@ independently.
 **Verify**
 
 - [ ] Card appears under the right section on a local `docs/index.html` preview
-- [ ] After Baton `main` deploy, card appears on https://openphysics.github.io/Baton/
-- [ ] Card links to https://openphysics.github.io/\<Sim\>/
+- [ ] After Baton `main` deploy, card appears on https://openlyceum.github.io/Baton/
+- [ ] Card links to https://openlyceum.github.io/\<Sim\>/

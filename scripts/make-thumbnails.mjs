@@ -20,7 +20,7 @@ const REPOS_JSON = join(REPO_ROOT, "structure", "repos.json");
 const SCREENSHOTS_DIR = join(REPO_ROOT, "screenshots");
 const ASSETS_DIR = join(REPO_ROOT, "docs", "assets");
 // Sibling sim repos live beside this repo in the workspace checkout.
-const WORKSPACE = process.env.OPENPHYSICS_WORKSPACE || resolve(REPO_ROOT, "..");
+const WORKSPACE = process.env.FLEET_WORKSPACE || process.env.OPENPHYSICS_WORKSPACE || resolve(REPO_ROOT, "..");
 
 // Width of the generated card thumbnails (crisp on ~360px cards at 2x).
 const DEFAULT_THUMB_WIDTH = 760;

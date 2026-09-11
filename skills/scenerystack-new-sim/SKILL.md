@@ -1,11 +1,11 @@
 ---
 name: scenerystack-new-sim
-description: Use when creating a new OpenPhysics SceneryStack simulation from SceneryStackTemplate — forking via create-sim.sh or rename + scaffold-screens, fixing post-rename residue, filling keyboard-help stubs, and onboarding into the fleet catalog. Covers the two-step rename/scaffold flow, stray Sim* type aliases, and common bootstrap gotchas.
+description: Use when creating a new OpenLyceum SceneryStack simulation from SceneryStackTemplate — forking via create-sim.sh or rename + scaffold-screens, fixing post-rename residue, filling keyboard-help stubs, and onboarding into the fleet catalog. Covers the two-step rename/scaffold flow, stray Sim* type aliases, and common bootstrap gotchas.
 ---
 
 # SceneryStack New Sim
 
-New sims start from [`SceneryStackTemplate`](https://github.com/OpenPhysics/SceneryStackTemplate).
+New sims start from [`SceneryStackTemplate`](https://github.com/OpenLyceum/SceneryStackTemplate).
 Prefer **`Baton/scripts/create-sim.sh`** — it creates the repo (or adopts `--existing` /
 `--local-only`), runs rename + scaffold, `npm run fix`, and `npm run check`. Fleet
 onboarding (catalog, screenshot, Pages) is documented in
@@ -15,7 +15,7 @@ onboarding (catalog, screenshot, Pages) is documented in
 ## Preferred path
 
 ```bash
-# From the OpenPhysics workspace (Baton sibling to sims)
+# From the OpenLyceum workspace (Baton sibling to sims)
 Baton/scripts/create-sim.sh \
   --repo MyNewSim \
   --name "My New Sim" \
@@ -27,7 +27,7 @@ Baton/scripts/create-sim.sh \
 ```
 
 Omit `--screens` for a single screen named after `--name`. `--onboard` enables GitHub
-Pages and security defaults; `--pr` opens the Baton / OpenPhysics catalog PRs.
+Pages and security defaults; `--pr` opens the Baton / OpenLyceum catalog PRs.
 
 ## Manual two-step flow
 

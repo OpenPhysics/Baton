@@ -1,11 +1,11 @@
 ---
 name: scenerystack-code-review
-description: Use to run a pre-release Code Review (CRC) on an OpenPhysics SceneryStack sim built from the SceneryStack template — build/run/fuzz checks, memory-leak audit, performance, usability, i18n, repo-structure conformance, coding conventions, math libraries, maintainability, and accessibility. Trigger when asked to "code review", "do a CRC", "pre-release review", or audit a sim against project standards.
+description: Use to run a pre-release Code Review (CRC) on an OpenLyceum SceneryStack sim built from the SceneryStack template — build/run/fuzz checks, memory-leak audit, performance, usability, i18n, repo-structure conformance, coding conventions, math libraries, maintainability, and accessibility. Trigger when asked to "code review", "do a CRC", "pre-release review", or audit a sim against project standards.
 ---
 
 # SceneryStack Code Review (CRC)
 
-A Code Review is the pre-release audit of an OpenPhysics sim against project standards. Our sims are
+A Code Review is the pre-release audit of an OpenLyceum sim against project standards. Our sims are
 **Vite + TypeScript + Biome** projects forked from `SceneryStackTemplate` (`npm run rename`), so
 this checklist is tailored to that layout (`src/`, `doc/`, `public/`, `biome.json`) — **not** the classic
 PhET `js/`/grunt layout. Related skills: scenerystack-new-sim, scenerystack-accessibility,
@@ -121,7 +121,7 @@ accessed through `src/i18n/StringManager.ts`.
 
 Compare against `SceneryStackTemplate`. Source lives in `src/`, not `js/`; tooling is Biome + Vite.
 
-- [ ] Repo name matches the sim title (e.g. "The Ramp" → `TheRamp` per OpenPhysics naming).
+- [ ] Repo name matches the sim title (e.g. "The Ramp" → `TheRamp` per OpenLyceum naming).
 - [ ] Top-level layout matches the template (resource dirs may be absent if unused):
 
   ```
@@ -147,7 +147,7 @@ Compare against `SceneryStackTemplate`. Source lives in `src/`, not `js/`; tooli
     .github/CODEOWNERS
   ```
 
-- [ ] No local `LICENSE` or `CONTRIBUTING.md` — org defaults from `OpenPhysics/.github` apply
+- [ ] No local `LICENSE` or `CONTRIBUTING.md` — org defaults from `OpenLyceum/.github` apply
   (compliance fails if a root `LICENSE` is present).
 - [ ] `README.md` follows the six-section outline only: Features / Quick Start / Scripts /
   Tech Stack / License / Contributing (no extra top-level `##` sections).
@@ -286,5 +286,5 @@ scenerystack-accessibility and the repo's `SimScreenSummaryContent.ts` / `SimKey
 
 ---
 
-*PhET-iO is not used in OpenPhysics template sims; if a sim adds it, review against the upstream PhET-iO
+*PhET-iO is not used in OpenLyceum template sims; if a sim adds it, review against the upstream PhET-iO
 instrumentation guide separately.*

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sync canonical Dependabot configs from Baton/config/ to OpenPhysics repositories.
+# Sync canonical Dependabot configs from Baton/config/ to the fleet repositories.
 #
 # Targets are read from structure/repos.json (not a hardcoded list):
 #   - Baton itself          → config/dependabot-npm.yml (Baton ships a package.json with devDeps)
@@ -9,7 +9,7 @@
 #       • jscd48, tscd48, pyro, Almanach (other npm packages in the org)
 #   - pycd48                  → config/dependabot-pip.yml
 #
-# Writes sibling checkouts under OPENPHYSICS_WORKSPACE; skips repos that are not
+# Writes sibling checkouts under FLEET_WORKSPACE; skips repos that are not
 # present locally (clone with clone-fleet.sh first). Commit/push is left to you
 # or to fleet-exec.sh.
 #
@@ -21,8 +21,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONFIG_DIR="$REPO_ROOT/config"
-CATALOG="${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}"
-WORKSPACE="${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}"
+CATALOG="${FLEET_CATALOG:-${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}}"
+WORKSPACE="${FLEET_WORKSPACE:-${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}}"
 
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 1; }
 [ -f "$CATALOG" ] || { echo "missing catalog: $CATALOG" >&2; exit 1; }

@@ -98,10 +98,10 @@ setup() {
 }
 
 @test "ci.yml not calling the shared reusable workflow fails" {
-  sed -i 's|OpenPhysics/Baton/.github/workflows/ci.yml@main|some/other/workflow.yml@main|' "$SIM/.github/workflows/ci.yml"
+  sed -i "s|$(fleet_org)/Baton/.github/workflows/ci.yml@main|some/other/workflow.yml@main|" "$SIM/.github/workflows/ci.yml"
   run_compliance "$SIM"
   assert_failure
-  assert_output --partial "ci.yml must call OpenPhysics/Baton reusable workflow"
+  assert_output --partial "ci.yml must call $(fleet_org)/Baton reusable workflow"
 }
 
 @test "ci.yml without the shared dependency-review workflow fails" {
@@ -245,7 +245,7 @@ setup() {
   echo '{"enabledPlugins": {}}' >"$SIM/.claude/settings.json"
   run_compliance "$SIM"
   assert_failure
-  assert_output --partial "does not enable the scenerystack@openphysics plugin"
+  assert_output --partial "does not enable the $(fleet_plugin_id) plugin"
 }
 
 # ── Colors ────────────────────────────────────────────────────────────────────

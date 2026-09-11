@@ -8,7 +8,7 @@
 #   2. make-thumbnails.mjs      — copy sibling shots → screenshots/<sim>.png + docs/assets/<sim>.webp
 #   3. generate-pages-index.sh  — regenerate docs/index.html from structure/repos.json
 #
-# Running this is the way to keep https://openphysics.github.io/Baton/ in sync with
+# Running this is the way to keep the org Pages landing page in sync with
 # the sim captures. After it finishes, commit the changed screenshot.png in each
 # sim repo and the screenshots/ + docs/ changes in Baton — the script prints the
 # exact commands at the end.
@@ -71,7 +71,7 @@ echo "── 3/3  regenerate docs/index.html ───────────�
 bash "$SCRIPT_DIR/generate-pages-index.sh"
 
 # ── what to commit ────────────────────────────────────────────────────────────
-WORKSPACE="${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}"
+WORKSPACE="${FLEET_WORKSPACE:-${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}}"
 
 if [[ ${#SIMS[@]} -gt 0 ]]; then
   candidates=("${SIMS[@]}")

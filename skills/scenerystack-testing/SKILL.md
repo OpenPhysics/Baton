@@ -5,7 +5,7 @@ description: Use when adding or changing unit tests for a simulation — writing
 
 # SceneryStack Testing
 
-Every OpenPhysics SceneryStack sim ships Vitest unit tests under root `tests/` and a
+Every OpenLyceum SceneryStack sim ships Vitest unit tests under root `tests/` and a
 `test` script in `package.json`. CI runs `npm test` when that script is present. Prefer
 testing the **model** (pure logic, physics, math) — not Scenery rendering.
 

@@ -1,24 +1,30 @@
 #!/usr/bin/env bash
-# Generate docs/index.html for the OpenPhysics GitHub Pages landing page.
+# Generate docs/index.html for the fleet's GitHub Pages landing page.
+# All branding and URLs come from the catalog (organization / displayName /
+# pagesBase), so renaming the org needs no edit here.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # Inputs and outputs are overridable so the generator can be exercised against a
 # fixture catalog without touching the committed page (see tests/pages-index.bats).
-# OPENPHYSICS_CATALOG is the same override check-repos-catalog.sh accepts.
-REPOS_JSON="${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}"
-DOCS_DIR="${OPENPHYSICS_DOCS_DIR:-$REPO_ROOT/docs}"
+# FLEET_CATALOG is the same override check-repos-catalog.sh accepts.
+REPOS_JSON="${FLEET_CATALOG:-${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}}"
+DOCS_DIR="${FLEET_DOCS_DIR:-${OPENPHYSICS_DOCS_DIR:-$REPO_ROOT/docs}}"
 ASSETS_DIR="$DOCS_DIR/assets"
 OUTPUT="$DOCS_DIR/index.html"
 # Full-size ground-truth screenshots committed in this repo. The lightweight
 # WebP thumbnails served by the page are derived from these.
-SCREENSHOTS_DIR="${OPENPHYSICS_SCREENSHOTS_DIR:-$REPO_ROOT/screenshots}"
+SCREENSHOTS_DIR="${FLEET_SCREENSHOTS_DIR:-${OPENPHYSICS_SCREENSHOTS_DIR:-$REPO_ROOT/screenshots}}"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required" >&2
   exit 1
 fi
+
+ORG="$(jq -r '.organization' "$REPOS_JSON")"
+ORG_DISPLAY="$(jq -r '.displayName // .organization' "$REPOS_JSON")"
+PAGES_BASE="$(jq -r '.pagesBase // "https://\(.organization | ascii_downcase).github.io"' "$REPOS_JSON")"
 
 mkdir -p "$ASSETS_DIR" "$SCREENSHOTS_DIR"
 
@@ -45,12 +51,12 @@ jq_program='
   | select(.isSimulation == true and .status == "active")
   | select(.name | test("cd48"; "i") | not)
   | select(.lineage == $category)
-  | "\(.name)|\(.displayName // .name)|\(.deployedUrl // ("https://openphysics.github.io/" + .name))|\((.name | explode | add) % 360)|\(.physicsTopics | join(","))@\(.description)"
+  | "\(.name)|\(.displayName // .name)|\(.deployedUrl // ($base + "/" + .name))|\((.name | explode | add) % 360)|\(.physicsTopics | join(","))@\(.description)"
 '
 
-new_sims="$(jq -r --arg category original "$jq_program" "$REPOS_JSON" | sort)"
-phet_sims="$(jq -r --arg category phet "$jq_program" "$REPOS_JSON" | sort)"
-naap_sims="$(jq -r --arg category naap "$jq_program" "$REPOS_JSON" | sort)"
+new_sims="$(jq -r --arg category original --arg base "$PAGES_BASE" "$jq_program" "$REPOS_JSON" | sort)"
+phet_sims="$(jq -r --arg category phet --arg base "$PAGES_BASE" "$jq_program" "$REPOS_JSON" | sort)"
+naap_sims="$(jq -r --arg category naap --arg base "$PAGES_BASE" "$jq_program" "$REPOS_JSON" | sort)"
 
 html_escape() {
   printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
@@ -62,7 +68,7 @@ card_html() {
   meta="${line%%@*}"
   desc="${line#*@}"
   IFS='|' read -r name title url hue topics <<<"$meta"
-  url="$(printf '%s' "$url" | sed 's|OpenPhysics|openphysics|g' | sed 's|/$||')"
+  url="$(printf '%s' "$url" | sed -E 's#^(https?://)([^/]+)#\1\L\2#' | sed 's|/$||')"
 
   local monogram
   # `|| true` because an all-lowercase name makes grep exit 1, and under
@@ -123,17 +129,17 @@ naap_count="$(count_lines "$naap_sims")"
 total_count="$((new_count + phet_count + naap_count))"
 
 {
-  cat <<'HEADER'
+  cat <<HEADER
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="OpenPhysics — open-source interactive physics simulations for the web.">
-  <meta property="og:title" content="OpenPhysics Simulations">
+  <meta name="description" content="$ORG_DISPLAY — open-source interactive physics simulations for the web.">
+  <meta property="og:title" content="$ORG_DISPLAY Simulations">
   <meta property="og:description" content="Open-source interactive physics simulations for the web.">
   <meta name="theme-color" content="#0b1020">
-  <title>OpenPhysics Simulations</title>
+  <title>$ORG_DISPLAY Simulations</title>
   <style>
     :root {
       color-scheme: dark;
@@ -396,12 +402,12 @@ total_count="$((new_count + phet_count + naap_count))"
   <div class="wrap">
     <header>
       <span class="eyebrow">Open-source physics for the web</span>
-      <h1>OpenPhysics</h1>
+      <h1>$ORG_DISPLAY</h1>
       <p>Interactive simulations for waves, mechanics, optics, electromagnetism, and quantum circuits &mdash; free to explore, remix, and teach with.</p>
       <div class="links">
         <a class="primary" href="#simulations">Browse simulations</a>
-        <a href="https://github.com/OpenPhysics">GitHub Organization</a>
-        <a href="https://github.com/OpenPhysics/.github/blob/main/CONTRIBUTING.md">Contributing</a>
+        <a href="https://github.com/$ORG">GitHub Organization</a>
+        <a href="https://github.com/$ORG/.github/blob/main/CONTRIBUTING.md">Contributing</a>
       </div>
     </header>
 
@@ -460,7 +466,7 @@ SECTION
 
     <footer>
       <p>${total_count} live simulations &middot; Built with <a href="https://scenerystack.org/">SceneryStack</a> &middot; GNU Affero GPL v3 &middot;
-      <a href="https://github.com/OpenPhysics/Baton">OpenPhysics/Baton</a></p>
+      <a href="https://github.com/$ORG/Baton">$ORG/Baton</a></p>
     </footer>
   </div>
 </body>

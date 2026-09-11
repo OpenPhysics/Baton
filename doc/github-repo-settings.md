@@ -1,6 +1,6 @@
 # GitHub repository settings baseline
 
-Canonical settings for OpenPhysics **simulations** and `SceneryStackTemplate`.
+Canonical settings for OpenLyceum **simulations** and `SceneryStackTemplate`.
 New GitHub repos inherit defaults (wiki on, Projects on, security features off) —
 do **not** reverse-engineer a mature sim by hand. Use the machine-readable baseline
 and the apply script in this repo instead.

@@ -1,10 +1,10 @@
-# OpenPhysics Codebase Convention
+# OpenLyceum Codebase Convention
 
-This document defines the **single, shared codebase structure** every OpenPhysics
+This document defines the **single, shared codebase structure** every OpenLyceum
 SceneryStack simulation must follow, so that any contributor (or AI assistant) can move
 between sims and find everything in the same place. It is the structural companion to
 [ACCESSIBILITY.md](ACCESSIBILITY.md) (which governs the a11y pattern) and to the shared
-coding guidance in [.github/CLAUDE.md](https://github.com/OpenPhysics/.github/blob/main/CLAUDE.md).
+coding guidance in [.github/CLAUDE.md](https://github.com/OpenLyceum/.github/blob/main/CLAUDE.md).
 
 The canonical reference implementation lives in **`SceneryStackTemplate`**. When in doubt,
 copy from the template. New sims are forked from it via `npm run rename`, so they start
@@ -21,7 +21,7 @@ conformant by default.
 ## 1. Bootstrap chain
 
 `src/main.ts` must have `import "./brand.js"` as its **very first import**. Never reorder.
-See [.github/CLAUDE.md §"Bootstrap import chain"](https://github.com/OpenPhysics/.github/blob/main/CLAUDE.md)
+See [.github/CLAUDE.md §"Bootstrap import chain"](https://github.com/OpenLyceum/.github/blob/main/CLAUDE.md)
 for the full explanation. Every sim has all five bootstrap files:
 
 ```
@@ -148,8 +148,8 @@ License / Contributing` (enforced by Baton's compliance check). Do **not** add a
 | `tsconfig.json` / `tsconfig.scripts.json` / `tsconfig.test.json` | shared template versions (TS7, `erasableSyntaxOnly`, `verbatimModuleSyntax`); `check` runs `tsc` on all three |
 | `package.json` | `scenerystack ^3`, `vite ^8`, `typescript ^7`, `@biomejs/biome ^2.5`, `vitest ^4`; standard `scripts` block |
 | `.githooks/{pre-commit,pre-push}` | present; activated via `prepare` script on `npm install` |
-| `.github/workflows/ci.yml` | calls `OpenPhysics/Baton` reusable CI + shared security workflows |
-| `.github/workflows/deploy.yml` | calls `OpenPhysics/Baton` reusable Pages deploy; `on: push` to `main` **and** `workflow_dispatch` |
+| `.github/workflows/ci.yml` | calls `OpenLyceum/Baton` reusable CI + shared security workflows |
+| `.github/workflows/deploy.yml` | calls `OpenLyceum/Baton` reusable Pages deploy; `on: push` to `main` **and** `workflow_dispatch` |
 | `.github/dependabot.yml` | present (synced from `Baton/config/dependabot-npm.yml`) |
 
 **PWA** (`vite-plugin-pwa`) is fleet-standard. Copy the template's `VitePWA({…})` block, `scripts/generate-icons.ts`, and `index.html` meta; only `id` / `name` / `short_name` / `description` / `theme_color` / screenshot `label` change per sim.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.2.0",
-  "organization": "OpenPhysics",
+  "organization": "ExampleOrg",
   "_comment": "Fixture catalog for tests/pages-index.bats. Deliberately exercises the generator's edge cases (mixed-case host, trailing slash, missing displayName, no-uppercase name, >3 topics, HTML metacharacters, excluded rows) rather than mirroring the real catalog. Not schema-valid on purpose \u2014 see fixtures/catalog-valid.json for that.",
   "repos": [
     {
@@ -42,7 +42,7 @@
       ],
       "framework": "SceneryStack",
       "description": "A wave.",
-      "deployedUrl": "https://openphysics.github.io/betaWave",
+      "deployedUrl": "https://exampleorg.github.io/betaWave",
       "physicsTopics": [
         "waves"
       ],
@@ -91,7 +91,7 @@
       ],
       "framework": "SceneryStack",
       "description": "A port.",
-      "deployedUrl": "https://OpenPhysics.github.io/GammaRay/",
+      "deployedUrl": "https://ExampleOrg.github.io/GammaRay/",
       "physicsTopics": [
         "radiation"
       ],

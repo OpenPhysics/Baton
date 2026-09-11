@@ -38,7 +38,7 @@ export default DopplerEffectColors;
 
 ## Two color families
 
-Most OpenPhysics sims use a **dark default** profile (dark screen + dark panels, light text) and a **light projector** profile. SceneryStack widget defaults (black checkbox stroke, black `NumberDisplay` text, white combo-box chrome) assume a **light** surface — so they usually look fine in projector mode and fail contrast in default mode. Theme both families in `*Colors.ts`:
+Most OpenLyceum sims use a **dark default** profile (dark screen + dark panels, light text) and a **light projector** profile. SceneryStack widget defaults (black checkbox stroke, black `NumberDisplay` text, white combo-box chrome) assume a **light** surface — so they usually look fine in projector mode and fail contrast in default mode. Theme both families in `*Colors.ts`:
 
 | Family | Role | Typical keys | Profile behavior |
 |---|---|---|---|

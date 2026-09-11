@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
-# Compliance checks for OpenPhysics SceneryStack simulation repositories.
+# Compliance checks for the fleet's SceneryStack simulation repositories.
 set -euo pipefail
 
 # Resolve before the cd below: BASH_SOURCE may be a relative path, and it stops
 # resolving once the working directory moves into the repo under test.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Read the org identity and the canonical Claude plugin id from Baton before the
+# cd below moves us out of this repo. Everything asserted further down is built
+# from these, so renaming the organization or the marketplace is a catalog/config
+# edit, never an edit to this script.
+BATON_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+CATALOG="${FLEET_CATALOG:-${OPENPHYSICS_CATALOG:-$BATON_ROOT/structure/repos.json}}"
+CLAUDE_SETTINGS="$BATON_ROOT/config/claude-settings.json"
+
+ORG="${FLEET_ORG:-${OPENPHYSICS_ORG:-$(jq -r '.organization' "$CATALOG")}}"
+ORG_CONFIG_REPO="$ORG/.github"
+PLUGIN_ID="$(jq -r '.enabledPlugins | keys[0]' "$CLAUDE_SETTINGS")"
 
 REPO_DIR="${1:?Repository directory required}"
 cd "$REPO_DIR"
@@ -28,13 +40,13 @@ pass() {
 }
 
 if [ -f CONTRIBUTING.md ]; then
-  fail "CONTRIBUTING.md must not exist at repo root (use org default from OpenPhysics/.github)"
+  fail "CONTRIBUTING.md must not exist at repo root (use org default from $ORG_CONFIG_REPO)"
 else
   pass "no local CONTRIBUTING.md"
 fi
 
 if [ -f LICENSE ]; then
-  fail "LICENSE must not exist at repo root (use org default from OpenPhysics/.github)"
+  fail "LICENSE must not exist at repo root (use org default from $ORG_CONFIG_REPO)"
 else
   pass "no local LICENSE"
 fi
@@ -86,15 +98,15 @@ fi
 
 if [ ! -f .github/workflows/ci.yml ]; then
   fail ".github/workflows/ci.yml is missing"
-elif ! grep -q "OpenPhysics/Baton/.github/workflows/ci.yml@main" .github/workflows/ci.yml; then
-  fail "ci.yml must call OpenPhysics/Baton reusable workflow"
+elif ! grep -q "$ORG/Baton/.github/workflows/ci.yml@main" .github/workflows/ci.yml; then
+  fail "ci.yml must call $ORG/Baton reusable workflow"
 else
   pass "ci.yml uses shared reusable workflow"
 fi
 
-if ! grep -q "OpenPhysics/Baton/.github/workflows/shared-dependency-review.yml@main" .github/workflows/ci.yml; then
+if ! grep -q "$ORG/Baton/.github/workflows/shared-dependency-review.yml@main" .github/workflows/ci.yml; then
   fail "ci.yml must call shared dependency-review workflow"
-elif ! grep -q "OpenPhysics/Baton/.github/workflows/shared-codeql.yml@main" .github/workflows/ci.yml; then
+elif ! grep -q "$ORG/Baton/.github/workflows/shared-codeql.yml@main" .github/workflows/ci.yml; then
   fail "ci.yml must call shared CodeQL workflow"
 else
   pass "ci.yml uses shared security workflows"
@@ -211,10 +223,14 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
   # The scenerystack Claude Code plugin roll-out (config/claude-settings.json).
   if [ ! -f .claude/settings.json ]; then
     fail ".claude/settings.json is missing (run Baton/scripts/sync-claude-settings.sh)"
-  elif ! grep -q 'scenerystack@openphysics' .claude/settings.json; then
-    fail ".claude/settings.json does not enable the scenerystack@openphysics plugin"
-  else
+  elif grep -q "$PLUGIN_ID" .claude/settings.json; then
     pass ".claude/settings.json enables the scenerystack plugin"
+  elif grep -qE 'scenerystack@[A-Za-z0-9_-]+' .claude/settings.json; then
+    # Transitional: the marketplace id was renamed off the org name. A repo still
+    # carrying the old id is stale, not broken - sync-claude-settings.sh fixes it.
+    warn ".claude/settings.json uses a stale plugin id; expected $PLUGIN_ID (run Baton/scripts/sync-claude-settings.sh)"
+  else
+    fail ".claude/settings.json does not enable the $PLUGIN_ID plugin"
   fi
 
   # Hardcoded colors in view code (heuristic — ProfileColorProperty entries belong in
@@ -320,8 +336,8 @@ if [ -f package.json ] && [ -f src/main.ts ]; then
   # matching Baton's own pages.yml triggers so a missed push can be recovered.
   if [ ! -f .github/workflows/deploy.yml ]; then
     fail ".github/workflows/deploy.yml is missing"
-  elif ! grep -q "OpenPhysics/Baton/.github/workflows/deploy.yml@main" .github/workflows/deploy.yml; then
-    fail "deploy.yml must call OpenPhysics/Baton reusable deploy workflow"
+  elif ! grep -q "$ORG/Baton/.github/workflows/deploy.yml@main" .github/workflows/deploy.yml; then
+    fail "deploy.yml must call $ORG/Baton reusable deploy workflow"
   elif ! grep -q "workflow_dispatch:" .github/workflows/deploy.yml; then
     fail "deploy.yml must allow workflow_dispatch (manual Pages publish)"
   else
@@ -444,7 +460,7 @@ if [ -z "$REPO_NAME" ]; then
 fi
 
 if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-  VULN_ALERTS=$(gh api graphql -f query='query($o:String!,$n:String!){ repository(owner:$o,name:$n){ hasVulnerabilityAlertsEnabled isPrivate } }' -f o=OpenPhysics -f n="$REPO_NAME" --jq '.data.repository.hasVulnerabilityAlertsEnabled' 2>/dev/null || echo "")
+  VULN_ALERTS=$(gh api graphql -f query='query($o:String!,$n:String!){ repository(owner:$o,name:$n){ hasVulnerabilityAlertsEnabled isPrivate } }' -f o="$ORG" -f n="$REPO_NAME" --jq '.data.repository.hasVulnerabilityAlertsEnabled' 2>/dev/null || echo "")
   if [ "$VULN_ALERTS" = "true" ]; then
     pass "Dependabot vulnerability alerts enabled"
   elif [ -n "$VULN_ALERTS" ]; then
@@ -453,8 +469,8 @@ if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
     warn "Could not verify GitHub vulnerability alerts (gh query failed)"
   fi
 
-  SEC_JSON=$(gh api "repos/OpenPhysics/$REPO_NAME" --jq '.security_and_analysis // {}' 2>/dev/null || echo "{}")
-  IS_PRIVATE=$(gh api "repos/OpenPhysics/$REPO_NAME" --jq '.private' 2>/dev/null || echo "false")
+  SEC_JSON=$(gh api "repos/$ORG/$REPO_NAME" --jq '.security_and_analysis // {}' 2>/dev/null || echo "{}")
+  IS_PRIVATE=$(gh api "repos/$ORG/$REPO_NAME" --jq '.private' 2>/dev/null || echo "false")
   if [ -n "$SEC_JSON" ] && [ "$SEC_JSON" != "{}" ] && [ "$SEC_JSON" != "null" ]; then
     DEP_UPDATES=$(python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get("dependabot_security_updates",{}).get("status","unknown"))' <<<"$SEC_JSON")
     if [ "$DEP_UPDATES" = "enabled" ]; then

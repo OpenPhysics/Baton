@@ -31,7 +31,7 @@ the schedule visible in Baton.
 
 ### 1. The GitLab group
 
-Create a group (e.g. `OpenPhysics`) at <https://gitlab.com/groups/new>. The group path is
+Create a group (e.g. `OpenLyceum`) at <https://gitlab.com/groups/new>. The group path is
 case-sensitive and is what `--group` expects.
 
 Then set **Group → Settings → Repository → Initial default branch protection** to
@@ -44,7 +44,7 @@ clears protection per project before pushing, so this setting is belt-and-braces
 
 A **personal access token** works everywhere: <https://gitlab.com/-/user_settings/personal_access_tokens>
 with the **`api`** and **`write_repository`** scopes. If your plan offers group access tokens, a
-group token on `OpenPhysics` with the **Maintainer** role is the tidier choice — it is not tied to
+group token on `OpenLyceum` with the **Maintainer** role is the tidier choice — it is not tied to
 a person.
 
 ```bash
@@ -70,7 +70,7 @@ scripts/sync-gitlab-mirror.sh --dry-run
 scripts/sync-gitlab-mirror.sh
 ```
 
-Each repo is cloned into a bare mirror under `~/.cache/openphysics/gitlab-mirror/` and pushed. The
+Each repo is cloned into a bare mirror under `~/.cache/openlyceum/gitlab-mirror/` and pushed. The
 first run is the slow one (full clones); later runs transfer only new objects.
 
 Per repo the output is one of `created`, `pushed N ref update(s)`, or `up to date`, and the run
@@ -84,7 +84,7 @@ daily at 04:00 UTC and on manual dispatch. For the workflow, add the token as a 
 secret:
 
 ```bash
-gh secret set GITLAB_TOKEN --repo OpenPhysics/Baton
+gh secret set GITLAB_TOKEN --repo OpenLyceum/Baton
 # paste the token when prompted
 ```
 
@@ -92,15 +92,15 @@ Without that secret the workflow logs a notice and exits cleanly, so it is harml
 it up. Run it by hand with:
 
 ```bash
-gh workflow run gitlab-mirror.yml --repo OpenPhysics/Baton
-gh workflow run gitlab-mirror.yml --repo OpenPhysics/Baton -f mode=check
-gh workflow run gitlab-mirror.yml --repo OpenPhysics/Baton -f only=DopplerEffect
+gh workflow run gitlab-mirror.yml --repo OpenLyceum/Baton
+gh workflow run gitlab-mirror.yml --repo OpenLyceum/Baton -f mode=check
+gh workflow run gitlab-mirror.yml --repo OpenLyceum/Baton -f only=DopplerEffect
 ```
 
 Or from a local cron / launchd job:
 
 ```cron
-17 4 * * *  GITLAB_TOKEN=glpat-… /home/you/OpenPhysics/Baton/scripts/sync-gitlab-mirror.sh >> /tmp/gitlab-mirror.log 2>&1
+17 4 * * *  GITLAB_TOKEN=glpat-… /home/you/OpenLyceum/Baton/scripts/sync-gitlab-mirror.sh >> /tmp/gitlab-mirror.log 2>&1
 ```
 
 ## Verifying the backup
@@ -113,9 +113,9 @@ scripts/sync-gitlab-mirror.sh --check
 ```
 
 ```
-==== DopplerEffect -> OpenPhysics/DopplerEffect ====
+==== DopplerEffect -> OpenLyceum/DopplerEffect ====
   in sync (14 ref(s))
-==== HeatTransfer -> OpenPhysics/HeatTransfer ====
+==== HeatTransfer -> OpenLyceum/HeatTransfer ====
   STALE — 2 ref(s) differ from GitHub
 ----
 Summary: 43 repo(s) — 42 in sync, 1 stale, 0 missing, 0 unreadable.
@@ -126,9 +126,9 @@ Summary: 43 repo(s) — 42 in sync, 1 stale, 0 missing, 0 unreadable.
 The mirror is a normal git repo, so recovery is a clone and a push:
 
 ```bash
-git clone --mirror https://gitlab.com/OpenPhysics/DopplerEffect.git
+git clone --mirror https://gitlab.com/OpenLyceum/DopplerEffect.git
 cd DopplerEffect.git
-git push --mirror git@github.com:OpenPhysics/DopplerEffect.git   # into a fresh, empty repo
+git push --mirror git@github.com:OpenLyceum/DopplerEffect.git   # into a fresh, empty repo
 ```
 
 Then re-run the fleet onboarding for the restored repo (settings, metadata, Dependabot, Claude
@@ -145,7 +145,7 @@ settings): see [`doc/github-repo-settings.md`](github-repo-settings.md) and
   `--no-prune` for a hoard-everything backup instead of a true mirror.
 - **The mirror is one-way.** Anything committed directly on GitLab is overwritten on the next
   sync. Keep GitHub the source of truth.
-- **Cache location.** `--work-dir` (default `~/.cache/openphysics/gitlab-mirror`) holds the bare
+- **Cache location.** `--work-dir` (default `~/.cache/openlyceum/gitlab-mirror`) holds the bare
   mirrors; deleting it costs nothing but a slow next run. `--fresh` re-clones one anyway.
 - **Filters.** The same catalog filters as the other fleet scripts: `--simulation`, `--type`,
   `--status`, `--lineage`, `--only NAME`, `--skip NAME`.

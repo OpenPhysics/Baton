@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/repos.sh
 source "$SCRIPT_DIR/lib/repos.sh"
 
-ORG="${OPENPHYSICS_ORG:-OpenPhysics}"
+ORG="${FLEET_ORG:-${OPENPHYSICS_ORG:-$(repos_org)}}"
 BASELINE_PATH="$(cd "$SCRIPT_DIR/.." && pwd)/config/github-repo-baseline.json"
 MODE="check"
 DRY_RUN=0

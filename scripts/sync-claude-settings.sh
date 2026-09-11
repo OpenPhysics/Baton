@@ -2,8 +2,13 @@
 # Roll the scenerystack Claude Code plugin out to the SceneryStack repos by merging
 # the canonical keys from config/claude-settings.json into each repo's
 # .claude/settings.json. Mirrors sync-dependabot.sh, but MERGES (never clobbers):
-# existing keys in a repo's settings are preserved; only extraKnownMarketplaces.openphysics
-# and enabledPlugins["scenerystack@openphysics"] are added/updated.
+# existing keys in a repo's settings are preserved; only the marketplace entry and
+# the scenerystack plugin flag are added/updated.
+#
+# The canonical block is DERIVED, not stored: the marketplace id comes from
+# .claude-plugin/marketplace.json and the org from the catalog, so a rename of
+# either is a single edit at the source. config/claude-settings.json is rewritten
+# from those values on every run and stays the artifact other tools read.
 #
 # Targets every repo whose catalog framework is "SceneryStack" (all the sims in
 # structure/repos.json + the template — i.e. the CONVENTIONS.md scope). Operates on sibling checkouts in the workspace, like the
@@ -21,11 +26,22 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SOURCE="$REPO_ROOT/config/claude-settings.json"
-CATALOG="${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}"
-WORKSPACE="${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}"
+MARKETPLACE="$REPO_ROOT/.claude-plugin/marketplace.json"
+CATALOG="${FLEET_CATALOG:-${OPENPHYSICS_CATALOG:-$REPO_ROOT/structure/repos.json}}"
+WORKSPACE="${FLEET_WORKSPACE:-${OPENPHYSICS_WORKSPACE:-$(cd "$REPO_ROOT/.." && pwd)}}"
 
 command -v jq >/dev/null || { echo "jq is required" >&2; exit 1; }
 command -v python3 >/dev/null || { echo "python3 is required" >&2; exit 1; }
+[ -f "$MARKETPLACE" ] || { echo "missing $MARKETPLACE" >&2; exit 1; }
+
+# Regenerate the canonical block from the marketplace id + the catalog org.
+MARKETPLACE_ID="$(jq -r '.name' "$MARKETPLACE")"
+ORG="${FLEET_ORG:-${OPENPHYSICS_ORG:-$(jq -r '.organization' "$CATALOG")}}"
+jq -n --arg id "$MARKETPLACE_ID" --arg repo "$ORG/Baton" '
+  {
+    extraKnownMarketplaces: { ($id): { source: { source: "github", repo: $repo } } },
+    enabledPlugins: { ("scenerystack@" + $id): true }
+  }' > "$SOURCE"
 [ -f "$SOURCE" ] || { echo "missing $SOURCE" >&2; exit 1; }
 
 DRY_RUN=0
@@ -83,6 +99,28 @@ def deep_merge(dst, add):
 
 before = json.dumps(cur, sort_keys=True)
 merged = deep_merge(json.loads(json.dumps(cur)), src)
+
+# Prune superseded entries. A merge alone would leave a renamed marketplace
+# (or an org-renamed source repo) sitting beside the canonical one, so drop any
+# marketplace that points at the same Baton repo under a different key, and any
+# scenerystack plugin flag that is not the current id. Unrelated marketplaces
+# and plugins the repo has added are left alone.
+canonical_id = next(iter(src["extraKnownMarketplaces"]))
+canonical_repo = src["extraKnownMarketplaces"][canonical_id]["source"]["repo"]
+canonical_plugin = next(iter(src["enabledPlugins"]))
+
+markets = merged.get("extraKnownMarketplaces", {})
+for key in [k for k in markets if k != canonical_id]:
+    entry = markets[key]
+    repo = (entry or {}).get("source", {}).get("repo", "")
+    if repo.split("/")[-1] == canonical_repo.split("/")[-1]:
+        del markets[key]
+
+plugins = merged.get("enabledPlugins", {})
+for key in [k for k in plugins if k != canonical_plugin]:
+    if key.split("@")[0] == canonical_plugin.split("@")[0]:
+        del plugins[key]
+
 after = json.dumps(merged, sort_keys=True)
 
 if before == after:

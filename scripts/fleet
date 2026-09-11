@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run a git command across every OpenPhysics repo checked out locally.
+# Run a git command across every fleet repo checked out locally.
 #
 # Memorable shortcuts for the fleet-git one-liners in doc/fleet-git.md:
 #   fleet push

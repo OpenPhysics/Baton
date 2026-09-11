@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# List OpenPhysics repositories from structure/repos.json.
+# List the org's repositories from structure/repos.json.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

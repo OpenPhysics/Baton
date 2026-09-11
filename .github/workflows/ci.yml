@@ -43,7 +43,10 @@ jobs:
         run: npm ci
 
       - name: Security audit
-        uses: OpenPhysics/Baton/.github/actions/security-audit@main
+        # Must stay fully qualified: `uses:` accepts no expressions, and inside a
+        # reusable workflow a local `./` path resolves against the CALLER's
+        # checkout, not this repo. Renaming the org means editing this line.
+        uses: OpenLyceum/Baton/.github/actions/security-audit@main
 
       - name: Lint
         run: npm run lint

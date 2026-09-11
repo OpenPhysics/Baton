@@ -1,11 +1,13 @@
 {
   "$schema": "./repos.schema.json",
-  "schemaVersion": "1.2.0",
-  "organization": "OpenPhysics",
+  "schemaVersion": "1.3.0",
+  "organization": "OpenLyceum",
+  "displayName": "Open Lyceum",
+  "pagesBase": "https://openlyceum.github.io",
   "repos": [
     {
       "name": ".github",
-      "displayName": "OpenPhysics .github",
+      "displayName": "Open Lyceum .github",
       "type": "config",
       "isSimulation": false,
       "lineage": null,
@@ -32,7 +34,6 @@
       ],
       "framework": "SceneryStack",
       "description": "AC phasor simulation exploring resistors, inductors, and capacitors across four screens — Intro (single element), Series RLC, Resonance, and Power.",
-      "deployedUrl": "https://openphysics.github.io/ACPhasor",
       "physicsTopics": [
         "AC circuits",
         "phasors",
@@ -73,7 +74,6 @@
       ],
       "framework": "VitePress",
       "description": "A file-based SceneryStack knowledge base with API guides, software patterns, styling, and accessibility conventions, designed for humans and LLM agents alike.",
-      "deployedUrl": "https://openphysics.github.io/Almanach/",
       "physicsTopics": [],
       "screens": null,
       "status": "active"
@@ -91,7 +91,7 @@
         "Markdown"
       ],
       "framework": null,
-      "description": "Immutable upstream baselines / ground truth for OpenPhysics sims: pinned git clones (via fetch-baselines.sh) and committed non-git snapshots (NAAP dumps, SPINS, etc.).",
+      "description": "Immutable upstream baselines / ground truth for Open Lyceum sims: pinned git clones (via fetch-baselines.sh) and committed non-git snapshots (NAAP dumps, SPINS, etc.).",
       "deployedUrl": null,
       "physicsTopics": [],
       "screens": null,
@@ -113,7 +113,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Basic Coordinates and Seasons' lab. Explore terrestrial and celestial coordinates and how Earth's axial tilt produces the seasons across three screens.",
-      "deployedUrl": "https://openphysics.github.io/BasicCoordinatesAndSeasons",
       "physicsTopics": [
         "astronomy",
         "coordinates",
@@ -151,7 +150,6 @@
       ],
       "framework": null,
       "description": "Org orchestration: reusable CI/CD workflows, cross-repo automation scripts, Dependabot templates, the repository catalog, and the simulation landing page.",
-      "deployedUrl": "https://openphysics.github.io/Baton/",
       "physicsTopics": [],
       "screens": null,
       "status": "active"
@@ -168,7 +166,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Explore the Carnot cycle across three screens: a piston-cylinder tied to a live PV diagram, a quantitative efficiency lab with a T–S view, and the same cycle reversed as a refrigerator or heat pump.",
-      "deployedUrl": "https://openphysics.github.io/CarnotHeatEngine",
       "physicsTopics": [
         "thermodynamics",
         "Carnot cycle",
@@ -205,7 +202,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Explore crystal structure across five screens: the five 2D Bravais lattices, cubic unit cells and packing factors, hexagonal vs cubic close packing, Miller indices, and aperiodic order — Penrose tilings and the hat monotile, with diffraction as sharp as a crystal's but a symmetry no crystal can have.",
-      "deployedUrl": "https://openphysics.github.io/CrystalLattice",
       "physicsTopics": [
         "crystallography",
         "Bravais lattices",
@@ -252,7 +248,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Interactive simulation of the Doppler Effect — visualizes how the frequency of sound waves shifts with relative motion between source and observer.",
-      "deployedUrl": "https://openphysics.github.io/DopplerEffect",
       "physicsTopics": [
         "waves",
         "sound",
@@ -286,7 +281,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET 'Electric Field of Dreams' simulation. Place charged particles and observe Coulomb interactions and an adjustable uniform external field.",
-      "deployedUrl": "https://openphysics.github.io/ElectricFieldOfDreams",
       "physicsTopics": [
         "electrostatics",
         "electric fields",
@@ -320,7 +314,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Interactive simulation of two exoplanet-detection methods — radial velocity (Doppler wobble) and transit (light-curve dip).",
-      "deployedUrl": "https://openphysics.github.io/ExtrasolarPlanets",
       "physicsTopics": [
         "astronomy",
         "exoplanets",
@@ -352,7 +345,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Explore Maxwell boundary conditions for E/D and B/H at a planar interface between two media.",
-      "deployedUrl": "https://openphysics.github.io/FieldBoundary",
       "physicsTopics": [
         "electromagnetism",
         "boundary-conditions",
@@ -382,7 +374,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Flow past an obstacle, from laminar streamlines to a Kármán vortex street to a turbulent wake — real-time GPU fluid simulation across Intro and Lab screens.",
-      "deployedUrl": "https://openphysics.github.io/FluidDynamics",
       "physicsTopics": [
         "fluid dynamics",
         "Reynolds number",
@@ -419,7 +410,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack recreation of PhET's Fluid Pressure and Flow — Under Pressure, Flow, and Water Tower screens for hydrostatic pressure, Bernoulli flow, and a water tower with a hose.",
-      "deployedUrl": "https://openphysics.github.io/FluidPressureAndFlow",
       "physicsTopics": [
         "fluid pressure",
         "hydrostatics",
@@ -465,7 +455,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Habitable Zones' lab. Compare circumstellar and galactic habitable zones with orbiting planets in two screens: Circumstellar and Galactic / Milky Way Habitability.",
-      "deployedUrl": "https://openphysics.github.io/HabitableZones",
       "physicsTopics": [
         "astronomy",
         "habitable zone",
@@ -497,7 +486,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Heat as a field on a WebGPU engine — temperature, conduction, convection, transport balance, and materials across five screens, with GPU-native compute shaders and a CPU reference backend.",
-      "deployedUrl": "https://openphysics.github.io/HeatTransfer",
       "physicsTopics": [
         "heat transfer",
         "conduction",
@@ -540,7 +528,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Physical-optics simulation of Michelson, Mach-Zehnder, and Fabry-Perot interferometers: optical path length, phase, coherence, and fringe formation.",
-      "deployedUrl": "https://openphysics.github.io/InterferometryLab",
       "physicsTopics": [
         "optics",
         "physical optics",
@@ -576,7 +563,6 @@
       ],
       "framework": null,
       "description": "JavaScript library for controlling the CD48 Coincidence Counter via the Web Serial API. Published to npm.",
-      "deployedUrl": "https://openphysics.github.io/jscd48/",
       "physicsTopics": [
         "nuclear physics",
         "coincidence counting",
@@ -601,7 +587,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET 'Ladybug Motion 2D' simulation. Explore 2D motion, position, velocity, and acceleration using a ladybug on a rotating platform.",
-      "deployedUrl": "https://openphysics.github.io/LadyBug",
       "physicsTopics": [
         "kinematics",
         "2D motion",
@@ -631,7 +616,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Interactive simulation of how light propagates through polarizers and wave plates — Intro, Polarization, Wave Plates, and Lab screens.",
-      "deployedUrl": "https://openphysics.github.io/LightPropagation",
       "physicsTopics": [
         "optics",
         "light",
@@ -674,7 +658,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the classic PhET Flash 'Lunar Lander' simulation. Pilot a lunar module to a soft landing by managing thrust and tilt against gravity.",
-      "deployedUrl": "https://openphysics.github.io/LunarLander",
       "physicsTopics": [
         "gravity",
         "forces",
@@ -709,7 +692,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET 'Maze Game' simulation. Drive a particle through tile-based mazes using position, velocity, or acceleration control modes.",
-      "deployedUrl": "https://openphysics.github.io/MazeGame",
       "physicsTopics": [
         "kinematics",
         "vectors",
@@ -739,7 +721,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Match target position-versus-time and velocity-versus-time graphs by moving a character with pointer controls or by walking in front of a PASCO Wireless Motion Sensor.",
-      "deployedUrl": "https://openphysics.github.io/MotionMatch",
       "physicsTopics": [
         "kinematics",
         "motion graphs",
@@ -775,7 +756,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Record position over time with the mouse or a PASCO Wireless Motion Sensor over Web Bluetooth, and plot position, velocity and acceleration on a graph whose axes you choose.",
-      "deployedUrl": "https://openphysics.github.io/MotionSensor",
       "physicsTopics": [
         "kinematics",
         "motion",
@@ -815,7 +795,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Motions of the Sun' lab. Trace the Sun's daily path, compare sidereal and solar time, and explore the zodiac on the celestial sphere.",
-      "deployedUrl": "https://openphysics.github.io/MotionsOfTheSun",
       "physicsTopics": [
         "astronomy",
         "sun paths",
@@ -859,7 +838,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET Java 'Moving Man' simulation. Explore 1D kinematics by dragging a man or using position/velocity/acceleration sliders.",
-      "deployedUrl": "https://openphysics.github.io/MovingMan",
       "physicsTopics": [
         "kinematics",
         "1D motion",
@@ -894,7 +872,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Web-based geometric optics simulation. Supports ray sources, parallel and divergent beams, mirrors, lenses, beam splitters, and refraction interfaces.",
-      "deployedUrl": "https://openphysics.github.io/OpticsLab",
       "physicsTopics": [
         "optics",
         "geometric optics",
@@ -934,7 +911,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Collection of four classical mechanics simulations exploring oscillations and chaos: single spring, double spring, pendulum, and double pendulum.",
-      "deployedUrl": "https://openphysics.github.io/OscillationsAndChaos",
       "physicsTopics": [
         "oscillations",
         "chaos",
@@ -978,7 +954,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Single-screen SceneryStack bench oscilloscope. Display a synthetic function-generator signal or live microphone audio on a phosphor-green CRT graticule, with two channels, triggering, X-Y and FFT modes, measurement cursors, and live auto-measurements.",
-      "deployedUrl": "https://openphysics.github.io/Oscilloscope",
       "physicsTopics": [
         "oscilloscope",
         "waveforms",
@@ -1008,7 +983,6 @@
       "framework": "SceneryStack",
       "description": "Interactive map of the Earth's tectonic plates drawn entirely from real data — PB2002 plate boundaries, USGS earthquakes, Holocene volcanoes and NOAA relief — plus cross-sections through a subduction zone, a spreading ridge and a transform fault, and a reconstruction clock running 50 Myr either side of the present. Two further screens port the tabs of PhET's Java simulation: crustal isostasy, and the evolution of a convergent or divergent plate boundary.",
       "shortDescription": "Interactive map of Earth's tectonic plates from real data — boundaries, earthquakes, volcanoes, cross-sections, and a 50 Myr reconstruction clock — plus PhET-style crust and plate-motion screens.",
-      "deployedUrl": "https://openphysics.github.io/PlateTectonics",
       "physicsTopics": [
         "plate tectonics",
         "seismology",
@@ -1046,7 +1020,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Rigid-body dynamics of a spinning gyroscope: steady precession under gravity, nutation, and torque-free tumbling.",
-      "deployedUrl": "https://openphysics.github.io/Precession",
       "physicsTopics": [
         "rigid body",
         "precession",
@@ -1104,7 +1077,6 @@
       ],
       "framework": "GlowScript",
       "description": "Browser-based VPython editor using CodeMirror 6 and GlowScript VPython 3.2. Write and run VPython code in the browser with live 3D visualization.",
-      "deployedUrl": "https://openphysics.github.io/pyro",
       "physicsTopics": [
         "3D visualization",
         "computational physics"
@@ -1124,7 +1096,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Drag-and-drop quantum circuit builder with a live state simulator. Place quantum gates and watch probabilities, amplitudes, Bloch spheres, and measurements update in real time.",
-      "deployedUrl": "https://openphysics.github.io/QubitSketch",
       "physicsTopics": [
         "quantum mechanics",
         "quantum circuits",
@@ -1155,7 +1126,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Counting-statistics laboratory: measure radioactive decay — simulated or from a PASCO Wireless Geiger Counter over Web Bluetooth — and compare the distribution against Poisson and Gaussian theory.",
-      "deployedUrl": "https://openphysics.github.io/RadioactivityAndStatistics",
       "physicsTopics": [
         "radioactivity",
         "statistics",
@@ -1199,7 +1169,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET 'Radio Waves & Electromagnetic Fields' simulation, rebuilt from the legacy PIXI.js + Backbone version. Wiggle an electron and watch EM radiation propagate.",
-      "deployedUrl": "https://openphysics.github.io/RadioWaves",
       "physicsTopics": [
         "electromagnetism",
         "radio waves",
@@ -1226,7 +1195,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Interactive simulation of resonance in driven oscillating systems. Visualizes driven mass-spring systems and Chladni plate patterns.",
-      "deployedUrl": "https://openphysics.github.io/Resonance",
       "physicsTopics": [
         "resonance",
         "oscillations",
@@ -1270,7 +1238,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Rotating Sky' lab. Explore how the sky appears to rotate for an observer on Earth through a horizon system, a celestial sphere, and a combined interactive explorer.",
-      "deployedUrl": "https://openphysics.github.io/RotatingSky",
       "physicsTopics": [
         "astronomy",
         "celestial sphere",
@@ -1305,8 +1272,7 @@
         "TypeScript"
       ],
       "framework": "SceneryStack",
-      "description": "GitHub template for OpenPhysics SceneryStack sims — Use this template or Baton create-sim.sh; rename + scaffold-screens for one or N screens.",
-      "deployedUrl": null,
+      "description": "GitHub template for Open Lyceum SceneryStack sims — Use this template or Baton create-sim.sh; rename + scaffold-screens for one or N screens.",
       "physicsTopics": [],
       "screens": null,
       "status": "template"
@@ -1327,7 +1293,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Solar System Models' lab. Compare the Earth-centered Ptolemaic model (deferent and epicycle) with the Sun-centered system and the planetary configurations it produces.",
-      "deployedUrl": "https://openphysics.github.io/SolarSystemModels",
       "physicsTopics": [
         "astronomy",
         "geocentrism",
@@ -1362,7 +1327,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Explore special relativity across five screens: a moving light clock, an interactive Minkowski spacetime diagram, length contraction (ladder and barn), the twin paradox, and the relativistic Doppler effect.",
-      "deployedUrl": "https://openphysics.github.io/SpecialRelativity",
       "physicsTopics": [
         "special relativity",
         "spacetime",
@@ -1410,7 +1374,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Longitudinal standing waves in a pipe: displacement, velocity and pressure phase relationships, open vs. closed end reflection, and the harmonic series of open and stopped pipes.",
-      "deployedUrl": "https://openphysics.github.io/StandingWaves",
       "physicsTopics": [
         "standing waves",
         "acoustics",
@@ -1449,7 +1412,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Interactive Stern–Gerlach experiment: assemble analyzers, magnets, and counters; fire spin-½ / spin-1 atoms; compare Monte Carlo counts with analytic quantum predictions.",
-      "deployedUrl": "https://openphysics.github.io/SternGerlach",
       "physicsTopics": [
         "quantum mechanics",
         "spin",
@@ -1484,7 +1446,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the PhET Java 'The Ramp' simulation. Explore forces on an inclined plane with friction, energy conservation, and applied forces. Features record/playback, force charts, and comparison objects.",
-      "deployedUrl": "https://openphysics.github.io/TheRamp",
       "physicsTopics": [
         "forces",
         "inclined plane",
@@ -1520,7 +1481,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Browser-based video motion-analysis tool. Load a video, calibrate real-world distances, and auto-track objects across frames using computer vision.",
-      "deployedUrl": "https://openphysics.github.io/TrackLab",
       "physicsTopics": [
         "kinematics",
         "measurement",
@@ -1551,7 +1511,6 @@
       ],
       "framework": null,
       "description": "TypeScript library for controlling the CD48 Coincidence Counter via the Web Serial API. Published to npm.",
-      "deployedUrl": "https://openphysics.github.io/tscd48/",
       "physicsTopics": [
         "nuclear physics",
         "coincidence counting",
@@ -1576,7 +1535,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack port of the NAAP 'Variable Star Photometry' lab. Register CCD star-field images, blink-compare epochs, perform aperture photometry, and find periods from a differential-magnitude light curve.",
-      "deployedUrl": "https://openphysics.github.io/VariableStarPhotometry",
       "physicsTopics": [
         "astronomy",
         "photometry",
@@ -1617,7 +1575,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Learn to read vernier calipers and vernier scales in general.",
-      "deployedUrl": "https://openphysics.github.io/VernierScales",
       "physicsTopics": [
         "metrology",
         "measurement",
@@ -1655,7 +1612,6 @@
       ],
       "framework": "SceneryStack",
       "description": "Three-screen VoceVista-style real-time voice-analysis simulation. Analyzes microphone input for waveform, spectrum, and composition.",
-      "deployedUrl": "https://openphysics.github.io/WaveComposer",
       "physicsTopics": [
         "waves",
         "acoustics",
@@ -1693,7 +1649,6 @@
       ],
       "framework": "SceneryStack",
       "description": "SceneryStack planetarium renderer. Project the night sky for an observer on Earth from latitude, longitude, and local sidereal time.",
-      "deployedUrl": "https://openphysics.github.io/Zenith",
       "physicsTopics": [
         "astronomy",
         "planetarium",

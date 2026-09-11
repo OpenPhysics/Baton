@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Canonical GitHub repository settings for OpenPhysics SceneryStack simulations (and SceneryStackTemplate). New fleet members often inherit GitHub defaults — apply this baseline instead of copying settings from a mature sim by hand.",
+  "description": "Canonical GitHub repository settings for OpenLyceum SceneryStack simulations (and SceneryStackTemplate). New fleet members often inherit GitHub defaults — apply this baseline instead of copying settings from a mature sim by hand.",
   "appliesTo": {
     "primary": [
       "simulation",

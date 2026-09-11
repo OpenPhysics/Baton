@@ -1,6 +1,6 @@
 # SceneryStack skills
 
-Focused, single-topic reference docs for building OpenPhysics SceneryStack simulations. Each
+Focused, single-topic reference docs for building OpenLyceum SceneryStack simulations. Each
 skill is a folder containing a `SKILL.md` in the standard Claude Code layout —
 [YAML frontmatter](https://code.claude.com/docs/en/skills) (`name` + `description`) describing
 **when** it applies, followed by the patterns, code, and common mistakes for that topic. An AI
@@ -9,7 +9,7 @@ topic guides.
 
 These complement, not replace, the broader docs:
 
-- [`.github/CLAUDE.md`](https://github.com/OpenPhysics/.github/blob/main/CLAUDE.md) — the org-wide AI guide (tech stack, bootstrap chain, commands). Start there.
+- [`.github/CLAUDE.md`](https://github.com/OpenLyceum/.github/blob/main/CLAUDE.md) — the org-wide AI guide (tech stack, bootstrap chain, commands). Start there.
 - [`../CONVENTIONS.md`](../CONVENTIONS.md) — the structural convention (file layout, naming, the `preferences/` trio, tests).
 - [`../ACCESSIBILITY.md`](../ACCESSIBILITY.md) — the shared accessibility pattern.
 

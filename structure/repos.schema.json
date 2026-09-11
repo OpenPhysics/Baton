@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openphysics.github.io/Baton/structure/repos.schema.json",
-  "title": "OpenPhysics repository catalog",
-  "description": "Machine-readable catalog of OpenPhysics organization repositories. Consumed by bootstrap, fleet scripts, Pages, and compliance tooling.",
+  "$id": "repos.schema.json",
+  "title": "Repository catalog",
+  "description": "Machine-readable catalog of the organization's repositories. Consumed by bootstrap, fleet scripts, Pages, and compliance tooling.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "organization", "repos"],
+  "required": ["schemaVersion", "organization", "pagesBase", "repos"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -18,7 +18,18 @@
     },
     "organization": {
       "type": "string",
-      "const": "OpenPhysics"
+      "minLength": 1,
+      "description": "GitHub organization login. The single source of truth for the org name across all fleet tooling."
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable organization name for page titles and headings (e.g. \"Open Lyceum\"). Defaults to organization when absent."
+    },
+    "pagesBase": {
+      "type": "string",
+      "pattern": "^https://[^/]+$",
+      "description": "Base URL for GitHub Pages sites, no trailing slash (e.g. https://<org>.github.io). Every deployedUrl is derived from this."
     },
     "repos": {
       "type": "array",
@@ -40,7 +51,6 @@
         "language",
         "framework",
         "description",
-        "deployedUrl",
         "physicsTopics",
         "screens",
         "status"
@@ -108,12 +118,12 @@
           "maxLength": 350
         },
         "deployedUrl": {
-          "description": "Canonical GitHub Pages URL (lowercase host). Null when not deployed.",
+          "description": "Pages URL override. Omit to derive <pagesBase>/<name>; null means the repo is not deployed.",
           "oneOf": [
             { "type": "null" },
             {
               "type": "string",
-              "pattern": "^https://openphysics\\.github\\.io/"
+              "pattern": "^https://"
             }
           ]
         },

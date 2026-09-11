@@ -1,11 +1,11 @@
 ---
 name: scenerystack-coding-conventions
-description: Use when writing or reviewing TypeScript in an OpenPhysics SceneryStack sim — naming, constructor signatures (positional params + options object), documentation style, access modifiers, type inference, enumerations, optionize, TReadOnlyProperty annotations, assertions, non-null assertions, excess-property checking, and read-vs-write Property APIs. Trigger when deciding how to structure a class/method or when a review flags a style/convention issue.
+description: Use when writing or reviewing TypeScript in an OpenLyceum SceneryStack sim — naming, constructor signatures (positional params + options object), documentation style, access modifiers, type inference, enumerations, optionize, TReadOnlyProperty annotations, assertions, non-null assertions, excess-property checking, and read-vs-write Property APIs. Trigger when deciding how to structure a class/method or when a review flags a style/convention issue.
 ---
 
 # SceneryStack TypeScript Coding Conventions
 
-How TypeScript is written in OpenPhysics SceneryStack sims (SceneryStack template: Vite + TypeScript +
+How TypeScript is written in OpenLyceum SceneryStack sims (SceneryStack template: Vite + TypeScript +
 **Biome**, source under `src/`). Adapted from PhET's coding conventions and trimmed to what applies here.
 Formatting and import ordering are enforced by `biome.json` (`npm run lint` / `npm run fix`) — this skill
 covers the judgment calls Biome can't make. Related skills: scenerystack-optionize,

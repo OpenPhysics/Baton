@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fleet batch-change runner for OpenPhysics repositories.
+# Fleet batch-change runner for the org's repositories.
 #
 # Clone each repo selected from the catalog, run a command inside it, and — with
 # --apply — push a branch and open a pull request with the resulting changes.
@@ -23,7 +23,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib/repos.sh
 source "$SCRIPT_DIR/lib/repos.sh"
 
-ORG="OpenPhysics"
+ORG="${FLEET_ORG:-${OPENPHYSICS_ORG:-$(repos_org)}}"
 BRANCH="chore/fleet-update"
 TITLE=""
 BODY="Automated fleet change opened by Baton's fleet-exec runner."
@@ -43,7 +43,7 @@ usage() {
   cat <<'EOF'
 Usage: fleet-exec.sh [filters] [options] -- <command> [args...]
 
-Clone each selected OpenPhysics repo, run <command> in it, and (with --apply) open
+Clone each selected repo, run <command> in it, and (with --apply) open
 a PR with the resulting changes. Dry-run by default.
 
 Filters (from structure/repos.json):

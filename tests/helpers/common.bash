@@ -16,6 +16,17 @@ fleet_node_major() {
   grep -oP 'default:\s*["'\'']\K[0-9]+' "$BATON_ROOT/.github/workflows/ci.yml" | head -n1
 }
 
+# The org login and the Claude marketplace id, read from the same sources the
+# scripts read them from, so the suite survives an organization rename or a
+# marketplace rename without touching a single fixture.
+fleet_org() {
+  jq -r '.organization' "$BATON_ROOT/structure/repos.json"
+}
+
+fleet_plugin_id() {
+  printf 'scenerystack@%s\n' "$(jq -r '.name' "$BATON_ROOT/.claude-plugin/marketplace.json")"
+}
+
 # check-repo-compliance.sh queries live GitHub security settings when `gh` is
 # installed and authenticated. Shadow it with a stub that fails `auth status` so
 # the suite is hermetic and offline: the script takes its documented
@@ -77,16 +88,20 @@ AGPL-3.0.
 See the org defaults.
 EOF
 
-  cat >"$dir/.github/workflows/ci.yml" <<'EOF'
+  local org plugin_id
+  org="$(fleet_org)"
+  plugin_id="$(fleet_plugin_id)"
+
+  cat >"$dir/.github/workflows/ci.yml" <<EOF
 name: CI
 on: [push, pull_request]
 jobs:
   ci:
-    uses: OpenPhysics/Baton/.github/workflows/ci.yml@main
+    uses: ${org}/Baton/.github/workflows/ci.yml@main
   dependency-review:
-    uses: OpenPhysics/Baton/.github/workflows/shared-dependency-review.yml@main
+    uses: ${org}/Baton/.github/workflows/shared-dependency-review.yml@main
   codeql:
-    uses: OpenPhysics/Baton/.github/workflows/shared-codeql.yml@main
+    uses: ${org}/Baton/.github/workflows/shared-codeql.yml@main
 EOF
 
   cat >"$dir/.github/dependabot.yml" <<'EOF'
@@ -123,12 +138,12 @@ EOF
 }
 EOF
 
-  cat >"$dir/.claude/settings.json" <<'EOF'
+  cat >"$dir/.claude/settings.json" <<EOF
 {
   "extraKnownMarketplaces": {
-    "openphysics": { "source": { "source": "github", "repo": "OpenPhysics/Baton" } }
+    "${plugin_id#scenerystack@}": { "source": { "source": "github", "repo": "${org}/Baton" } }
   },
-  "enabledPlugins": { "scenerystack@openphysics": true }
+  "enabledPlugins": { "${plugin_id}": true }
 }
 EOF
 

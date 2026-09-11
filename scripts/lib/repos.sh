@@ -5,7 +5,7 @@ set -euo pipefail
 REPOS_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOS_SCRIPT_DIR="${REPOS_SCRIPT_DIR:-$REPOS_LIB_DIR/..}"
 REPOS_JSON="${REPOS_JSON:-$REPOS_SCRIPT_DIR/../structure/repos.json}"
-OPENPHYSICS_WORKSPACE="${OPENPHYSICS_WORKSPACE:-$(cd "$REPOS_SCRIPT_DIR/../.." && pwd)}"
+FLEET_WORKSPACE="${FLEET_WORKSPACE:-${OPENPHYSICS_WORKSPACE:-$(cd "$REPOS_SCRIPT_DIR/../.." && pwd)}}"
 
 FILTER_TYPE=""
 FILTER_STATUS=""
@@ -30,7 +30,21 @@ repos_catalog_path() {
 }
 
 repos_workspace_root() {
-  printf '%s\n' "$OPENPHYSICS_WORKSPACE"
+  printf '%s\n' "$FLEET_WORKSPACE"
+}
+
+# The organization login, read from the catalog. This is the single place the
+# org name enters the tooling; override with FLEET_ORG for dry runs against a
+# fork. Keep callers using this rather than a literal so a rename is one edit.
+repos_org() {
+  repos_require_jq
+  jq -r '.organization' "$(repos_catalog_path)"
+}
+
+# Base URL for Pages sites, e.g. https://<org>.github.io (no trailing slash).
+repos_pages_base() {
+  repos_require_jq
+  jq -r '.pagesBase // "https://\(.organization | ascii_downcase).github.io"' "$(repos_catalog_path)"
 }
 
 repos_reset_filters() {
@@ -74,14 +88,19 @@ repos_jq_select_expr() {
   printf 'select(%s)' "$expr"
 }
 
+# Pages URL for a catalog row, resolved against the catalog's pagesBase:
+#   deployedUrl absent -> derive "<pagesBase>/<name>"
+#   deployedUrl null   -> the repo is not deployed
+#   deployedUrl string -> explicit override
+# No repo names appear here; "not deployed" is stated in the catalog, not guessed.
 repos_jq_homepage_def='
-def github_homepage:
-  if ((.deployedUrl // "") | length) > 0 then
-    (.deployedUrl | gsub("OpenPhysics"; "openphysics") | rtrimstr("/"))
-  elif .name == ".github" or .name == "Baton" or .name == "pycd48" then
+def github_homepage($base):
+  if (has("deployedUrl") | not) then
+    "\($base)/\(.name)"
+  elif .deployedUrl == null then
     null
   else
-    "https://openphysics.github.io/\(.name)"
+    (.deployedUrl | rtrimstr("/"))
   end;
 '
 
@@ -90,10 +109,11 @@ repos_jq_enrich_program() {
   select_expr="$(repos_jq_select_expr)"
   cat <<JQ
 $repos_jq_homepage_def
-.repos[]
+(.pagesBase // "https://\(.organization | ascii_downcase).github.io") as \$base
+| .repos[]
 | $select_expr
 | . + {
-    githubHomepage: github_homepage,
+    githubHomepage: github_homepage(\$base),
     localPath: (\$workspace + "/" + .name)
   }
 JQ
@@ -168,7 +188,7 @@ repos_summary() {
   catalog="$(repos_catalog_path)"
   workspace="$(repos_workspace_root)"
   jq -r '
-    "organization: \(.organization // "OpenPhysics")",
+    "organization: \(.organization)",
     "schemaVersion: \(.schemaVersion // "unknown")",
     "total: \(.repos | length)",
     (.repos | group_by(.type) | map("  \(.[0].type): \(length)") | .[]),

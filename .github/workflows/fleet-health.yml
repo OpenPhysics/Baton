@@ -99,7 +99,7 @@ jobs:
           row=""
           status=0
 
-          if ! gh repo clone "OpenPhysics/$SIM" "$dir" -- --depth 1 --quiet; then
+          if ! gh repo clone "${{ github.repository_owner }}/$SIM" "$dir" -- --depth 1 --quiet; then
             row="| $SIM | ❌ clone | — | — | — | — |"
             status=1
           else

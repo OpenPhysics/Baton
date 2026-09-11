@@ -1,6 +1,6 @@
 # Fleet git commands
 
-Run everyday git operations across **every OpenPhysics repo checked out locally** — the sibling
+Run everyday git operations across **every OpenLyceum repo checked out locally** — the sibling
 clones that live beside `Baton` in the workspace (`pull all`, `push all`, `status all`, …).
 
 ## The short version
@@ -17,7 +17,7 @@ fleet --simulation log -1 --oneline
 Put it on your `PATH` once (symlink is enough if `~/.local/bin` is already there):
 
 ```bash
-ln -sfn ~/OpenPhysics/Baton/scripts/fleet ~/.local/bin/fleet
+ln -sfn ~/OpenLyceum/Baton/scripts/fleet ~/.local/bin/fleet
 ```
 
 Or call it as `Baton/scripts/fleet …` / `scripts/fleet …` from the Baton directory.
@@ -138,7 +138,7 @@ done
 - **Non-zero exit if any repo fails.** `fleet` keeps going after a failure, then exits `1` if
   any repo's git command failed — scan the output for which ones.
 - **Workspace location.** Scripts assume `Baton` sits beside the member repos. If your checkout
-  differs, set `OPENPHYSICS_WORKSPACE` or pass `--catalog /path/to/repos.json`.
+  differs, set `FLEET_WORKSPACE` or pass `--catalog /path/to/repos.json`.
 - For non-git fan-out (lint, build, dependency bumps) that should land as PRs, use
   [`fleet-exec.sh`](../scripts/fleet-exec.sh) instead — it works on fresh clones, not your local
   trees.

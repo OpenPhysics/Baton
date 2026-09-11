@@ -5,8 +5,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-CATALOG="${OPENPHYSICS_CATALOG:-$ROOT/structure/repos.json}"
-SCHEMA="${OPENPHYSICS_CATALOG_SCHEMA:-$ROOT/structure/repos.schema.json}"
+CATALOG="${FLEET_CATALOG:-${OPENPHYSICS_CATALOG:-$ROOT/structure/repos.json}}"
+SCHEMA="${FLEET_CATALOG_SCHEMA:-${OPENPHYSICS_CATALOG_SCHEMA:-$ROOT/structure/repos.schema.json}}"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required" >&2
@@ -119,9 +119,14 @@ assert_jq "non-ports have null upstream" '
   )
 '
 
-assert_jq "deployedUrl host is lowercase openphysics when set" '
-  all(.repos[] | select(.deployedUrl != null);
-    (.deployedUrl | startswith("https://openphysics.github.io/"))
+assert_jq "pagesBase matches the organization and has no trailing slash" '
+  (.pagesBase == "https://\(.organization | ascii_downcase).github.io")
+'
+
+assert_jq "explicit deployedUrl overrides sit under pagesBase" '
+  . as $root
+  | all(.repos[] | select(has("deployedUrl") and .deployedUrl != null);
+    (.deployedUrl | startswith($root.pagesBase + "/"))
   )
 '
 
