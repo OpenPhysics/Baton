@@ -14,8 +14,7 @@ conformant by default.
 > [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
 > plus `SceneryStackTemplate`. As of 2026-08-12 that is 37 sims including ACPhasor,
 > BasicCoordinatesAndSeasons, CarnotHeatEngine, HabitableZones, LightPropagation, MotionsOfTheSun,
-> Oscilloscope, Precession, SpecialRelativity, SternGerlach, and Zenith. The hardware
-> web UI `tscd48` and the Python apps (`pyro`, `pycd48`) are out of scope. Orchestration (`Baton`)
+> Oscilloscope, Precession, SpecialRelativity, SternGerlach, and Zenith. Orchestration (`Baton`)
 > and community-health (`.github`) repos follow their own conventions.
 
 ## 1. Bootstrap chain

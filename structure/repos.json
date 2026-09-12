@@ -552,26 +552,6 @@
       "status": "active"
     },
     {
-      "name": "jscd48",
-      "displayName": "jscd48",
-      "type": "hardware-interface",
-      "isSimulation": false,
-      "lineage": null,
-      "upstream": null,
-      "language": [
-        "JavaScript"
-      ],
-      "framework": null,
-      "description": "JavaScript library for controlling the CD48 Coincidence Counter via the Web Serial API. Published to npm.",
-      "physicsTopics": [
-        "nuclear physics",
-        "coincidence counting",
-        "particle detection"
-      ],
-      "screens": null,
-      "status": "active"
-    },
-    {
       "name": "LadyBug",
       "displayName": "Ladybug Motion 2D",
       "type": "simulation",
@@ -1045,46 +1025,6 @@
       "status": "active"
     },
     {
-      "name": "pycd48",
-      "displayName": "pycd48",
-      "type": "hardware-interface",
-      "isSimulation": false,
-      "lineage": null,
-      "upstream": null,
-      "language": [
-        "Python"
-      ],
-      "framework": null,
-      "description": "Python library for controlling the CD48 Coincidence Counter via USB serial. Supports Linux, macOS, and Windows.",
-      "deployedUrl": null,
-      "physicsTopics": [
-        "nuclear physics",
-        "coincidence counting",
-        "particle detection"
-      ],
-      "screens": null,
-      "status": "active"
-    },
-    {
-      "name": "pyro",
-      "displayName": "pyro",
-      "type": "tool",
-      "isSimulation": false,
-      "lineage": null,
-      "upstream": null,
-      "language": [
-        "JavaScript"
-      ],
-      "framework": "GlowScript",
-      "description": "Browser-based VPython editor using CodeMirror 6 and GlowScript VPython 3.2. Write and run VPython code in the browser with live 3D visualization.",
-      "physicsTopics": [
-        "3D visualization",
-        "computational physics"
-      ],
-      "screens": null,
-      "status": "active"
-    },
-    {
       "name": "QubitSketch",
       "displayName": "Qubit Sketch",
       "type": "simulation",
@@ -1497,26 +1437,6 @@
           "title": "Track Lab"
         }
       ],
-      "status": "active"
-    },
-    {
-      "name": "tscd48",
-      "displayName": "tscd48",
-      "type": "hardware-interface",
-      "isSimulation": false,
-      "lineage": null,
-      "upstream": null,
-      "language": [
-        "TypeScript"
-      ],
-      "framework": null,
-      "description": "TypeScript library for controlling the CD48 Coincidence Counter via the Web Serial API. Published to npm.",
-      "physicsTopics": [
-        "nuclear physics",
-        "coincidence counting",
-        "particle detection"
-      ],
-      "screens": null,
       "status": "active"
     },
     {

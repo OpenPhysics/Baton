@@ -13,8 +13,7 @@ default.
 > [`structure/repos.json`](structure/repos.json) (`isSimulation` + `framework: SceneryStack`)
 > plus `SceneryStackTemplate`. As of 2026-08-12 that is 37 sims including ACPhasor,
 > BasicCoordinatesAndSeasons, CarnotHeatEngine, HabitableZones, LightPropagation, MotionsOfTheSun,
-> Oscilloscope, Precession, SpecialRelativity, SternGerlach, and Zenith. The hardware
-> web UI `tscd48` and the Python apps are out of scope and keep their own a11y docs.
+> Oscilloscope, Precession, SpecialRelativity, SternGerlach, and Zenith.
 >
 > **Fleet status:** structural Layer 1–2 coverage and Layer-3 keyboard drag for play-area
 > objects are expected on every active sim (verified weekly by the
